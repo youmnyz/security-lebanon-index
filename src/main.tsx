@@ -8,7 +8,7 @@ import './index.css';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <HelmetProvider>
-      <BrowserRouter basename="/security-index">
+      <BrowserRouter basename={import.meta.env.DEV ? "/" : "/security-index"}>
         <App />
       </BrowserRouter>
     </HelmetProvider>

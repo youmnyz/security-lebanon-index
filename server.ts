@@ -214,6 +214,50 @@ async function startServer() {
     next();
   });
 
+  // Live news from real RSS sources
+  app.get("/api/live-news", async (req, res) => {
+    const RSS_FEEDS = [
+      { url: 'https://www.nna-leb.gov.lb/en/rss', source: 'National News Agency' },
+      { url: 'https://naharnet.com/stories/en/rss', source: 'Naharnet' },
+      { url: 'https://www.lorientlejour.com/rss', source: "L'Orient Le Jour" },
+      { url: 'https://news.google.com/rss/search?q=Lebanon+security+safety&hl=en-LB&gl=LB&ceid=LB:en', source: 'Google News' },
+    ];
+
+    const parseRSS = (xml: string, defaultSource: string) => {
+      const items: { title: string; url: string; source: string; summary: string; timestamp: string }[] = [];
+      const itemMatches = xml.matchAll(/<item>([\s\S]*?)<\/item>/g);
+      for (const match of itemMatches) {
+        const block = match[1];
+        const title = (block.match(/<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/) || [])[1]?.trim();
+        const link = (block.match(/<link>(.*?)<\/link>/) || block.match(/<link[^>]*href="([^"]+)"/) || [])[1]?.trim();
+        const desc = (block.match(/<description>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/description>/) || [])[1]?.replace(/<[^>]+>/g, '').trim().substring(0, 200);
+        const pubDate = (block.match(/<pubDate>(.*?)<\/pubDate>/) || [])[1]?.trim();
+        const sourceName = (block.match(/<source[^>]*>(.*?)<\/source>/) || [])[1]?.trim() || defaultSource;
+        if (title && link) {
+          items.push({ title, url: link, source: sourceName, summary: desc || '', timestamp: pubDate ? new Date(pubDate).toISOString() : new Date().toISOString() });
+        }
+        if (items.length >= 5) break;
+      }
+      return items;
+    };
+
+    const results = await Promise.allSettled(
+      RSS_FEEDS.map(async ({ url, source }) => {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000);
+        try {
+          const r = await fetch(url, { signal: controller.signal, headers: { 'User-Agent': 'Mozilla/5.0' } });
+          clearTimeout(timeout);
+          const xml = await r.text();
+          return parseRSS(xml, source);
+        } catch { clearTimeout(timeout); return []; }
+      })
+    );
+
+    const allNews = results.flatMap(r => r.status === 'fulfilled' ? r.value : []);
+    res.json(allNews.slice(0, 20));
+  });
+
   // API routes
   app.get("/api/risk-assessment/:date", async (req, res) => {
     const { date } = req.params;
