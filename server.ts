@@ -201,6 +201,19 @@ async function startServer() {
 
   app.use(express.json({ limit: '1mb' }));
 
+  // CORS — allow zodsecurity.com and local dev
+  app.use((req, res, next) => {
+    const allowed = ['https://zodsecurity.com', 'https://www.zodsecurity.com', 'http://localhost:3000', 'http://localhost:5173'];
+    const origin = req.headers.origin || '';
+    if (allowed.includes(origin) || !origin) {
+      res.setHeader('Access-Control-Allow-Origin', origin || '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    }
+    if (req.method === 'OPTIONS') return res.sendStatus(204);
+    next();
+  });
+
   // API routes
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });

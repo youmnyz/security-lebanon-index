@@ -722,7 +722,7 @@ export default function App() {
 
   const fetchSecurityData = useCallback(async () => {
     try {
-      const response = await fetch('/api/security-data');
+      const response = await fetch('https://security-lebanon-index.onrender.com/api/security-data');
       if (response.ok) {
         const result = await response.json();
         setData(result);
@@ -734,7 +734,7 @@ export default function App() {
 
   const saveSecurityData = useCallback(async (newData: SecurityIndexData) => {
     try {
-      await fetch('/api/security-data', {
+      await fetch('https://security-lebanon-index.onrender.com/api/security-data', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newData)
