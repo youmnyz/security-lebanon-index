@@ -536,8 +536,8 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
             </div>
           </div>
           <div className="space-y-4 bg-white border border-gray-100 rounded-xl p-4 max-h-[500px] overflow-y-auto custom-scrollbar">
-            {(data.newsFeed || []).map((item) => (
-              <div key={item.id} className="group border-b border-gray-50 pb-4 last:border-0 last:pb-0">
+            {(liveNews.length > 0 ? liveNews : []).map((item, idx) => (
+              <div key={item.url || idx} className="group border-b border-gray-50 pb-4 last:border-0 last:pb-0">
                 <div className="flex justify-between items-start mb-2 gap-2">
                   <span className="text-[10px] font-mono uppercase tracking-widest opacity-40 font-bold">
                     {safeFormatDate(item.timestamp)}
@@ -551,17 +551,12 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
                     {item.source || 'Intelligence'}
                   </a>
                 </div>
-                {item.imageUrl && (
-                  <div className="mb-3">
-                    <TacticalImage src={item.imageUrl} alt={item.title} id={item.id} type="security" />
-                  </div>
-                )}
                 <h4 className="text-sm font-bold leading-tight mb-1 group-hover:text-[#E31E24] transition-colors">{item.title}</h4>
                 <p className="text-xs text-gray-500 leading-relaxed line-clamp-3">{item.summary}</p>
               </div>
             ))}
-            {(!data.newsFeed || data.newsFeed.length === 0) && (
-              <p className="text-sm text-gray-400 italic text-center py-4">No feed items available.</p>
+            {liveNews.length === 0 && (
+              <p className="text-sm text-gray-400 italic text-center py-4">Loading live feed...</p>
             )}
           </div>
         </section>
@@ -708,6 +703,7 @@ const TacticalImage = ({ src, alt, id, type = 'tactical' }: { src?: string, alt:
 
 export default function App() {
   const [data, setData] = useState<SecurityIndexData>(INITIAL_SECURITY_DATA);
+  const [liveNews, setLiveNews] = useState<any[]>([]);
   const [aiAnalysis, setAiAnalysis] = useState<any>(null);
   const [lebanonMap, setLebanonMap] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -1019,6 +1015,14 @@ export default function App() {
   useEffect(() => {
     fetchSecurityData();
   }, [fetchSecurityData]);
+
+  // On mount: fetch live news from RSS feeds
+  useEffect(() => {
+    fetch('https://security-lebanon-index.onrender.com/api/live-news')
+      .then(r => r.json())
+      .then(setLiveNews)
+      .catch(console.error);
+  }, []);
 
   // Trigger recalibration when data is stale or still at initial score
   useEffect(() => {
