@@ -217,21 +217,30 @@ async function startServer() {
   // Live news from real RSS sources
   app.get("/api/live-news", async (req, res) => {
     const RSS_FEEDS = [
-      { url: 'https://www.nna-leb.gov.lb/en/rss', source: 'National News Agency' },
-      { url: 'https://naharnet.com/stories/en/rss', source: 'Naharnet' },
-      { url: 'https://www.lorientlejour.com/rss', source: "L'Orient Le Jour" },
+      { url: 'https://nna-leb.gov.lb/en/rss', source: 'National News Agency' },
+      { url: 'https://www.naharnet.com/tags/lebanon/en/feed.atom', source: 'Naharnet' },
+      { url: 'https://www.the961.com/feed/', source: 'The961' },
+      { url: 'https://www.newarab.com/rss.xml', source: 'The New Arab' },
+      { url: 'https://www.middleeasteye.net/rss', source: 'Middle East Eye' },
+      { url: 'https://feeds.bbci.co.uk/news/world/middle_east/rss.xml', source: 'BBC Middle East' },
+      { url: 'https://www.aljazeera.com/xml/rss/all.xml', source: 'Al Jazeera' },
       { url: 'https://news.google.com/rss/search?q=Lebanon+security+safety&hl=en-LB&gl=LB&ceid=LB:en', source: 'Google News' },
     ];
 
     const parseRSS = (xml: string, defaultSource: string) => {
       const items: { title: string; url: string; source: string; summary: string; timestamp: string }[] = [];
-      const itemMatches = xml.matchAll(/<item>([\s\S]*?)<\/item>/g);
-      for (const match of itemMatches) {
+      // Support both RSS <item> and Atom <entry>
+      const tagName = xml.includes('<entry>') ? 'entry' : 'item';
+      const matches = xml.matchAll(new RegExp(`<${tagName}>([\\s\\S]*?)<\\/${tagName}>`, 'g'));
+      for (const match of matches) {
         const block = match[1];
         const title = (block.match(/<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/) || [])[1]?.trim();
+        // RSS <link> or Atom <link href="...">
         const link = (block.match(/<link>(.*?)<\/link>/) || block.match(/<link[^>]*href="([^"]+)"/) || [])[1]?.trim();
-        const desc = (block.match(/<description>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/description>/) || [])[1]?.replace(/<[^>]+>/g, '').trim().substring(0, 200);
-        const pubDate = (block.match(/<pubDate>(.*?)<\/pubDate>/) || [])[1]?.trim();
+        const desc = (block.match(/<description>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/description>/)
+          || block.match(/<summary[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/summary>/) || [])[1]
+          ?.replace(/<[^>]+>/g, '').trim().substring(0, 200);
+        const pubDate = (block.match(/<pubDate>(.*?)<\/pubDate>/) || block.match(/<updated>(.*?)<\/updated>/) || block.match(/<published>(.*?)<\/published>/) || [])[1]?.trim();
         const sourceName = (block.match(/<source[^>]*>(.*?)<\/source>/) || [])[1]?.trim() || defaultSource;
         if (title && link) {
           items.push({ title, url: link, source: sourceName, summary: desc || '', timestamp: pubDate ? new Date(pubDate).toISOString() : new Date().toISOString() });
