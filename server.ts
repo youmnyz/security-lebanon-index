@@ -215,6 +215,29 @@ async function startServer() {
   });
 
   // API routes
+  app.get("/api/risk-assessment/:date", async (req, res) => {
+    const { date } = req.params;
+    try {
+      const { GoogleGenAI } = await import("@google/genai");
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: `Generate a detailed daily security risk assessment for Lebanon for the date: ${date}.
+        SEO REQUIREMENTS:
+        - Generate a compelling 'seoTitle' (max 60 chars) and 'seoDescription' (max 160 chars).
+        - ALWAYS include the exact keywords "Lebanon Safety" and "Lebanon Security" in both.
+        Return a JSON object with this shape:
+        { date, summary, threatLevel: 'Low'|'Moderate'|'Elevated'|'High'|'Extreme', keyRisks: [{category, description, mitigation}], outlook24h, seoTitle, seoDescription }`,
+        config: { responseMimeType: "application/json" }
+      });
+      const result = JSON.parse(response.text || "{}");
+      res.json(result);
+    } catch (err) {
+      console.error("Risk assessment generation failed:", err);
+      res.status(500).json({ error: "Failed to generate assessment" });
+    }
+  });
+
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
   });

@@ -12,13 +12,11 @@ import {
   FileText,
   Lock
 } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
 import SEO from '../components/SEO';
 import { RiskAssessment } from '../types';
-import { INITIAL_SECURITY_DATA } from '../constants';
 import { cn } from '../lib/utils';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const API_BASE = 'https://security-lebanon-index.onrender.com';
 
 export default function RiskAssessmentPage() {
   const { date } = useParams<{ date: string }>();
@@ -30,32 +28,9 @@ export default function RiskAssessmentPage() {
     setLoading(true);
     setError(null);
     try {
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: `Generate a detailed daily security risk assessment for Lebanon for the date: ${date}.
-        Use the following context about Lebanon's current security infrastructure: ${JSON.stringify(INITIAL_SECURITY_DATA)}.
-        
-        SEO REQUIREMENTS:
-        - Generate a compelling 'seoTitle' (max 60 chars) and 'seoDescription' (max 160 chars).
-        - ALWAYS include the exact keywords "Lebanon Safety" and "Lebanon Security" in both the 'seoTitle' and 'seoDescription'.
-        
-        The output must be a JSON object matching this interface:
-        interface RiskAssessment {
-          date: string;
-          summary: string;
-          threatLevel: 'Low' | 'Moderate' | 'Elevated' | 'High' | 'Extreme';
-          keyRisks: { category: string; description: string; mitigation: string }[];
-          outlook24h: string;
-          seoTitle: string;
-          seoDescription: string;
-        }
-        Focus on professional, intelligence-grade analysis suitable for a top security firm.`,
-        config: {
-          responseMimeType: "application/json",
-        }
-      });
-
-      const result = JSON.parse(response.text || "{}");
+      const response = await fetch(`${API_BASE}/api/risk-assessment/${date}`);
+      if (!response.ok) throw new Error('Server error');
+      const result = await response.json();
       setAssessment(result);
     } catch (err) {
       console.error("Failed to generate assessment:", err);
