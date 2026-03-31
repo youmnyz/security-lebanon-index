@@ -237,9 +237,11 @@ async function startServer() {
         const title = (block.match(/<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?<\/title>/) || [])[1]?.trim();
         // RSS <link> or Atom <link href="...">
         const link = (block.match(/<link>(.*?)<\/link>/) || block.match(/<link[^>]*href="([^"]+)"/) || [])[1]?.trim();
-        const desc = (block.match(/<description>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/description>/)
-          || block.match(/<summary[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/summary>/) || [])[1]
-          ?.replace(/<[^>]+>/g, '').trim().substring(0, 200);
+        const rawDesc = (block.match(/<description>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/description>/)
+          || block.match(/<summary[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/summary>/) || [])[1] || '';
+        const desc = rawDesc
+          .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+          .replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 200);
         const pubDate = (block.match(/<pubDate>(.*?)<\/pubDate>/) || block.match(/<updated>(.*?)<\/updated>/) || block.match(/<published>(.*?)<\/published>/) || [])[1]?.trim();
         const sourceName = (block.match(/<source[^>]*>(.*?)<\/source>/) || [])[1]?.trim() || defaultSource;
         if (title && link) {
@@ -293,6 +295,79 @@ async function startServer() {
 
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
+  });
+
+  // Server-side recalibration using Gemini with valid API key
+  app.get("/api/recalibrate", async (req, res) => {
+    try {
+      const { GoogleGenAI } = await import("@google/genai");
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+      const today = new Date().toISOString().split('T')[0];
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: `Perform a comprehensive tactical security scan for Lebanon for ${today}.
+        Provide a SecurityIndexData JSON object with REAL current context.
+        RULES:
+        1. isInitial MUST be false. lastUpdated MUST be today's ISO date.
+        2. source MUST be a real outlet: Reuters, Al Jazeera, Naharnet, L'Orient-Le Jour, NNA, BBC, The961.
+        3. url MUST be one of these only (no hallucinated article URLs):
+           NNA: https://www.nna-leb.gov.lb/en/security-law
+           L'Orient-Le Jour: https://www.lorientlejour.com/category/Liban
+           Naharnet: https://www.naharnet.com/stories/en/lebanon
+           Al Jazeera: https://www.aljazeera.com/tag/lebanon/
+           Reuters: https://www.reuters.com/world/middle-east/
+           BBC: https://www.bbc.com/news/world/middle_east
+           The961: https://www.the961.com/category/latest-news/
+        4. Max 2 news items per category, max 2 items in newsFeed and tacticalFeed. Summaries under 180 chars.
+        5. Use EXACTLY these 5 categories:
+           Fire Risks (subHeading: Fire Solutions, externalLink: https://zodfire.com)
+           Lightning Risks (subHeading: Lightning Protection, externalLink: https://zodlightning.com)
+           Criminal Risks (subHeading: Intruder Protection, externalLink: https://zodprotection.com)
+           Financial Risks (subHeading: Safes and Locks Solutions, externalLink: https://zodsafe.com)
+           Corporate News (subHeading: Entrance Automation Solutions, externalLink: https://zodentrance.com)
+        6. overallScore should reflect current Lebanon security reality (typically 20-45 given ongoing instability).
+        Return ONLY valid JSON matching: { overallScore, isInitial, lastUpdated, categories: [{id,title,score,status,description,subHeading,externalLink,news:[{id,timestamp,title,summary,severity,source,url}]}], newsFeed:[{id,timestamp,title,summary,severity,source,url}], tacticalFeed:[{id,timestamp,title,summary,severity,source,url}] }`,
+        config: { responseMimeType: "application/json", maxOutputTokens: 8192 }
+      });
+      const result = JSON.parse(response.text || "{}");
+      res.json(result);
+    } catch (err) {
+      console.error("Recalibration failed:", err);
+      res.status(500).json({ error: "Recalibration failed" });
+    }
+  });
+
+  // Server-side AI analysis using Gemini
+  app.post("/api/ai-analysis", async (req, res) => {
+    try {
+      const { GoogleGenAI } = await import("@google/genai");
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+      const { score, lastUpdated } = req.body;
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: `Generate a Lebanon security intelligence analysis for a security dashboard.
+        Current overall security score: ${score}/100. Last updated: ${lastUpdated}.
+        Lebanon context: ongoing political instability, economic crisis, post-conflict reconstruction, regional tensions.
+        Return JSON with:
+        {
+          "summarySections": [
+            { "title": "Strategic Overview", "content": "2-3 sentence analysis" },
+            { "title": "Tactical Monitoring", "content": "2-3 sentence analysis" },
+            { "title": "Infrastructure Outlook", "content": "2-3 sentence analysis" }
+          ],
+          "findings": ["finding 1 under 80 chars", "finding 2 under 80 chars", "finding 3 under 80 chars"],
+          "metrics": { "Resilience": 0-100, "Stability": 0-100, "Risk": 0-100 },
+          "seoTitle": "Lebanon Security Index ${new Date().toLocaleDateString('en-US', {month:'long', year:'numeric'})} | Lebanon Safety",
+          "seoDescription": "Real-time Lebanon security and Lebanon safety assessment. Score: ${score}/100."
+        }`,
+        config: { responseMimeType: "application/json", maxOutputTokens: 2048 }
+      });
+      const result = JSON.parse(response.text || "{}");
+      res.json(result);
+    } catch (err) {
+      console.error("AI analysis failed:", err);
+      res.status(500).json({ error: "AI analysis failed" });
+    }
   });
 
   app.get("/api/security-data", (req, res) => {

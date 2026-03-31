@@ -44,6 +44,15 @@ body {
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
+/* Fix: Kadence WordPress theme uses unlayered element selectors (h1, h2, p, etc.)
+   that override Tailwind's layered utilities. Using #root ID prefix gives higher
+   specificity while color:inherit lets parent container Tailwind colors flow through. */
+#root h1, #root h2, #root h3, #root h4, #root h5, #root h6,
+#root p, #root span, #root a, #root li, #root button, #root label,
+#root td, #root th, #root strong, #root em {
+  color: inherit;
+}
+
 @layer utilities {
   .custom-scrollbar::-webkit-scrollbar {
     width: 4px;

@@ -165,13 +165,14 @@ function repairJson(jsonStr: string) {
   return fixedText;
 }
 
-function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonMap, mapStatus }: { 
-  data: SecurityIndexData, 
-  aiAnalysis: any, 
-  isAnalyzing: boolean, 
+function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonMap, mapStatus, liveNews }: {
+  data: SecurityIndexData,
+  aiAnalysis: any,
+  isAnalyzing: boolean,
   generateAiAnalysis: () => void,
   lebanonMap: string | null,
-  mapStatus: 'generating' | 'success' | 'fallback' | 'idle'
+  mapStatus: 'generating' | 'success' | 'fallback' | 'idle',
+  liveNews: any[]
 }) {
   const radarData = useMemo(() => (data.categories || []).map(cat => ({
     subject: cat.title.includes(' ') ? cat.title.split(' ')[0] : cat.title,
@@ -742,48 +743,50 @@ export default function App() {
 
   const generateLebanonMap = useCallback(async () => {
     setMapStatus('generating');
-    try {
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash-image',
-        contents: {
-          parts: [
-            {
-              text: 'A highly detailed, professional, tactical satellite map of Lebanon. The style should be dark, high-contrast, with a military intelligence aesthetic. Include subtle topographical details and a clean, sharp outline of the country. No text or labels on the image itself.',
-            },
-          ],
-        },
-        config: {
-          imageConfig: {
-            aspectRatio: "1:1"
-          }
-        }
-      });
-      
-      for (const part of response.candidates[0].content.parts) {
-        if (part.inlineData) {
-          const base64EncodeString: string = part.inlineData.data;
-          setLebanonMap(`data:image/png;base64,${base64EncodeString}`);
-          setMapStatus('success');
-          break;
-        }
-      }
-    } catch (error: any) {
-      if (isQuotaError(error)) {
-        console.warn("Gemini Quota Exhausted for map generation. Using tactical placeholder.");
-        setLebanonMap("https://images.unsplash.com/photo-1516738901171-8eb4fc13bd20?q=80&w=1000&auto=format&fit=crop");
-        setMapStatus('fallback');
-      } else {
-        console.error("Failed to generate Lebanon map:", error);
-        setMapStatus('idle');
-      }
-    }
+    setLebanonMap("https://images.unsplash.com/photo-1516738901171-8eb4fc13bd20?q=80&w=1000&auto=format&fit=crop");
+    setMapStatus('fallback');
   }, []);
 
   const recalibrateSystem = useCallback(async () => {
     setIsRecalibrating(true);
     try {
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
+      const response = await fetch('https://security-lebanon-index.onrender.com/api/recalibrate');
+      if (!response.ok) throw new Error('Server recalibration failed');
+      const result = await response.json();
+
+      if (result.newsFeed) result.newsFeed = result.newsFeed.map(sanitizeNewsItem);
+      if (result.tacticalFeed) result.tacticalFeed = result.tacticalFeed.map(sanitizeNewsItem);
+      if (result.categories) result.categories = result.categories.map((cat: any) => ({
+        ...cat, news: (cat.news || []).map(sanitizeCategoryNewsItem)
+      }));
+
+      if (result.overallScore) {
+        const newHistoricalEntry = {
+          date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          score: result.overallScore
+        };
+        const current = dataRef.current;
+        const updatedData = {
+          ...current,
+          ...result,
+          historicalData: [...(current.historicalData || []), newHistoricalEntry].slice(-7)
+        };
+        setData(updatedData);
+        await saveSecurityData(updatedData);
+        generateAiAnalysis(updatedData);
+      }
+    } catch (error) {
+      console.error("System recalibration failed:", error);
+    } finally {
+      setIsRecalibrating(false);
+      setHasAttemptedRecalibration(true);
+    }
+  }, [saveSecurityData]);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _legacy_recalibrate = useCallback(async () => {
+    try {
+      const _response = await Promise.resolve({ model: "UNUSED",
         contents: `Perform a comprehensive tactical monitoring scan for the Lebanon Security Situation (2024-2026 period). 
         Provide a new SecurityIndexData object. 
         
@@ -943,54 +946,13 @@ export default function App() {
     const resolved = currentData ?? dataRef.current;
     setIsAnalyzing(true);
     try {
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: `Analyze the following Lebanon Security and Safety data and provide a comprehensive, intelligence-grade security assessment for SEO purposes. 
-        CRITICAL CONTEXT: Lebanon is currently experiencing significant security challenges. The analysis must reflect the gravity of this situation from a safety and security perspective.
-        
-        STRUCTURE:
-        - 'summarySections': An array of 2-3 objects, each with a 'title' and 'content'. 
-          - Section 1: Strategic Overview
-          - Section 2: Tactical Monitoring Impact
-          - Section 3: Humanitarian/Infrastructure Outlook
-        - 'findings': Exactly 3 short bullet points.
-        
-        SEO REQUIREMENTS:
-        - Generate a compelling 'seoTitle' (max 60 chars) and 'seoDescription' (max 160 chars).
-        - ALWAYS include the exact keywords "Lebanon Safety" and "Lebanon Security" in both the 'seoTitle' and 'seoDescription'.
-        
-        Data context: Overall Score is ${resolved.overallScore}, Last Updated ${resolved.lastUpdated}.
-        Format: Return a JSON object with:
-        {
-          "summarySections": [ { "title": "string", "content": "markdown string" } ],
-          "findings": ["finding 1", "finding 2", "finding 3"],
-          "metrics": { "Resilience": 0-100, "Stability": 0-100, "Risk": 0-100 },
-          "directives": [ { "label": "string", "text": "string" } ],
-          "seoTitle": "SEO optimized title including Lebanon Safety and Lebanon Security",
-          "seoDescription": "SEO optimized description including Lebanon Safety and Lebanon Security"
-        }`,
-        config: {
-          responseMimeType: "application/json",
-          maxOutputTokens: 4096,
-        }
+      const response = await fetch('https://security-lebanon-index.onrender.com/api/ai-analysis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ score: resolved.overallScore, lastUpdated: resolved.lastUpdated })
       });
-
-      const text = response.text || "{}";
-      let result;
-
-      try {
-        result = JSON.parse(text);
-      } catch (e) {
-        console.error("JSON Parse Error during AI analysis. Attempting repair.", e);
-        const fixedText = repairJson(text);
-        try {
-          result = JSON.parse(fixedText);
-        } catch (innerE) {
-          console.error("Failed to parse AI analysis response even after repair attempt.");
-          throw new Error("Failed to parse AI analysis response.");
-        }
-      }
-
+      if (!response.ok) throw new Error('Server AI analysis failed');
+      const result = await response.json();
       setAiAnalysis(result);
     } catch (error) {
       if (isQuotaError(error)) {
@@ -1045,7 +1007,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#F4F4F4] text-[#1A1A1A] font-sans selection:bg-[#2D2D2D] selection:text-white">
       {/* Header */}
-      <header className="bg-[#2D2D2D] text-white px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-50 shadow-md">
+      <header className="bg-[#2D2D2D] text-white px-4 md:px-8 py-4 flex justify-between items-center shadow-md">
         <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
           <div className="w-10 h-10 bg-white flex items-center justify-center rounded-md">
             <Lock className="text-[#2D2D2D] w-6 h-6" />
@@ -1082,13 +1044,14 @@ export default function App() {
 
       <Routes>
         <Route path="/" element={
-          <Dashboard 
-            data={data} 
-            aiAnalysis={aiAnalysis} 
-            isAnalyzing={isAnalyzing} 
-            generateAiAnalysis={generateAiAnalysis} 
+          <Dashboard
+            data={data}
+            aiAnalysis={aiAnalysis}
+            isAnalyzing={isAnalyzing}
+            generateAiAnalysis={generateAiAnalysis}
             lebanonMap={lebanonMap}
             mapStatus={mapStatus}
+            liveNews={liveNews}
           />
         } />
         <Route path="/risk-assessment/:date" element={<RiskAssessmentPage />} />
