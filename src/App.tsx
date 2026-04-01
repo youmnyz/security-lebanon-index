@@ -553,51 +553,6 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
         ))}
       </div>
 
-      <div className="lg:col-span-4 self-start">
-        {/* Latest News Feed */}
-        <section className="bg-[#1A1A1A] text-white rounded-xl p-4 md:p-6 shadow-xl border-l-4 border-[#E31E24]">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-[#E31E24] shrink-0" />
-              <h2 className="text-[10px] font-mono uppercase tracking-widest font-bold text-white">Latest News</h2>
-            </div>
-            <div className="flex items-center gap-1 shrink-0">
-              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-              <span className="text-[9px] font-bold uppercase tracking-widest opacity-50 hidden sm:inline">Live</span>
-            </div>
-          </div>
-          <div className="space-y-4">
-            {(data.tacticalFeed || []).map((news) => (
-              <div key={news.id} className="group border-b border-white/5 pb-4 last:border-0 last:pb-0">
-                <div className="flex justify-between items-start mb-2 gap-2">
-                  <span className="text-[10px] font-mono uppercase tracking-widest opacity-40 font-bold">
-                    {safeFormatDate(news.timestamp)}
-                  </span>
-                  <a
-                    href={news.url || '#'}
-                    target="_blank"
-                    rel="nofollow noopener noreferrer"
-                    className="text-[10px] font-bold uppercase tracking-widest text-[#E31E24] hover:underline shrink-0 min-h-[44px] md:min-h-0 flex items-center"
-                  >
-                    {news.source || 'Intelligence'}
-                  </a>
-                </div>
-                {news.imageUrl && (
-                  <div className="mb-3">
-                    <TacticalImage src={news.imageUrl} alt={news.title} id={news.id} type="tactical" />
-                  </div>
-                )}
-                <h4 className="text-sm font-bold leading-tight text-white group-hover:text-[#E31E24] transition-colors mb-1">{news.title}</h4>
-                <p className="text-[11px] text-white/50 leading-relaxed line-clamp-3">{news.summary}</p>
-              </div>
-            ))}
-            {(!data.tacticalFeed || data.tacticalFeed.length === 0) && (
-              <p className="text-[11px] text-white/30 italic">No tactical reports available.</p>
-            )}
-          </div>
-        </section>
-      </div>
-
       {/* SEO: Archive Link Section */}
       <div className="lg:col-span-12 bg-gradient-to-r from-[#2D2D2D] to-[#1a1a1a] border border-[#E31E24]/20 rounded-xl p-6 md:p-8 mb-6 shadow-lg">
         <div className="flex flex-col gap-4">
@@ -1107,6 +1062,13 @@ export default function App() {
         <p className="text-xs md:text-sm text-blue-900 text-center">
           <strong>Transparency Notice:</strong> This index analyzes news sentiment. Scores reflect media coverage, not definitive security assessments.
           <Link to="/methodology" className="font-bold text-blue-700 hover:underline ml-1">Learn our methodology →</Link>
+        </p>
+      </div>
+
+      {/* ZOD Disclaimer Banner */}
+      <div className="bg-red-50 border-b border-red-200 px-4 md:px-8 py-3">
+        <p className="text-xs md:text-sm text-red-900 text-center">
+          <strong>Disclaimer:</strong> ZOD is not responsible for the accuracy, completeness, or use of information displayed on this tool. Users access this service entirely at their own risk.
         </p>
       </div>
 
