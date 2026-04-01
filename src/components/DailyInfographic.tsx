@@ -80,10 +80,10 @@ const DailyInfographic: React.FC<DailyInfographicProps> = ({ data, aiAnalysis, m
         <div>
           <div className="flex items-center gap-2 mb-2">
             <div className="w-2 h-2 bg-[#E31E24] rounded-full animate-pulse" />
-            <span className="text-[10px] font-mono uppercase tracking-[0.4em] font-bold opacity-60">Intelligence Briefing</span>
+            <span className="text-[10px] font-mono uppercase tracking-[0.4em] font-bold opacity-60">News Analysis Briefing</span>
           </div>
-          <h2 className="text-2xl md:text-4xl font-black tracking-tighter uppercase italic">Tactical Monitoring & Security Assessment</h2>
-          <p className="text-xs font-mono opacity-40 mt-2 uppercase tracking-widest">Date: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} | Ref: LB-SEC-IDX-{data.overallScore}</p>
+          <h2 className="text-2xl md:text-4xl font-black tracking-tighter uppercase italic">Daily News Coverage Analysis</h2>
+          <p className="text-xs font-mono opacity-40 mt-2 uppercase tracking-widest">Date: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} | Score: {data.overallScore}/100</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex gap-2">
@@ -121,7 +121,7 @@ const DailyInfographic: React.FC<DailyInfographicProps> = ({ data, aiAnalysis, m
         <div className="lg:col-span-3 p-4 md:p-8 border-r border-white/5 space-y-8 md:space-y-12">
           {/* Risk Gauge */}
           <div>
-            <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-40 mb-6">Tactical Monitoring Intensity</h3>
+            <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-40 mb-6">Coverage Sentiment Score</h3>
             <div className="relative h-4 bg-white/5 rounded-full overflow-hidden mb-4">
               <div 
                 className="absolute top-0 left-0 h-full bg-gradient-to-r from-emerald-500 via-amber-500 to-red-600 transition-all duration-1000"
@@ -129,14 +129,14 @@ const DailyInfographic: React.FC<DailyInfographicProps> = ({ data, aiAnalysis, m
               />
             </div>
             <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest opacity-40">
-              <span>Low Intensity</span>
-              <span>Critical Security Level</span>
+              <span>Very Positive</span>
+              <span>Very Negative</span>
             </div>
           </div>
 
-          {/* Infrastructure Grid */}
+          {/* Category Scores */}
           <div>
-            <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-40 mb-6">Critical Infrastructure Health</h3>
+            <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-40 mb-6">Category Coverage Scores</h3>
             <div className="grid grid-cols-2 gap-4">
               {infrastructure.map((item, i) => (
                 <div key={i} className="bg-white/5 rounded-xl p-4 border border-white/5 hover:bg-white/10 transition-colors">
@@ -155,9 +155,9 @@ const DailyInfographic: React.FC<DailyInfographicProps> = ({ data, aiAnalysis, m
         {/* Center Column: Heatmap/Visual */}
         <div className="lg:col-span-6 p-4 md:p-8 border-r border-white/5">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-40">Tactical Regional Overview</h3>
+            <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-40">Regional Coverage Analysis</h3>
             <div className="flex items-center gap-4">
-              <span className="text-[8px] font-mono opacity-20 uppercase tracking-widest">Digital Reconnaissance Active</span>
+              <span className="text-[8px] font-mono opacity-20 uppercase tracking-widest">Real-time Analysis Active</span>
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                 <span className="text-[8px] font-mono opacity-40 uppercase">Live Link</span>
@@ -183,14 +183,14 @@ const DailyInfographic: React.FC<DailyInfographicProps> = ({ data, aiAnalysis, m
                     <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 px-3 py-1 bg-amber-500/20 border border-amber-500/40 rounded-full backdrop-blur-md">
                       <div className="flex items-center gap-2">
                         <AlertTriangle className="w-3 h-3 text-amber-500" />
-                        <span className="text-[8px] font-bold uppercase tracking-widest text-amber-500">Tactical Placeholder Active (Quota Limit)</span>
+                        <span className="text-[8px] font-bold uppercase tracking-widest text-amber-500">Default Map (Limit Reached)</span>
                       </div>
                     </div>
                   )}
                 </>
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center bg-white/5">
-                  <div className="text-[10px] font-mono opacity-20 uppercase animate-pulse">Generating Tactical Map...</div>
+                  <div className="text-[10px] font-mono opacity-20 uppercase animate-pulse">Loading coverage map...</div>
                 </div>
               )}
 
@@ -241,7 +241,7 @@ const DailyInfographic: React.FC<DailyInfographicProps> = ({ data, aiAnalysis, m
                     <span className="text-[8px] font-mono font-bold opacity-60">{region.score}%</span>
                   </div>
                   <div className="mt-2 text-[6px] font-mono opacity-30 uppercase tracking-tighter">
-                    Click for Intelligence
+                    Click for analysis
                   </div>
                 </motion.div>
               ))}
@@ -295,7 +295,7 @@ const DailyInfographic: React.FC<DailyInfographicProps> = ({ data, aiAnalysis, m
                     </div>
 
                     <div className="pt-4 border-t border-white/5">
-                      <div className="text-[8px] font-bold uppercase opacity-40 mb-2">Intelligence Summary</div>
+                      <div className="text-[8px] font-bold uppercase opacity-40 mb-2">Coverage Analysis</div>
                       <p className="text-[9px] leading-relaxed opacity-70 italic">
                         {selectedRegion.score < 30 
                           ? "Critical instability detected. Multiple high-severity incidents reported in this sector. Immediate caution advised."
@@ -313,9 +313,9 @@ const DailyInfographic: React.FC<DailyInfographicProps> = ({ data, aiAnalysis, m
             <div className="absolute top-6 left-6 flex flex-col gap-2 pointer-events-none z-20">
               <div className="flex items-center gap-2">
                 <div className="w-1 h-1 bg-[#E31E24] rounded-full animate-ping" />
-                <div className="text-[9px] font-mono text-[#E31E24] uppercase tracking-widest font-bold">Signal Active</div>
+                <div className="text-[9px] font-mono text-[#E31E24] uppercase tracking-widest font-bold">Analysis Active</div>
               </div>
-              <div className="text-[8px] font-mono opacity-40 uppercase tracking-widest">Sector: LEB-INT-01</div>
+              <div className="text-[8px] font-mono opacity-40 uppercase tracking-widest">Region: Lebanon</div>
             </div>
             
             {/* Legend */}
@@ -323,15 +323,15 @@ const DailyInfographic: React.FC<DailyInfographicProps> = ({ data, aiAnalysis, m
               <div className="space-y-3">
                 <div className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-widest">
                   <div className="w-2.5 h-2.5 bg-red-600 rounded-full shadow-[0_0_8px_#E31E24]" />
-                  <span>Critical Instability</span>
+                  <span>Negative Coverage</span>
                 </div>
                 <div className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-widest">
                   <div className="w-2.5 h-2.5 bg-orange-600 rounded-full shadow-[0_0_8px_#F27D26]" />
-                  <span>Elevated Risk</span>
+                  <span>Mixed Coverage</span>
                 </div>
                 <div className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-widest">
                   <div className="w-2.5 h-2.5 bg-emerald-600 rounded-full shadow-[0_0_8px_#10B981]" />
-                  <span>Stable Sector</span>
+                  <span>Positive Coverage</span>
                 </div>
               </div>
             </div>
@@ -348,12 +348,12 @@ const DailyInfographic: React.FC<DailyInfographicProps> = ({ data, aiAnalysis, m
         {/* Right Column: Directives */}
         <div className="lg:col-span-3 p-4 md:p-8 space-y-6 md:space-y-8">
           <div>
-            <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-40 mb-6">Intelligence Directives</h3>
+            <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-40 mb-6">Coverage Observations</h3>
             <div className="space-y-4">
               {(aiAnalysis?.directives || [
-                { label: 'Evacuation', text: 'Prioritize southern corridor clearance.', icon: ArrowUpRight },
-                { label: 'Cyber', text: 'Harden financial sector backbones.', icon: ShieldAlert },
-                { label: 'Logistics', text: 'Secure BEY emergency flight paths.', icon: Activity },
+                { label: 'Politics', text: 'Government and governance developments dominate reporting.', icon: ArrowUpRight },
+                { label: 'Economic', text: 'Financial market coverage shows mixed trends.', icon: ShieldAlert },
+                { label: 'Regional', text: 'Regional geopolitical events frequently covered.', icon: Activity },
               ]).map((item: any, i: number) => {
                 const Icon = item.icon || (i === 0 ? ArrowUpRight : i === 1 ? ShieldAlert : Activity);
                 return (
@@ -372,7 +372,7 @@ const DailyInfographic: React.FC<DailyInfographicProps> = ({ data, aiAnalysis, m
           </div>
 
           <div className="pt-8 border-t border-white/5">
-            <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-40 mb-4">Security Pulse</h3>
+            <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-40 mb-4">Coverage Volatility</h3>
             <div className="flex items-center gap-4">
               <div className="flex-1 h-12 flex items-end gap-1">
                 {[
@@ -412,7 +412,7 @@ const DailyInfographic: React.FC<DailyInfographicProps> = ({ data, aiAnalysis, m
           </div>
         </div>
         <div className="text-[8px] font-mono opacity-20 uppercase tracking-widest">
-          Intelligence Systems © 2026 | Classified: Internal Use Only
+          Lebanon News Index © 2026 | Public Analysis
         </div>
       </div>
     </div>

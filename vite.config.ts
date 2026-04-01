@@ -8,6 +8,18 @@ export default defineConfig(({mode}) => {
   return {
     base: '/security-index/',
     plugins: [react(), tailwindcss()],
+    build: {
+      rollupOptions: {
+        output: {
+          entryFileNames: 'assets/index.js',
+          chunkFileNames: 'assets/index.js',
+          assetFileNames: (assetInfo) => {
+            if (assetInfo.name?.endsWith('.css')) return 'assets/index.css';
+            return 'assets/[name][extname]';
+          },
+        },
+      },
+    },
     define: {
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
     },

@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import SEO from './components/SEO';
+import Methodology from './components/Methodology';
+import ArchivePage from './pages/ArchivePage';
 import {
   ResponsiveContainer,
   Radar,
@@ -181,8 +183,9 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
   })), [data.categories]);
 
   const todayStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-  const seoTitle = aiAnalysis?.seoTitle || `Lebanon Security Index: ${data.overallScore}/100 - ${todayStr}`;
-  const seoDescription = aiAnalysis?.seoDescription || `Real-time security Lebanon risk assessment. Current national safety score: ${data.overallScore}/100. Intelligence-grade security assessments and tactical monitoring for critical infrastructure and conflict zones.`;
+  // SEO: Optimized for "lebanon security" and "lebanon safety" keywords
+  const seoTitle = aiAnalysis?.seoTitle || `Lebanon Security & Safety News - Real-Time Analysis | ${data.overallScore}/100 | zodsecurity.com`;
+  const seoDescription = aiAnalysis?.seoDescription || `Real-time Lebanon security and safety news analysis from 8+ sources. Daily sentiment analysis covering political stability, economic safety, infrastructure, humanitarian concerns, and regional security developments. Score: ${data.overallScore}/100`;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -224,12 +227,12 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
           <div className="flex-1 text-center lg:text-left relative z-10">
             <div className="flex items-center gap-2 mb-4 justify-center lg:justify-start">
               <div className="w-1.5 h-1.5 bg-[#E31E24] rounded-full animate-pulse" />
-              <h2 className="text-[10px] font-mono uppercase tracking-[0.4em] text-[#E31E24] font-bold">National Security Index</h2>
+              <h2 className="text-[10px] font-mono uppercase tracking-[0.4em] text-[#E31E24] font-bold">Lebanon Security & Safety Analysis</h2>
               {data.isInitial && (
-                <span className="text-[8px] bg-white/10 text-white/60 px-2 py-0.5 rounded-full font-mono uppercase tracking-widest border border-white/5">Initial Intelligence</span>
+                <span className="text-[8px] bg-white/10 text-white/60 px-2 py-0.5 rounded-full font-mono uppercase tracking-widest border border-white/5">Initial Data</span>
               )}
             </div>
-            
+
             <div className="flex items-end justify-center lg:justify-start gap-4 mb-6">
               <span className="text-8xl md:text-9xl font-black tracking-tighter leading-none text-white drop-shadow-[0_0_30px_rgba(227,30,36,0.2)]">{data.overallScore}</span>
               <div className="flex flex-col mb-3">
@@ -240,19 +243,19 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
                     data.overallScore > data.historicalData[data.historicalData.length - 2].score ? "text-red-500" : "text-emerald-500"
                   )}>
                     {data.overallScore > data.historicalData[data.historicalData.length - 2].score ? (
-                      <><ArrowUpRight className="w-3 h-3 mr-1" /> Escalating</>
+                      <><ArrowUpRight className="w-3 h-3 mr-1" /> More Negative</>
                     ) : (
-                      <><TrendingDown className="w-3 h-3 mr-1" /> Stabilizing</>
+                      <><TrendingDown className="w-3 h-3 mr-1" /> More Positive</>
                     )}
                   </div>
                 )}
               </div>
             </div>
-            
+
             <p className="text-sm md:text-base text-white/70 leading-relaxed max-w-xl mb-8">
-              Real-time assessment of the <span className="text-white font-bold">Lebanon Conflict Dynamics</span>. 
-              Telemetry indicates <span className="text-[#E31E24] font-bold">Kinetic Operations</span> 
-              impacting infrastructure and safety vectors.
+              <span className="text-white font-bold">Lebanon security & safety</span> news analysis from
+              <span className="text-[#E31E24] font-bold"> 8+ international sources</span>.
+              Real-time sentiment analysis of political stability, economic safety, infrastructure, humanitarian concerns, and regional developments.
             </p>
             
           </div>
@@ -282,7 +285,7 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
           </div>
           <div className="flex items-center gap-2 mb-4 relative z-10">
             <Activity className="w-4 h-4 text-[#E31E24]" />
-            <h2 className="text-[9px] font-mono uppercase tracking-widest font-bold">Intelligence Findings</h2>
+            <h2 className="text-[9px] font-mono uppercase tracking-widest font-bold">News Analysis Summary</h2>
           </div>
           
           <div className="flex-1 overflow-hidden relative z-10">
@@ -478,15 +481,15 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
       </div>
 
       <div className="lg:col-span-4 self-start">
-        {/* Tactical Status Feed */}
+        {/* Latest News Feed */}
         <section className="bg-[#1A1A1A] text-white rounded-xl p-4 md:p-6 shadow-xl border-l-4 border-[#E31E24]">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-[#E31E24] shrink-0" />
-              <h2 className="text-[10px] font-mono uppercase tracking-widest font-bold text-white">Tactical Status Feed</h2>
+              <h2 className="text-[10px] font-mono uppercase tracking-widest font-bold text-white">Latest News</h2>
             </div>
             <div className="flex items-center gap-1 shrink-0">
-              <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
+              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
               <span className="text-[9px] font-bold uppercase tracking-widest opacity-50 hidden sm:inline">Live</span>
             </div>
           </div>
@@ -520,6 +523,25 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
             )}
           </div>
         </section>
+      </div>
+
+      {/* SEO: Archive Link Section */}
+      <div className="lg:col-span-12 bg-blue-50 border border-blue-200 rounded-xl p-6 md:p-8 mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-[#2D2D2D] mb-2">Lebanon Security & Safety News Archive</h2>
+            <p className="text-gray-700">
+              Access {365} daily reports analyzing Lebanon security and safety news coverage.
+              Complete archive with real-time sentiment analysis and historical trends.
+            </p>
+          </div>
+          <Link
+            to="/archive"
+            className="whitespace-nowrap bg-[#E31E24] text-white px-6 py-3 rounded-lg font-bold hover:bg-opacity-90 transition flex items-center gap-2"
+          >
+            View All Reports →
+          </Link>
+        </div>
       </div>
 
       {/* Bottom Sections */}
@@ -625,13 +647,14 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
           <section className="space-y-6">
             <div className="flex items-center gap-2">
               <Lock className="w-5 h-5 text-[#2D2D2D]" />
-              <h2 className="text-[10px] font-mono uppercase tracking-widest font-bold">Safety Lebanon</h2>
+              <h2 className="text-[10px] font-mono uppercase tracking-widest font-bold">About This Index</h2>
             </div>
             <div className="bg-[#2D2D2D] text-white rounded-xl p-4 md:p-6 relative overflow-hidden shadow-xl">
               <div className="relative z-10">
-                <h3 className="text-base font-bold mb-3">National Security Intelligence</h3>
+                <h3 className="text-base font-bold mb-3">News-Based Security Analysis</h3>
                 <p className="text-[11px] opacity-70 leading-relaxed">
-                  Our methodology combines open-source intelligence with proprietary data vectors to provide the most accurate security Lebanon assessment available.
+                  This index analyzes sentiment from 8+ news sources to track coverage trends. Scores reflect reporting tone, not operational ground truth.
+                  <Link to="/methodology" className="block mt-3 text-[#E31E24] font-bold hover:underline">Learn our methodology →</Link>
                 </p>
               </div>
               <div className="absolute -bottom-4 -right-4 opacity-5">
@@ -962,10 +985,10 @@ export default function App() {
       }
       setAiAnalysis({
         summarySections: [
-          { title: "System Alert", content: "Failed to generate real-time security analysis. Intelligence feed interrupted due to sync issues or quota limits." },
-          { title: "Status", content: "Regional data unavailable. Please initiate manual sync or check back later." }
+          { title: "Analysis Unavailable", content: "Unable to generate analysis summary at this time. Please try refreshing the page or clicking Update to fetch fresh data." },
+          { title: "Recommendation", content: "Review the raw news feeds below for current reporting. Use the Methodology page to understand how scores are calculated." }
         ],
-        findings: ["Intelligence feed interrupted", "Regional data unavailable", "System sync required"],
+        findings: ["Refresh to get latest data", "Review news sources directly", "Check back in a few moments"],
         metrics: { Resilience: 50, Stability: 50, Risk: 50 }
       });
     } finally {
@@ -1006,6 +1029,14 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F4F4F4] text-[#1A1A1A] font-sans selection:bg-[#2D2D2D] selection:text-white">
+      {/* Transparency Banner */}
+      <div className="bg-blue-50 border-b border-blue-200 px-4 md:px-8 py-3">
+        <p className="text-xs md:text-sm text-blue-900 text-center">
+          <strong>Transparency Notice:</strong> This index analyzes news sentiment. Scores reflect media coverage, not definitive security assessments.
+          <Link to="/methodology" className="font-bold text-blue-700 hover:underline ml-1">Learn our methodology →</Link>
+        </p>
+      </div>
+
       {/* Header */}
       <header className="bg-[#2D2D2D] text-white px-4 md:px-8 py-4 flex justify-between items-center shadow-md">
         <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
@@ -1013,8 +1044,8 @@ export default function App() {
             <Lock className="text-[#2D2D2D] w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-lg md:text-xl font-extrabold uppercase tracking-tight leading-none">Security Lebanon Index</h1>
-            <p className="text-[9px] font-mono opacity-70 uppercase tracking-widest mt-1">Safety Lebanon Intelligence Feed</p>
+            <h1 className="text-lg md:text-xl font-extrabold uppercase tracking-tight leading-none">Lebanon News Index</h1>
+            <p className="text-[9px] font-mono opacity-70 uppercase tracking-widest mt-1">News-Based Security Analysis</p>
           </div>
         </Link>
         <div className="flex items-center gap-4">
@@ -1022,23 +1053,29 @@ export default function App() {
             {isRecalibrating ? (
               <div className="flex items-center gap-2 text-[#E31E24] animate-pulse">
                 <Globe className="w-3 h-3 animate-spin" />
-                <span>Global Intelligence Recalibration in Progress...</span>
+                <span>Updating feeds...</span>
               </div>
             ) : (
-              <span>Last Sync: {new Date(data.lastUpdated).toLocaleTimeString()}</span>
+              <span>Last Update: {new Date(data.lastUpdated).toLocaleTimeString()}</span>
             )}
           </div>
           {location.pathname === '/' && (
-            <button 
+            <button
               onClick={() => recalibrateSystem()}
               disabled={isAnalyzing || isRecalibrating}
               className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors disabled:opacity-50 flex items-center gap-2"
-              title="Recalibrate System"
+              title="Fetch latest news and recalculate scores"
             >
               <RefreshCw className={cn("w-4 h-4", (isAnalyzing || isRecalibrating) && "animate-spin")} />
-              <span className="text-[10px] font-bold uppercase tracking-widest hidden md:inline">Recalibrate</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest hidden md:inline">Update</span>
             </button>
           )}
+          <Link
+            to="/methodology"
+            className="text-[10px] font-bold uppercase tracking-widest px-3 py-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
+          >
+            How It Works
+          </Link>
         </div>
       </header>
 
@@ -1055,6 +1092,9 @@ export default function App() {
           />
         } />
         <Route path="/risk-assessment/:date" element={<RiskAssessmentPage />} />
+        <Route path="/methodology" element={<Methodology />} />
+        <Route path="/archive" element={<ArchivePage />} />
+        <Route path="/archive/page/:page" element={<ArchivePage />} />
       </Routes>
     </div>
   );

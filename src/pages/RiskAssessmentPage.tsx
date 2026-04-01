@@ -122,10 +122,10 @@ export default function RiskAssessmentPage() {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-2 h-2 bg-[#E31E24] rounded-full" />
-                  <span className="text-[10px] font-mono uppercase tracking-[0.3em] font-bold opacity-70">Daily Security Briefing</span>
+                  <span className="text-[10px] font-mono uppercase tracking-[0.3em] font-bold opacity-70">News Sentiment Briefing</span>
                 </div>
-                <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">Risk Assessment</h1>
-                <p className="text-lg opacity-60 mt-2 font-medium">Intelligence Report for {new Date(date!).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">Daily News Analysis</h1>
+                <p className="text-lg opacity-60 mt-2 font-medium">Based on news coverage for {new Date(date!).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
               </div>
               <div className="flex flex-col items-end">
                 <span className="text-[10px] font-mono uppercase tracking-widest opacity-50 mb-2 font-bold">Threat Level</span>
@@ -137,21 +137,22 @@ export default function RiskAssessmentPage() {
             </div>
             
             <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-6 rounded-lg">
-              <h3 className="text-xs font-bold uppercase tracking-widest mb-3 text-[#E31E24]">Executive Summary</h3>
+              <h3 className="text-xs font-bold uppercase tracking-widest mb-3 text-[#E31E24]">News Summary</h3>
               <p className="text-base md:text-lg leading-relaxed opacity-90 font-medium italic">
                 "{assessment.summary}"
               </p>
+              <p className="text-xs opacity-50 mt-3">Based on news sentiment analysis from multiple sources</p>
             </div>
           </div>
         </div>
 
         {/* Content */}
         <div className="p-8 md:p-12 space-y-12">
-          {/* Key Risks */}
+          {/* Key Topics */}
           <section>
             <div className="flex items-center gap-3 mb-8">
               <AlertTriangle className="w-6 h-6 text-[#E31E24]" />
-              <h2 className="text-xl font-black uppercase tracking-tight text-[#2D2D2D]">Critical Risk Vectors</h2>
+              <h2 className="text-xl font-black uppercase tracking-tight text-[#2D2D2D]">News Topics & Themes</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {(assessment.keyRisks || []).map((risk, idx) => (
@@ -195,9 +196,12 @@ export default function RiskAssessmentPage() {
         </div>
 
         {/* Footer */}
-        <div className="bg-gray-50 border-t border-gray-100 p-6 text-center">
+        <div className="bg-gray-50 border-t border-gray-100 p-6 text-center space-y-2">
           <p className="text-[10px] font-mono uppercase tracking-widest text-gray-400 font-bold">
-            Intelligence verified by Intelligence Systems • Confidential Report • © 2026 Security Lebanon Index
+            News Sentiment Analysis • Based on public news sources • © 2026 Lebanon News Index
+          </p>
+          <p className="text-[9px] text-gray-500">
+            This analysis reflects news coverage patterns, not operational intelligence assessments.
           </p>
         </div>
       </div>
