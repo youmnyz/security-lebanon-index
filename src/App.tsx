@@ -224,7 +224,7 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
         description={seoDescription}
         jsonLd={jsonLd}
       />
-      <main className="max-w-7xl mx-auto p-2 md:p-4 grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+      <main className="max-w-7xl mx-auto p-2 md:p-4 grid grid-cols-1 lg:grid-cols-12 gap-3 items-stretch">
       {/* Row 1: Hero & AI Outlook - Modular & Autofill */}
       <div className="lg:col-span-8 flex flex-col">
         <section className="bg-[#2D2D2D] text-white border border-white/5 rounded-xl p-6 md:p-10 shadow-2xl flex flex-col lg:flex-row items-center gap-10 h-full relative overflow-hidden flex-1">
@@ -481,7 +481,7 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
       </div>
 
       {/* Row 5: Category News Feeds */}
-      <div className="lg:col-span-8 space-y-4 md:space-y-8">
+      <div className="lg:col-span-8 space-y-4 md:space-y-6">
         {(data.categories || []).map((category) => (
           <section key={category.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
             <div className="p-4 md:p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 gap-3">
@@ -556,7 +556,7 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
         <div className="flex flex-col gap-4">
           <div>
             <h2 className="text-2xl font-bold text-white mb-2">Lebanon Security & Safety News Archive</h2>
-            <p className="text-gray-300">
+            <p className="text-gray-100">
               Access 365 daily reports analyzing Lebanon security and safety news. Complete archive with real-time sentiment analysis, historical trends, and security assessments.
             </p>
           </div>
@@ -577,7 +577,7 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
               <Link
                 key={label}
                 to={`/risk-assessment/${new Date(new Date().setDate(new Date().getDate() - offset)).toISOString().split('T')[0]}`}
-                className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg font-semibold text-sm transition text-center border border-white/10 hover:border-[#E31E24]/50"
+                className="bg-white/15 hover:bg-white/25 text-white px-4 py-2 rounded-lg font-semibold text-sm transition text-center border border-white/20 hover:border-[#E31E24]"
               >
                 {label}
               </Link>
@@ -617,7 +617,7 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
         </section>
 
         {/* System Status & Safety Lebanon */}
-        <div className="space-y-8">
+        <div className="space-y-6">
           <section className="space-y-6">
             <div className="flex items-center gap-2">
               <Server className="w-5 h-5 text-[#2D2D2D]" />
