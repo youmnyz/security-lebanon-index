@@ -278,30 +278,8 @@ async function startServer() {
   // In-memory data store (simulating a database)
   let securityData = {
     ...INITIAL_SECURITY_DATA,
-    newsFeed: [
-      {
-        id: "n1",
-        timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
-        title: "Security Lebanon: Emergency Airspace Closure Confirmed",
-        summary: "Civil Aviation Authority suspends all commercial operations at BEY following increased regional military activity. Emergency evacuation flights prioritized.",
-        severity: "High",
-        source: "L'Orient-Le Jour",
-        url: "https://www.lorientlejour.com/category/Liban",
-        keywords: ["airport", "beirut", "military"]
-      }
-    ],
-    tacticalFeed: [
-      {
-        id: "w1",
-        timestamp: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
-        title: "Frontline Report: Southern Border Activity",
-        summary: "Intense military exchanges reported in the border villages. Local sources confirm multiple strikes on tactical positions.",
-        severity: "High",
-        source: "Al Jazeera",
-        url: "https://www.aljazeera.com/where/lebanon/",
-        keywords: ["border", "soldier", "explosion"]
-      }
-    ],
+    newsFeed: [],
+    tacticalFeed: [],
     historicalData: [
       { date: "Mar 20", score: 45 },
       { date: "Mar 21", score: 42 },

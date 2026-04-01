@@ -14,17 +14,7 @@ export const INITIAL_SECURITY_DATA: SecurityIndexData = {
       description: "Monitoring political developments, government stability, and institutional integrity based on news analysis.",
       externalLink: "https://www.nna-leb.gov.lb",
       benchmarks: [],
-      news: [
-        {
-          id: "p-n1",
-          timestamp: new Date().toISOString(),
-          title: "Political Developments in Lebanon",
-          summary: "Tracking government statements, parliamentary activities, and political announcements from official sources.",
-          severity: "Medium",
-          source: "NNA",
-          url: "https://news.google.com/search?q=Lebanon+Government+Stability+NNA&hl=en-LB&gl=LB&ceid=LB:en"
-        }
-      ]
+      news: []
     },
     {
       id: "economic",
@@ -35,17 +25,7 @@ export const INITIAL_SECURITY_DATA: SecurityIndexData = {
       description: "Analysis of economic indicators, currency stability, and market conditions from financial reporting.",
       externalLink: "https://www.reuters.com/world/middle-east/",
       benchmarks: [],
-      news: [
-        {
-          id: "e-n1",
-          timestamp: new Date().toISOString(),
-          title: "Lebanon Economic Updates",
-          summary: "Monitoring currency exchange rates, banking system developments, and economic policy announcements.",
-          severity: "Medium",
-          source: "Reuters",
-          url: "https://news.google.com/search?q=Lebanon+Economy+Reuters&hl=en-LB&gl=LB&ceid=LB:en"
-        }
-      ]
+      news: []
     },
     {
       id: "infrastructure",
@@ -56,17 +36,7 @@ export const INITIAL_SECURITY_DATA: SecurityIndexData = {
       description: "Tracking reports on electricity, water, telecommunications, and other critical infrastructure.",
       externalLink: "https://www.naharnet.com/stories/en/lebanon",
       benchmarks: [],
-      news: [
-        {
-          id: "i-n1",
-          timestamp: new Date().toISOString(),
-          title: "Infrastructure Status",
-          summary: "Reports on power supply, water systems, telecommunications networks, and public utilities.",
-          severity: "Medium",
-          source: "Naharnet",
-          url: "https://news.google.com/search?q=Lebanon+Infrastructure+Services+Naharnet&hl=en-LB&gl=LB&ceid=LB:en"
-        }
-      ]
+      news: []
     },
     {
       id: "humanitarian",
@@ -77,17 +47,7 @@ export const INITIAL_SECURITY_DATA: SecurityIndexData = {
       description: "Monitoring humanitarian aid, displacement, healthcare, and social welfare indicators.",
       externalLink: "https://www.aljazeera.com/where/lebanon/",
       benchmarks: [],
-      news: [
-        {
-          id: "h-n1",
-          timestamp: new Date().toISOString(),
-          title: "Humanitarian Situation",
-          summary: "Tracking humanitarian organizations' reports, aid distribution, and social welfare developments.",
-          severity: "Medium",
-          source: "Al Jazeera",
-          url: "https://news.google.com/search?q=Lebanon+Humanitarian+Aid+Al+Jazeera&hl=en-LB&gl=LB&ceid=LB:en"
-        }
-      ]
+      news: []
     },
     {
       id: "regional",
@@ -98,17 +58,7 @@ export const INITIAL_SECURITY_DATA: SecurityIndexData = {
       description: "Coverage of regional geopolitical developments affecting Lebanon from international news sources.",
       externalLink: "https://www.lorientlejour.com/category/Liban",
       benchmarks: [],
-      news: [
-        {
-          id: "r-n1",
-          timestamp: new Date().toISOString(),
-          title: "Regional News Impact",
-          summary: "Monitoring regional developments, international diplomacy, and cross-border events affecting Lebanon.",
-          severity: "Medium",
-          source: "L'Orient-Le Jour",
-          url: "https://news.google.com/search?q=Lebanon+Regional+Developments&hl=en-LB&gl=LB&ceid=LB:en"
-        }
-      ]
+      news: []
     }
   ],
   newsFeed: [
