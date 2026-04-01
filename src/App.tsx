@@ -193,8 +193,8 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
 
   const todayStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
   // SEO: Optimized for "lebanon security" and "lebanon safety" keywords
-  const seoTitle = aiAnalysis?.seoTitle || `Lebanon Security & Safety News - Real-Time Analysis | ${data.overallScore}/100 | zodsecurity.com`;
-  const seoDescription = aiAnalysis?.seoDescription || `Real-time Lebanon security and safety news analysis from 8+ sources. Daily sentiment analysis covering political stability, economic safety, infrastructure, humanitarian concerns, and regional security developments. Score: ${data.overallScore}/100`;
+  const seoTitle = aiAnalysis?.seoTitle || `Lebanon Security Index - Safety News & Analysis | ${data.overallScore}/100`;
+  const seoDescription = aiAnalysis?.seoDescription || `Lebanon security and safety news tracker. Real-time analysis of Lebanon safety index covering criminal risks, fire safety, financial security, infrastructure threats, and business continuity. Current safety score: ${data.overallScore}/100`;
 
   const jsonLd = {
     "@context": "https://schema.org",

@@ -139,11 +139,11 @@ function getStatusFromScore(score: number): string {
  * Maps news items to security risk categories based on keywords
  */
 const CATEGORY_KEYWORDS: Record<string, string[]> = {
-  fire: ['fire', 'wildfire', 'flame', 'burn', 'burning', 'blazing', 'explosion', 'explosive', 'blast', 'flare', 'ignition', 'combustion', 'heat', 'smoke', 'danger', 'hazard', 'alert', 'risk', 'threat'],
-  lightning: ['lightning', 'thunder', 'storm', 'weather', 'electrical', 'electricity', 'voltage', 'surge', 'power outage', 'blackout', 'power failure', 'wind', 'rain', 'precipitation', 'atmospheric', 'meteorological'],
-  criminal: ['crime', 'criminal', 'theft', 'steal', 'robbery', 'burglary', 'violence', 'violent', 'attack', 'assault', 'murder', 'kill', 'kill', 'shoot', 'shooting', 'gun', 'weapon', 'armed', 'intruder', 'perpetrator', 'suspect'],
-  financial: ['economy', 'economic', 'currency', 'bank', 'banking', 'market', 'financial', 'finance', 'trade', 'investment', 'exchange', 'inflation', 'business', 'commerce', 'gdp', 'debt', 'lira', 'dollar', 'price', 'cost', 'monetary', 'fiscal'],
-  corporate: ['corporate', 'business', 'company', 'enterprise', 'corporation', 'firm', 'commercial', 'office', 'facility', 'headquarters', 'building', 'infrastructure', 'access', 'entrance', 'security', 'automation', 'tech', 'technology', 'digital']
+  fire: ['fire', 'wildfire', 'blaze', 'burn', 'burning', 'arson', 'firefight', 'fire department', 'extinguish', 'heat', 'smoke', 'evacuation', 'residential fire', 'building fire'],
+  lightning: ['lightning', 'thunder', 'storm', 'weather', 'electrical hazard', 'power outage', 'blackout', 'voltage surge', 'electrical safety', 'meteorological', 'rain', 'wind'],
+  criminal: ['crime', 'theft', 'robbery', 'burglary', 'criminal', 'police', 'arrest', 'suspect', 'perpetrator', 'investigation', 'prison', 'larceny', 'vandalism', 'fraud', 'assault (non-military)'],
+  financial: ['economy', 'economic', 'currency', 'bank', 'banking', 'market', 'financial', 'trade', 'investment', 'exchange rate', 'inflation', 'business', 'commerce', 'lira', 'dollar', 'price'],
+  corporate: ['business', 'company', 'corporate', 'enterprise', 'firm', 'office', 'building', 'facility', 'headquarters', 'infrastructure', 'automation', 'technology', 'digital', 'security system', 'access control']
 };
 
 /**
@@ -163,6 +163,23 @@ function categorizeNews(item: { title: string; summary: string }, keywords: Reco
   }
 
   return matched;
+}
+
+/**
+ * Check if news item is about Lebanon
+ */
+function isAboutLebanon(item: { title: string; summary: string; url?: string }): boolean {
+  const text = `${item.title} ${item.summary} ${item.url || ''}`.toLowerCase();
+  const lebanonTerms = ['lebanon', 'beirut', 'tripoli', 'sidon', 'tyre', 'baalbek', 'lebanese', 'hezbollah', 'lira'];
+  const irrelevantTerms = ['global', 'worldwide', 'international report', 'world news', 'us news', 'uk news', 'europe', 'asia', 'africa'];
+
+  // Must contain at least one Lebanon reference
+  const hasLebanon = lebanonTerms.some(term => text.includes(term));
+  if (!hasLebanon) return false;
+
+  // Should not be purely global content
+  const isGlobal = irrelevantTerms.some(term => text.includes(term)) && !text.includes('lebanon');
+  return !isGlobal;
 }
 
 /**
@@ -548,19 +565,19 @@ Based on how positive/negative the news coverage would typically be for this dat
         messages: [
           {
             role: "user",
-            content: `Analyze news sentiment about Lebanon. Current sentiment score: ${score}/100 (50=neutral, 0=very negative reporting, 100=very positive reporting). Last updated: ${lastUpdated}.
+            content: `Analyze Lebanon news coverage for security and safety topics. Current sentiment score: ${score}/100. Last updated: ${lastUpdated}.
 
-This is a NEWS SENTIMENT ANALYSIS tool, not an intelligence agency assessment. Interpret the score as: how positive vs negative is the current news coverage?
+This is a NEWS SENTIMENT ANALYSIS tool. Focus on: criminal activity, fire safety, economic stability, infrastructure security, and business operations.
 
-Generate a brief analysis summary with JSON format only (no markdown):
+Generate analysis in JSON format only (no markdown):
 {
   "summarySections": [
-    { "title": "News Coverage Tone", "content": "Brief 2-3 sentence description of whether recent reporting is positive, negative, or mixed" },
-    { "title": "Key Topics", "content": "2-3 sentence summary of major topics in recent news" },
-    { "title": "Trends", "content": "2-3 sentences on whether sentiment is improving or declining" }
+    { "title": "Safety Coverage", "content": "2-3 sentences on recent Lebanon security and safety news tone" },
+    { "title": "Key Security Issues", "content": "2-3 sentences on main security topics in news (crime, accidents, economic concerns, infrastructure)" },
+    { "title": "Outlook", "content": "2-3 sentences on whether conditions appear improving or declining" }
   ],
-  "findings": ["observation 1 about news coverage", "observation 2", "observation 3"],
-  "metrics": { "Resilience": 0-100, "Stability": 0-100, "Risk": 0-100 }
+  "findings": ["observation 1", "observation 2", "observation 3"],
+  "metrics": { "Safety": 0-100, "Stability": 0-100, "Risk": 0-100 }
 }`
           }
         ],
@@ -644,7 +661,8 @@ Generate a brief analysis summary with JSON format only (no markdown):
 
           const allNews = results.flatMap(r => r.status === 'fulfilled' ? r.value : []);
           const recentNews = allNews.filter(item => isWithinTimeWindow(item.timestamp, 30));
-          liveNews = recentNews.slice(0, 50);
+          const lebanonNews = recentNews.filter(item => isAboutLebanon(item));
+          liveNews = lebanonNews.slice(0, 50);
 
           // Cache the results
           newsCache.data = liveNews;
