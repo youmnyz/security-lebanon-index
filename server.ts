@@ -172,6 +172,8 @@ function isAboutLebanon(item: { title: string; summary: string; url?: string }):
   const text = `${item.title} ${item.summary} ${item.url || ''}`.toLowerCase();
   const lebanonTerms = ['lebanon', 'beirut', 'tripoli', 'sidon', 'tyre', 'baalbek', 'lebanese', 'hezbollah', 'lira'];
   const irrelevantTerms = ['global', 'worldwide', 'international report', 'world news', 'us news', 'uk news', 'europe', 'asia', 'africa'];
+  // Exclude articles primarily about other Middle Eastern countries
+  const otherCountries = ['baghdad', 'iraq', 'syria', 'damascus', 'jordan', 'amman', 'israel', 'palestine', 'egypt', 'cairo', 'saudi', 'yemen', 'gulf', 'iran', 'tehran'];
 
   // Must contain at least one Lebanon reference
   const hasLebanon = lebanonTerms.some(term => text.includes(term));
@@ -179,7 +181,17 @@ function isAboutLebanon(item: { title: string; summary: string; url?: string }):
 
   // Should not be purely global content
   const isGlobal = irrelevantTerms.some(term => text.includes(term)) && !text.includes('lebanon');
-  return !isGlobal;
+  if (isGlobal) return false;
+
+  // Reject if primarily about another country (title focus check)
+  const titleText = item.title.toLowerCase();
+  const primaryFocusOnOther = otherCountries.some(country => {
+    const countryCount = (titleText.match(new RegExp(country, 'g')) || []).length;
+    const lebanonCount = (titleText.match(/lebanon|beirut|tripoli/g) || []).length;
+    return countryCount > 0 && lebanonCount === 0;
+  });
+
+  return !primaryFocusOnOther;
 }
 
 /**
