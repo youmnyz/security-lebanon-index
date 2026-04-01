@@ -352,49 +352,49 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
 
       {/* AI Findings - Modular & Predictable */}
       <div className="lg:col-span-4 flex flex-col">
-        <section className="bg-[#2D2D2D] text-white p-6 rounded-xl shadow-xl relative overflow-hidden h-full flex flex-col flex-1">
+        <section className="bg-white text-[#2D2D2D] p-6 rounded-xl shadow-xl border border-gray-200 relative overflow-hidden h-full flex flex-col flex-1">
           <div className="absolute top-0 right-0 p-4 opacity-5">
-            <Zap className="w-16 h-16" />
+            <Zap className="w-16 h-16 text-[#2D2D2D]" />
           </div>
           <div className="flex items-center gap-2 mb-4 relative z-10">
             <Activity className="w-4 h-4 text-[#E31E24]" />
             <h2 className="text-[9px] font-mono uppercase tracking-widest font-bold">News Analysis Summary</h2>
           </div>
-          
+
           <div className="flex-1 overflow-hidden relative z-10">
             {isAnalyzing || !aiAnalysis ? (
               <div className="space-y-3">
-                <div className="h-3 w-full bg-white/10 animate-pulse rounded" />
-                <div className="h-3 w-3/4 bg-white/10 animate-pulse rounded" />
-                <div className="h-3 w-5/6 bg-white/10 animate-pulse rounded" />
+                <div className="h-3 w-full bg-gray-200 animate-pulse rounded" />
+                <div className="h-3 w-3/4 bg-gray-200 animate-pulse rounded" />
+                <div className="h-3 w-5/6 bg-gray-200 animate-pulse rounded" />
               </div>
             ) : (
               <div className="flex flex-col h-full gap-4">
                 <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-4">
                   {aiAnalysis.summarySections ? (
                     aiAnalysis.summarySections.map((section: any, idx: number) => (
-                      <div key={idx} className="bg-white/5 border border-white/10 rounded-lg p-3 hover:bg-white/10 transition-colors">
+                      <div key={idx} className="bg-gray-50 border border-gray-200 rounded-lg p-3 hover:bg-gray-100 transition-colors">
                         {section.title && (
-                          <h3 className="text-[9px] font-bold uppercase tracking-widest text-[#E31E24] mb-2 border-b border-white/5 pb-1">
+                          <h3 className="text-[9px] font-bold uppercase tracking-widest text-[#E31E24] mb-2 border-b border-gray-200 pb-1">
                             {section.title}
                           </h3>
                         )}
-                        <div className="text-[11px] leading-relaxed opacity-90 font-medium markdown-body">
+                        <div className="text-[11px] leading-relaxed opacity-80 font-medium markdown-body text-gray-700">
                           <Markdown>{section.content}</Markdown>
                         </div>
                       </div>
                     ))
                   ) : (
-                    <div className="text-sm leading-relaxed opacity-90 font-medium markdown-body">
+                    <div className="text-sm leading-relaxed opacity-80 font-medium markdown-body text-gray-700">
                       <Markdown>{aiAnalysis.summary}</Markdown>
                     </div>
                   )}
                 </div>
-                
-                <div className="pt-4 border-t border-white/10 shrink-0">
+
+                <div className="pt-4 border-t border-gray-200 shrink-0">
                   <ul className="space-y-2">
                     {(aiAnalysis.findings || []).slice(0, 3).map((finding: string, i: number) => (
-                      <li key={i} className="flex items-start gap-3 text-xs opacity-80 leading-tight">
+                      <li key={i} className="flex items-start gap-3 text-xs opacity-70 leading-tight">
                         <div className="w-1.5 h-1.5 bg-[#E31E24] rounded-full mt-1 shrink-0 shadow-[0_0_8px_#E31E24]" />
                         <span className="truncate">{finding}</span>
                       </li>
