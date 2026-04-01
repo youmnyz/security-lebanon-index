@@ -31,14 +31,11 @@ import {
   Area,
   CartesianGrid
 } from 'recharts';
-import { GoogleGenAI } from "@google/genai";
 import { INITIAL_SECURITY_DATA } from './constants';
 import { SecurityCategory, SecurityIndexData } from './types';
 import { cn } from './lib/utils';
 import RiskAssessmentPage from './pages/RiskAssessmentPage';
 import DailyInfographic from './components/DailyInfographic';
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 const ALLOWED_SOURCES: Record<string, string> = {
   "NNA": "https://www.nna-leb.gov.lb/en/security-law",
