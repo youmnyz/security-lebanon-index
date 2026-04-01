@@ -436,14 +436,17 @@ async function startServer() {
   app.get("/api/risk-assessment/:date", async (req, res) => {
     const { date } = req.params;
     try {
-      const { GoogleGenAI } = await import("@google/genai");
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+      const { Groq } = await import("groq-sdk");
+      const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || "" });
 
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: `For date ${date}, provide a news sentiment briefing for Lebanon. This is a NEWS ANALYSIS tool, not intelligence.
+      const response = await groq.chat.completions.create({
+        model: "mixtral-8x7b-32768",
+        messages: [
+          {
+            role: "user",
+            content: `For date ${date}, provide a news sentiment briefing for Lebanon. This is a NEWS ANALYSIS tool, not intelligence.
 
-Based on how positive/negative the news coverage would typically be for this date, provide:
+Based on how positive/negative the news coverage would typically be for this date, provide JSON format only (no markdown):
 {
   "date": "${date}",
   "summary": "What would typical news coverage on this date indicate about the situation? Focus on news tone and themes.",
@@ -454,11 +457,15 @@ Based on how positive/negative the news coverage would typically be for this dat
   "outlook24h": "What might the next day's news focus on?",
   "seoTitle": "Lebanon News Briefing - ${new Date(date).toLocaleDateString('en-US', {month:'short',day:'numeric'})}",
   "seoDescription": "News sentiment analysis briefing for Lebanon on ${new Date(date).toLocaleDateString('en-US', {month:'long',day:'numeric',year:'numeric'})}"
-}`,
-        config: { responseMimeType: "application/json" }
+}`
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 1024
       });
 
-      const result = JSON.parse(response.text || "{}");
+      const content = response.choices[0]?.message?.content || "{}";
+      const result = JSON.parse(content);
       res.json(result);
     } catch (err) {
       console.error("Risk assessment generation failed:", err);
@@ -532,17 +539,20 @@ Based on how positive/negative the news coverage would typically be for this dat
   // Server-side AI analysis using Gemini
   app.post("/api/ai-analysis", async (req, res) => {
     try {
-      const { GoogleGenAI } = await import("@google/genai");
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+      const { Groq } = await import("groq-sdk");
+      const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || "" });
       const { score, lastUpdated } = req.body;
 
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: `Analyze news sentiment about Lebanon. Current sentiment score: ${score}/100 (50=neutral, 0=very negative reporting, 100=very positive reporting). Last updated: ${lastUpdated}.
+      const response = await groq.chat.completions.create({
+        model: "mixtral-8x7b-32768",
+        messages: [
+          {
+            role: "user",
+            content: `Analyze news sentiment about Lebanon. Current sentiment score: ${score}/100 (50=neutral, 0=very negative reporting, 100=very positive reporting). Last updated: ${lastUpdated}.
 
 This is a NEWS SENTIMENT ANALYSIS tool, not an intelligence agency assessment. Interpret the score as: how positive vs negative is the current news coverage?
 
-Generate a brief analysis summary with:
+Generate a brief analysis summary with JSON format only (no markdown):
 {
   "summarySections": [
     { "title": "News Coverage Tone", "content": "Brief 2-3 sentence description of whether recent reporting is positive, negative, or mixed" },
@@ -550,14 +560,16 @@ Generate a brief analysis summary with:
     { "title": "Trends", "content": "2-3 sentences on whether sentiment is improving or declining" }
   ],
   "findings": ["observation 1 about news coverage", "observation 2", "observation 3"],
-  "metrics": { "Resilience": 0-100, "Stability": 0-100, "Risk": 0-100 },
-  "seoTitle": "Lebanon News Analysis ${new Date().toLocaleDateString('en-US', {month:'long', year:'numeric'})} | News Sentiment",
-  "seoDescription": "News sentiment analysis for Lebanon. Current reporting tone score: ${score}/100 based on coverage from 8+ sources."
-}`,
-        config: { responseMimeType: "application/json", maxOutputTokens: 2048 }
+  "metrics": { "Resilience": 0-100, "Stability": 0-100, "Risk": 0-100 }
+}`
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 1024
       });
 
-      const result = JSON.parse(response.text || "{}");
+      const content = response.choices[0]?.message?.content || "{}";
+      const result = JSON.parse(content);
       res.json(result);
     } catch (err) {
       console.error("AI analysis failed:", err);
