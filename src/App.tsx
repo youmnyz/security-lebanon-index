@@ -974,9 +974,9 @@ export default function App() {
         }
       });
 
-      const text = response.text || "{}";
+      const text = (_response as any).text || "{}";
       let result;
-      
+
       try {
         result = JSON.parse(text);
       } catch (e) {
