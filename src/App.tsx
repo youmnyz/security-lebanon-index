@@ -658,7 +658,6 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
                 <h3 className="text-base font-bold mb-3">News-Based Security Analysis</h3>
                 <p className="text-[11px] opacity-70 leading-relaxed">
                   This index analyzes sentiment from 8+ news sources to track coverage trends. Scores reflect reporting tone, not operational ground truth.
-                  <Link to="/methodology" className="block mt-3 text-[#E31E24] font-bold hover:underline">Learn our methodology →</Link>
                 </p>
               </div>
               <div className="absolute -bottom-4 -right-4 opacity-5">
@@ -1059,7 +1058,6 @@ export default function App() {
       <div className="bg-blue-50 border-b border-blue-200 px-4 md:px-8 py-3">
         <p className="text-xs md:text-sm text-blue-900 text-center">
           <strong>Transparency Notice:</strong> This index analyzes news sentiment. Scores reflect media coverage, not definitive security assessments.
-          <Link to="/methodology" className="font-bold text-blue-700 hover:underline ml-1">Learn our methodology →</Link>
         </p>
       </div>
 
