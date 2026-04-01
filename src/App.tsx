@@ -363,10 +363,8 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
 
           <div className="flex-1 overflow-hidden relative z-10">
             {isAnalyzing || !aiAnalysis ? (
-              <div className="space-y-3">
-                <div className="h-3 w-full bg-gray-200 animate-pulse rounded" />
-                <div className="h-3 w-3/4 bg-gray-200 animate-pulse rounded" />
-                <div className="h-3 w-5/6 bg-gray-200 animate-pulse rounded" />
+              <div className="text-center py-8 opacity-60">
+                <p className="text-sm font-medium">Analysis unavailable</p>
               </div>
             ) : (
               <div className="flex flex-col h-full gap-4">
