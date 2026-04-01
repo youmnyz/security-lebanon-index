@@ -457,7 +457,7 @@ async function startServer() {
       const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || "" });
 
       const response = await groq.chat.completions.create({
-        model: "mixtral-8x7b-32768",
+        model: "llama-3.1-70b-versatile",
         messages: [
           {
             role: "user",
@@ -561,7 +561,7 @@ Based on how positive/negative the news coverage would typically be for this dat
       const { score, lastUpdated } = req.body;
 
       const response = await groq.chat.completions.create({
-        model: "mixtral-8x7b-32768",
+        model: "llama-3.1-70b-versatile",
         messages: [
           {
             role: "user",
