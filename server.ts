@@ -3,6 +3,7 @@ import { createServer as createViteServer } from "vite";
 import path from "path";
 import { fileURLToPath } from "url";
 import cron from "node-cron";
+import { INITIAL_SECURITY_DATA } from "./src/constants";
 
 /**
  * Sentiment Analysis & Scoring Logic
@@ -85,6 +86,52 @@ function getStatusFromScore(score: number): string {
 }
 
 /**
+ * Category Keyword Mapping
+ * Maps news items to Lebanon security categories based on keywords
+ */
+const CATEGORY_KEYWORDS: Record<string, string[]> = {
+  political: ['government', 'parliament', 'election', 'minister', 'state', 'politics', 'political', 'stability', 'governance', 'policy', 'parliament', 'president', 'prime minister'],
+  economic: ['economy', 'currency', 'bank', 'market', 'financial', 'trade', 'investment', 'exchange', 'inflation', 'business', 'commerce', 'gdp', 'debt', 'lira'],
+  infrastructure: ['electricity', 'water', 'power', 'utilities', 'telecom', 'roads', 'transport', 'airport', 'port', 'services', 'grid', 'supply', 'system'],
+  humanitarian: ['aid', 'refugee', 'displaced', 'healthcare', 'hospital', 'health', 'welfare', 'humanitarian', 'crisis', 'poverty', 'food', 'medicine'],
+  regional: ['Syria', 'Israel', 'regional', 'border', 'international', 'diplomatic', 'foreign', 'military', 'conflict', 'Middle East', 'geopolitical', 'iran', 'saudi']
+};
+
+/**
+ * Categorize news items based on keyword matching
+ */
+function categorizeNews(item: { title: string; summary: string }, keywords: Record<string, string[]> = CATEGORY_KEYWORDS): string[] {
+  const text = `${item.title} ${item.summary}`.toLowerCase();
+  const matched: string[] = [];
+
+  for (const [categoryId, categoryKeywords] of Object.entries(keywords)) {
+    for (const keyword of categoryKeywords) {
+      if (text.includes(keyword.toLowerCase())) {
+        matched.push(categoryId);
+        break; // Don't add same category twice
+      }
+    }
+  }
+
+  return matched;
+}
+
+/**
+ * Filter news by age - only include items within specified days
+ */
+function isWithinTimeWindow(timestamp: string | undefined, maxDays: number = 30): boolean {
+  if (!timestamp) return true; // Include items without timestamp
+
+  const itemDate = new Date(timestamp);
+  if (isNaN(itemDate.getTime())) return true; // Include items with invalid dates
+
+  const now = new Date();
+  const daysDiff = (now.getTime() - itemDate.getTime()) / (1000 * 60 * 60 * 24);
+
+  return daysDiff >= 0 && daysDiff <= maxDays;
+}
+
+/**
  * Page Cache for pre-generated reports
  * Improves SEO by pre-generating 30 days of pages for indexing
  */
@@ -155,122 +202,82 @@ async function filterValidNews<T extends { url?: string }>(items: T[]): Promise<
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+/**
+ * Recalibrate security data with live news from RSS feeds
+ * Fetches from multiple sources, filters by date, categorizes, and scores
+ */
+async function recalibrateWithLiveNews(securityData: any, currentRSSFetch?: any) {
+  try {
+    console.log("[NEWS] Recalibrating categories with live RSS news...");
+
+    // Fetch live news from all RSS sources
+    let allNews: any[] = [];
+
+    // If called with existing fetch result, use it; otherwise fetch new
+    if (currentRSSFetch) {
+      allNews = currentRSSFetch;
+    } else {
+      // RSS fetching will happen in the /api/live-news endpoint
+      // For now, we'll populate it there and reuse the data
+      allNews = securityData.newsFeed || [];
+    }
+
+    // Filter news by 30-day window
+    const recentNews = allNews.filter(item => isWithinTimeWindow(item.timestamp, 30));
+
+    console.log(`[NEWS] Found ${recentNews.length} news items within 30-day window`);
+
+    // Clear existing category news
+    for (const category of securityData.categories || []) {
+      category.news = [];
+    }
+
+    // Distribute news to categories using keyword matching
+    for (const newsItem of recentNews) {
+      const categoryMatches = categorizeNews(newsItem, CATEGORY_KEYWORDS);
+
+      // Add to matched categories
+      for (const categoryId of categoryMatches) {
+        const category = (securityData.categories || []).find((c: any) => c.id === categoryId);
+        if (category && category.news.length < 20) { // Limit to 20 items per category
+          category.news.push(newsItem);
+        }
+      }
+    }
+
+    // Recalculate scores for each category
+    for (const category of securityData.categories || []) {
+      if (category.news && category.news.length > 0) {
+        category.score = calculateSecurityScore(category.news);
+        category.status = getStatusFromScore(category.score);
+      } else {
+        category.score = 50; // Neutral if no news
+        category.status = 'Stable';
+      }
+    }
+
+    // Recalculate overall score from all news
+    securityData.overallScore = calculateSecurityScore(recentNews.length > 0 ? recentNews : []);
+    securityData.lastUpdated = new Date().toISOString();
+
+    console.log(`[NEWS] Recalibration complete. Overall score: ${securityData.overallScore}`);
+    return securityData;
+  } catch (err) {
+    console.error("[NEWS] Error recalibrating news:", err);
+    return securityData;
+  }
+}
+
 async function startServer() {
   const app = express();
   const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
+  // Cache for RSS news (5-10 minute TTL to avoid hammering feeds)
+  let newsCache = { data: [] as any[], timestamp: 0, TTL: 5 * 60 * 1000 };
+
   // In-memory data store (simulating a database)
   let securityData = {
-    overallScore: 24,
-    isInitial: true,
-    lastUpdated: new Date().toISOString(),
-    categories: [
-      {
-        id: "fire",
-        title: "Fire Risks",
-        subHeading: "Fire Solutions",
-        score: 15,
-        status: "Warning",
-        description: "Real-time fire monitoring and forest fire risk assessments across Lebanon.",
-        externalLink: "https://zodfire.com",
-        benchmarks: [],
-        news: [
-          {
-            id: "f-n1",
-            timestamp: new Date().toISOString(),
-            title: "Wildfire Alert: Chouf Mountains",
-            summary: "High risk of forest fires detected in the Chouf region due to dry conditions. Local civil defense on standby.",
-            severity: "High",
-            source: "National News Agency",
-            url: "https://www.nna-leb.gov.lb/en/security-law"
-          }
-        ]
-      },
-      {
-        id: "lightning",
-        title: "Lightning Risks",
-        subHeading: "Lightning Protection",
-        score: 30,
-        status: "Stable",
-        description: "Weather forecast and lightning strike probability monitoring.",
-        externalLink: "https://zodlightning.com",
-        benchmarks: [],
-        news: [
-          {
-            id: "l-n1",
-            timestamp: new Date().toISOString(),
-            title: "Storm Warning: Northern Coastal Areas",
-            summary: "Lightning strike probability increased for the next 6 hours in Tripoli and surrounding areas.",
-            severity: "Medium",
-            source: "L'Orient-Le Jour",
-            url: "https://www.lorientlejour.com/category/Liban"
-          }
-        ]
-      },
-      {
-        id: "criminal",
-        title: "Criminal Risks",
-        subHeading: "Intruder Protection",
-        score: 45,
-        status: "Warning",
-        description: "Monitoring theft, burglary, and general criminal activity trends.",
-        externalLink: "https://zodprotection.com",
-        benchmarks: [],
-        news: [
-          {
-            id: "c-n1",
-            timestamp: new Date().toISOString(),
-            title: "Theft Trend: Urban Residential Areas",
-            summary: "Increased reports of nighttime burglaries in Beirut's outer districts. Enhanced security measures recommended.",
-            severity: "Medium",
-            source: "Naharnet",
-            url: "https://www.naharnet.com/stories/en/lebanon"
-          }
-        ]
-      },
-      {
-        id: "financial",
-        title: "Financial Risks",
-        subHeading: "Safes and Locks Solutions",
-        score: 10,
-        status: "Critical",
-        description: "Economic stability and financial security monitoring.",
-        externalLink: "https://zodsafe.com",
-        benchmarks: [],
-        news: [
-          {
-            id: "fn-n1",
-            timestamp: new Date().toISOString(),
-            title: "Currency Volatility Update",
-            summary: "Significant fluctuations in the unofficial exchange rate reported. Financial safety protocols advised.",
-            severity: "High",
-            source: "Reuters",
-            url: "https://www.reuters.com/world/middle-east/"
-          }
-        ]
-      },
-      {
-        id: "corporate",
-        title: "Corporate News",
-        subHeading: "Entrance Automation Solutions",
-        score: 60,
-        status: "Stable",
-        description: "Business continuity and corporate security developments.",
-        externalLink: "https://zodentrance.com",
-        benchmarks: [],
-        news: [
-          {
-            id: "co-n1",
-            timestamp: new Date().toISOString(),
-            title: "Corporate Access Protocols Updated",
-            summary: "New digital entrance security standards implemented for major business hubs in Beirut.",
-            severity: "Low",
-            source: "Al Jazeera",
-            url: "https://www.aljazeera.com/where/lebanon/"
-          }
-        ]
-      }
-    ],
+    ...INITIAL_SECURITY_DATA,
     newsFeed: [
       {
         id: "n1",
@@ -321,8 +328,14 @@ async function startServer() {
     next();
   });
 
-  // Live news from real RSS sources
+  // Live news from real RSS sources (with 30-day filtering and caching)
   app.get("/api/live-news", async (req, res) => {
+    // Check cache first (5-10 min TTL)
+    if (newsCache.data.length > 0 && Date.now() - newsCache.timestamp < newsCache.TTL) {
+      console.log("[CACHE] Returning cached news (age: " + Math.round((Date.now() - newsCache.timestamp) / 1000) + "s)");
+      return res.json(newsCache.data);
+    }
+
     const RSS_FEEDS = [
       { url: 'https://nna-leb.gov.lb/en/rss', source: 'National News Agency' },
       { url: 'https://www.naharnet.com/tags/lebanon/en/feed.atom', source: 'Naharnet' },
@@ -359,21 +372,37 @@ async function startServer() {
       return items;
     };
 
-    const results = await Promise.allSettled(
-      RSS_FEEDS.map(async ({ url, source }) => {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 5000);
-        try {
-          const r = await fetch(url, { signal: controller.signal, headers: { 'User-Agent': 'Mozilla/5.0' } });
-          clearTimeout(timeout);
-          const xml = await r.text();
-          return parseRSS(xml, source);
-        } catch { clearTimeout(timeout); return []; }
-      })
-    );
+    try {
+      console.log("[NEWS] Fetching fresh news from RSS feeds...");
+      const results = await Promise.allSettled(
+        RSS_FEEDS.map(async ({ url, source }) => {
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 5000);
+          try {
+            const r = await fetch(url, { signal: controller.signal, headers: { 'User-Agent': 'Mozilla/5.0' } });
+            clearTimeout(timeout);
+            const xml = await r.text();
+            return parseRSS(xml, source);
+          } catch { clearTimeout(timeout); return []; }
+        })
+      );
 
-    const allNews = results.flatMap(r => r.status === 'fulfilled' ? r.value : []);
-    res.json(allNews.slice(0, 20));
+      const allNews = results.flatMap(r => r.status === 'fulfilled' ? r.value : []);
+
+      // Filter to 30-day window
+      const recentNews = allNews.filter(item => isWithinTimeWindow(item.timestamp, 30));
+      const limited = recentNews.slice(0, 50);
+
+      // Cache the results
+      newsCache.data = limited;
+      newsCache.timestamp = Date.now();
+
+      console.log(`[NEWS] Fetched ${allNews.length} items, filtered to ${limited.length} recent items (30-day window)`);
+      res.json(limited);
+    } catch (err) {
+      console.error("[NEWS] Error fetching RSS news:", err);
+      res.json(newsCache.data.length > 0 ? newsCache.data : []);
+    }
   });
 
   // API routes
@@ -515,8 +544,22 @@ Generate a brief analysis summary with:
     }
   });
 
-  app.get("/api/security-data", (req, res) => {
-    res.json(securityData);
+  app.get("/api/security-data", async (req, res) => {
+    try {
+      // Recalibrate with live news data before responding
+      console.log("[API] /api/security-data request - recalibrating with live news");
+
+      // First, check if we have fresh cached news
+      const liveNews = newsCache.data.length > 0 ? newsCache.data : securityData.newsFeed || [];
+
+      // Recalibrate security data with the live (or cached) news
+      const updatedData = await recalibrateWithLiveNews(securityData, liveNews);
+
+      res.json(updatedData);
+    } catch (err) {
+      console.error("[API] Error in /api/security-data:", err);
+      res.json(securityData); // Fallback to current data
+    }
   });
 
   app.post("/api/security-data", async (req, res) => {
