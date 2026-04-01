@@ -136,14 +136,14 @@ function getStatusFromScore(score: number): string {
 
 /**
  * Category Keyword Mapping
- * Maps news items to Lebanon security categories based on keywords
+ * Maps news items to security risk categories based on keywords
  */
 const CATEGORY_KEYWORDS: Record<string, string[]> = {
-  political: ['government', 'parliament', 'election', 'minister', 'state', 'politics', 'political', 'stability', 'governance', 'policy', 'president', 'prime minister', 'beirut', 'lebanese', 'lebanon', 'escalation', 'deterioration', 'warning', 'alert', 'tension', 'crisis', 'caretaker'],
-  economic: ['economy', 'currency', 'bank', 'market', 'financial', 'trade', 'investment', 'exchange', 'inflation', 'business', 'commerce', 'gdp', 'debt', 'lira', 'dollar', 'price', 'cost'],
-  infrastructure: ['electricity', 'water', 'power', 'utilities', 'telecom', 'roads', 'transport', 'airport', 'port', 'services', 'grid', 'supply', 'system', 'fuel', 'generator', 'network'],
-  humanitarian: ['aid', 'refugee', 'displaced', 'displaced persons', 'healthcare', 'hospital', 'health', 'welfare', 'humanitarian', 'crisis', 'poverty', 'food', 'medicine', 'injured', 'casualties', 'civilian', 'shelter', 'emergency'],
-  regional: ['Syria', 'Israel', 'Israeli', 'regional', 'border', 'international', 'diplomatic', 'foreign', 'military', 'conflict', 'Middle East', 'geopolitical', 'iran', 'saudi', 'strike', 'attack', 'escalation', 'hezbollah', 'armed groups', 'weapon', 'airstrike', 'southern', 'beirut suburb']
+  fire: ['fire', 'wildfire', 'flame', 'burn', 'burning', 'blazing', 'explosion', 'explosive', 'blast', 'flare', 'ignition', 'combustion', 'heat', 'smoke', 'danger', 'hazard', 'alert', 'risk', 'threat'],
+  lightning: ['lightning', 'thunder', 'storm', 'weather', 'electrical', 'electricity', 'voltage', 'surge', 'power outage', 'blackout', 'power failure', 'wind', 'rain', 'precipitation', 'atmospheric', 'meteorological'],
+  criminal: ['crime', 'criminal', 'theft', 'steal', 'robbery', 'burglary', 'violence', 'violent', 'attack', 'assault', 'murder', 'kill', 'kill', 'shoot', 'shooting', 'gun', 'weapon', 'armed', 'intruder', 'perpetrator', 'suspect'],
+  financial: ['economy', 'economic', 'currency', 'bank', 'banking', 'market', 'financial', 'finance', 'trade', 'investment', 'exchange', 'inflation', 'business', 'commerce', 'gdp', 'debt', 'lira', 'dollar', 'price', 'cost', 'monetary', 'fiscal'],
+  corporate: ['corporate', 'business', 'company', 'enterprise', 'corporation', 'firm', 'commercial', 'office', 'facility', 'headquarters', 'building', 'infrastructure', 'access', 'entrance', 'security', 'automation', 'tech', 'technology', 'digital']
 };
 
 /**
