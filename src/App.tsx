@@ -53,6 +53,18 @@ const ALLOWED_SOURCES: Record<string, string> = {
   "Al Jadeed": "https://www.aljadeed.tv/news",
 };
 
+// API Base URL - use localhost in dev, Render deployment in production
+const getApiBaseUrl = () => {
+  // Check if running on localhost/127.0.0.1 (development)
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return 'http://localhost:3000';
+  }
+  // In production or preview, use the Render deployment
+  return 'https://security-lebanon-index.onrender.com';
+};
+
+const API_BASE_URL = getApiBaseUrl();
+
 const isQuotaError = (err: any) => {
   const errorBody = err?.error || err;
   return (
@@ -790,7 +802,7 @@ export default function App() {
 
   const fetchSecurityData = useCallback(async () => {
     try {
-      const response = await fetch('https://security-lebanon-index.onrender.com/api/security-data');
+      const response = await fetch(`${API_BASE_URL}/api/security-data`);
       if (response.ok) {
         const result = await response.json();
         setData(result);
@@ -802,7 +814,7 @@ export default function App() {
 
   const saveSecurityData = useCallback(async (newData: SecurityIndexData) => {
     try {
-      await fetch('https://security-lebanon-index.onrender.com/api/security-data', {
+      await fetch(`${API_BASE_URL}/api/security-data`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newData)
@@ -821,7 +833,7 @@ export default function App() {
   const recalibrateSystem = useCallback(async () => {
     setIsRecalibrating(true);
     try {
-      const response = await fetch('https://security-lebanon-index.onrender.com/api/recalibrate');
+      const response = await fetch(`${API_BASE_URL}/api/recalibrate`);
       if (!response.ok) throw new Error('Server recalibration failed');
       const result = await response.json();
 
@@ -1017,7 +1029,7 @@ export default function App() {
     const resolved = currentData ?? dataRef.current;
     setIsAnalyzing(true);
     try {
-      const response = await fetch('https://security-lebanon-index.onrender.com/api/ai-analysis', {
+      const response = await fetch(`${API_BASE_URL}/api/ai-analysis`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ score: resolved.overallScore, lastUpdated: resolved.lastUpdated })
@@ -1051,7 +1063,7 @@ export default function App() {
 
   // On mount: fetch live news from RSS feeds
   useEffect(() => {
-    fetch('https://security-lebanon-index.onrender.com/api/live-news')
+    fetch(`${API_BASE_URL}/api/live-news`)
       .then(r => r.json())
       .then(setLiveNews)
       .catch(console.error);
