@@ -409,7 +409,71 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
         </section>
       </div>
 
-      {/* Row 4: Category News Feeds */}
+      {/* Row 4: Daily Security Feed (moved before sectors with new design) */}
+      <div className="lg:col-span-8">
+        <section className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+          <div className="p-4 md:p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 gap-3">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2 mb-1">
+                <h3 className="text-lg md:text-2xl font-black tracking-tighter uppercase text-[#2D2D2D] italic truncate">Daily Security Feed</h3>
+                <div className="flex items-center gap-1 px-1.5 py-0.5 bg-emerald-50 border border-emerald-100 rounded text-[9px] font-bold text-emerald-600 uppercase tracking-widest shrink-0">
+                  <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
+                  Live
+                </div>
+              </div>
+              <p className="text-[11px] font-bold uppercase tracking-widest text-[#E31E24] flex items-center gap-1 py-1">
+                Real-Time Intelligence Feed
+              </p>
+            </div>
+            <div className="text-right shrink-0">
+              <div className="text-2xl md:text-3xl font-black text-[#2D2D2D] tabular-nums">{liveNews.length}</div>
+              <div className="text-[9px] font-bold uppercase px-2 py-0.5 rounded border whitespace-nowrap border-emerald-200 text-emerald-600 bg-emerald-50 mt-1">
+                Active
+              </div>
+            </div>
+          </div>
+          <div className="relative">
+            <div className="p-4 md:p-6 space-y-4 md:space-y-6 max-h-[600px] overflow-y-auto custom-scrollbar">
+              {(liveNews.length > 0 ? liveNews : []).map((item, idx) => (
+                <div key={item.url || idx} className="group border-b border-gray-50 last:border-0 pb-4 md:pb-6 last:pb-0">
+                  <div className="flex justify-between items-start mb-2 gap-2">
+                    <span className="text-[10px] font-mono uppercase tracking-widest opacity-40 font-bold shrink-0">
+                      {safeFormatDate(item.timestamp)}
+                    </span>
+                    <div className="flex flex-col items-end gap-1">
+                      <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border border-blue-200 text-blue-600 bg-blue-50 whitespace-nowrap">
+                        Breaking
+                      </span>
+                      {item.source && (
+                        <a
+                          href={item.url || '#'}
+                          target="_blank"
+                          rel="nofollow noopener noreferrer"
+                          className="text-[10px] font-bold uppercase tracking-widest text-[#E31E24] hover:underline min-h-[44px] md:min-h-0 flex items-center"
+                        >
+                          {item.source}
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                  <h4 className="text-base md:text-lg font-extrabold tracking-tight mb-2 group-hover:text-[#E31E24] transition-colors">{item.title}</h4>
+                  <p className="text-sm text-gray-500 leading-relaxed">{item.summary}</p>
+                </div>
+              ))}
+              {liveNews.length === 0 && (
+                <div className="text-center py-12 opacity-40 italic text-sm">
+                  No breaking news at this moment. Check back shortly.
+                </div>
+              )}
+            </div>
+            {liveNews.length > 0 && (
+              <div className="absolute right-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#E31E24] to-transparent opacity-30" />
+            )}
+          </div>
+        </section>
+      </div>
+
+      {/* Row 5: Category News Feeds */}
       <div className="lg:col-span-8 space-y-4 md:space-y-8">
         {(data.categories || []).map((category) => (
           <section key={category.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
@@ -438,7 +502,7 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
                 </div>
               </div>
             </div>
-            <div className="p-4 md:p-6 space-y-4 md:space-y-6">
+            <div className="p-4 md:p-6 space-y-4 md:space-y-6 max-h-[600px] overflow-y-auto custom-scrollbar">
               {(category.news || []).map((item) => (
                 <div key={item.id} className="group border-b border-gray-50 last:border-0 pb-4 md:pb-6 last:pb-0">
                   <div className="flex justify-between items-start mb-2 gap-2">
@@ -546,44 +610,6 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
 
       {/* Bottom Sections */}
       <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 border-t border-gray-200 pt-6">
-        {/* Daily Security Feed */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Globe className="w-4 h-4 text-[#2D2D2D]" />
-              <h2 className="text-[10px] font-mono uppercase tracking-widest font-bold">Daily Security Feed</h2>
-            </div>
-            <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-50 border border-emerald-100 rounded text-[9px] font-bold text-emerald-600 uppercase tracking-widest">
-              <div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse" />
-              Active
-            </div>
-          </div>
-          <div className="space-y-4 bg-white border border-gray-100 rounded-xl p-4 max-h-[500px] overflow-y-auto custom-scrollbar">
-            {(liveNews.length > 0 ? liveNews : []).map((item, idx) => (
-              <div key={item.url || idx} className="group border-b border-gray-50 pb-4 last:border-0 last:pb-0">
-                <div className="flex justify-between items-start mb-2 gap-2">
-                  <span className="text-[10px] font-mono uppercase tracking-widest opacity-40 font-bold">
-                    {safeFormatDate(item.timestamp)}
-                  </span>
-                  <a
-                    href={item.url || '#'}
-                    target="_blank"
-                    rel="nofollow noopener noreferrer"
-                    className="text-[10px] font-bold uppercase tracking-widest text-[#E31E24] hover:underline shrink-0 min-h-[44px] md:min-h-0 flex items-center"
-                  >
-                    {item.source || 'Intelligence'}
-                  </a>
-                </div>
-                <h4 className="text-sm font-bold leading-tight mb-1 group-hover:text-[#E31E24] transition-colors">{item.title}</h4>
-                <p className="text-xs text-gray-500 leading-relaxed line-clamp-3">{item.summary}</p>
-              </div>
-            ))}
-            {liveNews.length === 0 && (
-              <p className="text-sm text-gray-400 italic text-center py-4">Loading live feed...</p>
-            )}
-          </div>
-        </section>
-
         {/* Historical Analysis */}
         <section className="space-y-6">
           <div className="flex items-center gap-2">
@@ -596,7 +622,7 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
               date.setDate(date.getDate() - i);
               const dateStr = date.toISOString().split('T')[0];
               return (
-                <Link 
+                <Link
                   key={i}
                   to={`/risk-assessment/${dateStr}`}
                   className="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-lg hover:border-[#E31E24] transition-all group shadow-sm"
@@ -624,12 +650,12 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
                 <span className="text-xs font-medium text-gray-500">Intelligence Nodes</span>
                 <div className="flex items-center gap-2">
                   <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                  <span className="text-xs font-bold text-emerald-600">14/14 Active</span>
+                  <span className="text-xs font-bold text-emerald-600">8/8 Active</span>
                 </div>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-xs font-medium text-gray-500">Data Latency</span>
-                <span className="text-xs font-bold text-[#E31E24]">24ms (Real-time)</span>
+                <span className="text-xs font-bold text-[#E31E24]">Real-time</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-xs font-medium text-gray-500">Signal Integrity</span>
@@ -663,6 +689,28 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
             </div>
           </section>
         </div>
+
+        {/* Methodology Reference */}
+        <section className="space-y-6">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-[#2D2D2D]" />
+            <h2 className="text-[10px] font-mono uppercase tracking-widest font-bold">Data Sources</h2>
+          </div>
+          <div className="space-y-3 text-sm">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <p className="text-[11px] text-blue-900 font-medium mb-1">8 International News Sources</p>
+              <p className="text-[10px] text-blue-700">Real-time sentiment analysis from Naharnet, Al Jazeera, BBC, Reuters, and more.</p>
+            </div>
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+              <p className="text-[11px] text-amber-900 font-medium mb-1">30-Day Window</p>
+              <p className="text-[10px] text-amber-700">Only news from the last 30 days included in score calculations.</p>
+            </div>
+            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+              <p className="text-[11px] text-emerald-900 font-medium mb-1">Sentiment Analysis</p>
+              <p className="text-[10px] text-emerald-700">Keyword-based sentiment scoring with severity weighting.</p>
+            </div>
+          </div>
+        </section>
       </div>
     </main>
     </>

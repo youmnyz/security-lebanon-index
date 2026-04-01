@@ -8,28 +8,48 @@ import { INITIAL_SECURITY_DATA } from "./src/constants";
 /**
  * Sentiment Analysis & Scoring Logic
  * Used to calculate security scores based on news sentiment
+ * Enhanced for conflict/wartime detection
  */
 const NEGATIVE_KEYWORDS = [
   'attack', 'crisis', 'danger', 'conflict', 'strike', 'violence',
   'casualties', 'damage', 'displaced', 'hostility', 'emergency',
   'critical', 'severe', 'extreme', 'alert', 'warning', 'risk',
-  'threat', 'explosion', 'military', 'armed', 'hostile', 'fatal'
+  'threat', 'explosion', 'military', 'armed', 'hostile', 'fatal',
+  'escalation', 'war', 'fighting', 'fire', 'missile', 'drone',
+  'bombing', 'shelling', 'refugee', 'evacuation', 'barrage',
+  'injured', 'killed', 'deaths', 'injured', 'ceasefire violation',
+  'airstrike', 'wounded', 'bombing', 'mortar', 'rocket',
+  'retaliatory', 'retaliation', 'aggressive', 'deterioration',
+  'tension', 'confrontation', 'standoff'
 ];
 
 const POSITIVE_KEYWORDS = [
   'stable', 'secure', 'peace', 'agreement', 'accord', 'cease-fire',
   'resolve', 'cooperation', 'safe', 'improvement', 'recovery',
-  'progress', 'reconstruction', 'de-escalation', 'solution'
+  'progress', 'reconstruction', 'de-escalation', 'solution',
+  'ceasefire', 'truce', 'dialogue', 'talks', 'negotiation',
+  'peaceful', 'resolution', 'settlement', 'de-escalate'
 ];
 
 function analyzeSentiment(text: string): { sentiment: string; score: number } {
   const lowerText = text.toLowerCase();
   let negativeCount = 0;
   let positiveCount = 0;
+  let warfareIndicators = 0;
 
   NEGATIVE_KEYWORDS.forEach(kw => {
     const matches = lowerText.match(new RegExp(`\\b${kw}\\b`, 'gi'));
-    if (matches) negativeCount += matches.length;
+    if (matches) {
+      const count = matches.length;
+      negativeCount += count;
+      // Warfare keywords get extra weight
+      const warfareTerms = ['attack', 'strike', 'missile', 'drone', 'airstrike', 'bombing',
+                           'shelling', 'barrage', 'rocket', 'mortar', 'killed', 'wounded',
+                           'casualties', 'evacuation', 'escalation', 'war'];
+      if (warfareTerms.includes(kw)) {
+        warfareIndicators += count;
+      }
+    }
   });
 
   POSITIVE_KEYWORDS.forEach(kw => {
@@ -40,8 +60,16 @@ function analyzeSentiment(text: string): { sentiment: string; score: number } {
   const total = negativeCount + positiveCount;
   let score = 0;
   if (total > 0) {
+    // More sensitive to negative sentiment: use ratio with wartime adjustment
     score = (positiveCount - negativeCount) / total;
+
+    // Apply wartime multiplier: if warfare keywords are present, more negative
+    if (warfareIndicators > 0) {
+      const warfareWeight = Math.min(0.5, warfareIndicators * 0.1); // Cap at 0.5
+      score = score - warfareWeight; // Push score more negative
+    }
   }
+
   score = Math.max(-1, Math.min(1, score));
   const sentiment = score < -0.3 ? 'negative' : score > 0.3 ? 'positive' : 'neutral';
 
@@ -49,11 +77,12 @@ function analyzeSentiment(text: string): { sentiment: string; score: number } {
 }
 
 function calculateSecurityScore(newsItems: any[]): number {
-  if (!newsItems || newsItems.length === 0) return 50;
+  if (!newsItems || newsItems.length === 0) return 45; // Baseline lowered from 50 for wartime context
 
   const now = new Date();
   let totalWeightedSentiment = 0;
   let totalWeight = 0;
+  let conflictIndicators = 0;
 
   newsItems.forEach((item: any) => {
     const itemDate = new Date(item.timestamp);
@@ -70,10 +99,30 @@ function calculateSecurityScore(newsItems: any[]): number {
 
     totalWeightedSentiment += analysis.score * weight;
     totalWeight += weight;
+
+    // Detect conflict keywords
+    const conflictTerms = ['attack', 'strike', 'airstrike', 'bombing', 'escalation', 'casualt', 'killed', 'died', 'war'];
+    const itemText = `${item.title} ${item.summary || ''}`.toLowerCase();
+    conflictTerms.forEach(term => {
+      if (itemText.includes(term)) conflictIndicators++;
+    });
   });
 
   const avgSentiment = totalWeight > 0 ? totalWeightedSentiment / totalWeight : 0;
-  const score = 50 + (avgSentiment * 50);
+
+  // Base score: map sentiment from [-1,1] to [0,100], with lower baseline
+  let score = 50 + (avgSentiment * 40); // Reduced multiplier from 50 to 40
+
+  // Apply conflict penalty: if warfare terminology detected, lower score further
+  if (conflictIndicators > 0) {
+    const conflictPenalty = Math.min(15, conflictIndicators * 3); // 3 points per conflict indicator
+    score -= conflictPenalty;
+  }
+
+  // Overall floor for conflict situations: no higher than 55 if any conflict detected
+  if (conflictIndicators > 0 && score > 55) {
+    score = 55;
+  }
 
   return Math.round(Math.max(0, Math.min(100, score)));
 }
