@@ -599,21 +599,37 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
       </div>
 
       {/* SEO: Archive Link Section */}
-      <div className="lg:col-span-12 bg-blue-50 border border-blue-200 rounded-xl p-6 md:p-8 mb-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="lg:col-span-12 bg-gradient-to-r from-[#2D2D2D] to-[#1a1a1a] border border-[#E31E24]/20 rounded-xl p-6 md:p-8 mb-6 shadow-lg">
+        <div className="flex flex-col gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-[#2D2D2D] mb-2">Lebanon Security & Safety News Archive</h2>
-            <p className="text-gray-700">
-              Access {365} daily reports analyzing Lebanon security and safety news coverage.
-              Complete archive with real-time sentiment analysis and historical trends.
+            <h2 className="text-2xl font-bold text-white mb-2">Lebanon Security & Safety News Archive</h2>
+            <p className="text-gray-300">
+              Access 365 daily reports analyzing Lebanon security and safety news. Complete archive with real-time sentiment analysis, historical trends, and security assessments.
             </p>
           </div>
-          <Link
-            to="/archive"
-            className="whitespace-nowrap bg-[#E31E24] text-white px-6 py-3 rounded-lg font-bold hover:bg-opacity-90 transition flex items-center gap-2"
-          >
-            View All Reports →
-          </Link>
+
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 pt-4 border-t border-white/10">
+            <Link
+              to="/archive"
+              className="bg-[#E31E24] hover:bg-[#c71620] text-white px-4 py-2 rounded-lg font-bold text-sm transition text-center"
+            >
+              View All (365)
+            </Link>
+            {[
+              { label: 'Last 7 Days', offset: 7 },
+              { label: 'Last 30 Days', offset: 30 },
+              { label: 'Last 90 Days', offset: 90 },
+              { label: 'Last Year', offset: 365 }
+            ].map(({ label, offset }) => (
+              <Link
+                key={label}
+                to={`/risk-assessment/${new Date(new Date().setDate(new Date().getDate() - offset)).toISOString().split('T')[0]}`}
+                className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg font-semibold text-sm transition text-center border border-white/10 hover:border-[#E31E24]/50"
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
 
