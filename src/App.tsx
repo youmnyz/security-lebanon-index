@@ -312,8 +312,8 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
               </div>
             </div>
           </div>
-          <div className="relative">
-            <div className="p-4 md:p-6 space-y-2 md:space-y-3 max-h-[600px] overflow-y-auto custom-scrollbar">
+          <div className="relative group/scroll">
+            <div className="p-4 md:p-6 space-y-2 md:space-y-3 max-h-[600px] overflow-y-auto custom-scrollbar scroll-smooth">
               {(liveNews.length > 0 ? liveNews : []).map((item, idx) => (
                 <div key={item.url || idx} className="group border-b border-gray-50 last:border-0 pb-3 md:pb-4 last:pb-0">
                   <div className="flex justify-between items-start mb-2 gap-2">
@@ -346,8 +346,18 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
                 </div>
               )}
             </div>
+            {/* Scroll Indicators */}
             {liveNews.length > 0 && (
-              <div className="absolute right-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#E31E24] to-transparent opacity-30" />
+              <>
+                {/* Right accent bar */}
+                <div className="absolute right-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-[#E31E24] via-[#E31E24]/60 to-transparent opacity-60" />
+                {/* Bottom fade gradient - indicates scrollable content */}
+                <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none opacity-80" />
+                {/* Scroll indicator text */}
+                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-center text-[10px] font-bold uppercase tracking-widest text-[#E31E24] opacity-60 animate-bounce pointer-events-none">
+                  ↓ Scroll for more ↓
+                </div>
+              </>
             )}
           </div>
         </section>
@@ -512,42 +522,54 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
                 </div>
               </div>
             </div>
-            <div className="p-4 md:p-6 space-y-2 md:space-y-3 max-h-[600px] overflow-y-auto custom-scrollbar">
-              {(category.news || []).map((item) => (
-                <div key={item.id} className="group border-b border-gray-50 last:border-0 pb-3 md:pb-4 last:pb-0">
-                  <div className="flex justify-between items-start mb-2 gap-2">
-                    <span className="text-[10px] font-mono uppercase tracking-widest opacity-40 font-bold shrink-0">
-                      {safeFormatDate(item.timestamp)}
-                    </span>
-                    <div className="flex flex-col items-end gap-1">
-                      <span className={cn(
-                        "text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border whitespace-nowrap",
-                        item.severity === 'High' ? "border-red-200 text-red-600 bg-red-50" :
-                        item.severity === 'Medium' ? "border-amber-200 text-amber-600 bg-amber-50" :
-                        "border-emerald-200 text-emerald-600 bg-emerald-50"
-                      )}>
-                        {item.severity}
+            <div className="relative group/scroll">
+              <div className="p-4 md:p-6 space-y-2 md:space-y-3 max-h-[600px] overflow-y-auto custom-scrollbar scroll-smooth">
+                {(category.news || []).map((item) => (
+                  <div key={item.id} className="group border-b border-gray-50 last:border-0 pb-3 md:pb-4 last:pb-0">
+                    <div className="flex justify-between items-start mb-2 gap-2">
+                      <span className="text-[10px] font-mono uppercase tracking-widest opacity-40 font-bold shrink-0">
+                        {safeFormatDate(item.timestamp)}
                       </span>
-                      {item.source && (
-                        <a
-                          href={item.url || '#'}
-                          target="_blank"
-                          rel="nofollow noopener noreferrer"
-                          className="text-[10px] font-bold uppercase tracking-widest text-[#E31E24] hover:underline min-h-[44px] md:min-h-0 flex items-center"
-                        >
-                          {item.source}
-                        </a>
-                      )}
+                      <div className="flex flex-col items-end gap-1">
+                        <span className={cn(
+                          "text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border whitespace-nowrap",
+                          item.severity === 'High' ? "border-red-200 text-red-600 bg-red-50" :
+                          item.severity === 'Medium' ? "border-amber-200 text-amber-600 bg-amber-50" :
+                          "border-emerald-200 text-emerald-600 bg-emerald-50"
+                        )}>
+                          {item.severity}
+                        </span>
+                        {item.source && (
+                          <a
+                            href={item.url || '#'}
+                            target="_blank"
+                            rel="nofollow noopener noreferrer"
+                            className="text-[10px] font-bold uppercase tracking-widest text-[#E31E24] hover:underline min-h-[44px] md:min-h-0 flex items-center"
+                          >
+                            {item.source}
+                          </a>
+                        )}
+                      </div>
                     </div>
+                    <h4 className="text-base md:text-lg font-extrabold tracking-tight mb-2 group-hover:text-[#E31E24] transition-colors">{item.title}</h4>
+                    <p className="text-sm text-gray-500 leading-relaxed">{item.summary}</p>
                   </div>
-                  <h4 className="text-base md:text-lg font-extrabold tracking-tight mb-2 group-hover:text-[#E31E24] transition-colors">{item.title}</h4>
-                  <p className="text-sm text-gray-500 leading-relaxed">{item.summary}</p>
-                </div>
-              ))}
-              {(!category.news || category.news.length === 0) && (
-                <div className="text-center py-8 opacity-40 italic text-sm">
-                  No active intelligence reports for this sector.
-                </div>
+                ))}
+                {(!category.news || category.news.length === 0) && (
+                  <div className="text-center py-8 opacity-40 italic text-sm">
+                    No active intelligence reports for this sector.
+                  </div>
+                )}
+              </div>
+              {/* Scroll Indicators for Category */}
+              {category.news && category.news.length > 0 && (
+                <>
+                  <div className="absolute right-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-[#E31E24] via-[#E31E24]/60 to-transparent opacity-60" />
+                  <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none opacity-80" />
+                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-center text-[9px] font-bold uppercase tracking-widest text-[#E31E24] opacity-60 animate-bounce pointer-events-none">
+                    ↓ Scroll ↓
+                  </div>
+                </>
               )}
             </div>
           </section>
