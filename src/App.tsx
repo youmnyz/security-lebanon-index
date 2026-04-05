@@ -50,13 +50,16 @@ const ALLOWED_SOURCES: Record<string, string> = {
   "Al Jadeed": "https://www.aljadeed.tv/news",
 };
 
-// API Base URL - use localhost in dev, Render deployment in production
+// API Base URL - use localhost in dev, current domain in production
 const getApiBaseUrl = () => {
   // Check if running on localhost/127.0.0.1 (development)
   if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
     return 'http://localhost:3000';
   }
-  // In production or preview, use the Render deployment
+  // In production, use the current domain (works for custom domains and Render URL)
+  if (typeof window !== 'undefined') {
+    return `${window.location.protocol}//${window.location.hostname}`;
+  }
   return 'https://security-lebanon-index.onrender.com';
 };
 
