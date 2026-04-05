@@ -557,8 +557,8 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
       <div className="lg:col-span-12 bg-gradient-to-r from-[#2D2D2D] to-[#1a1a1a] border border-[#E31E24]/20 rounded-xl p-6 md:p-8 mb-4 shadow-lg">
         <div className="flex flex-col gap-3">
           <div>
-            <h2 className="text-2xl font-bold text-white/95 mb-2">Lebanon Security & Safety News Archive</h2>
-            <p className="text-white/80 font-medium leading-relaxed">
+            <h2 className="text-2xl font-bold text-white mb-2">Lebanon Security & Safety News Archive</h2>
+            <p className="text-white font-medium leading-relaxed">
               Access 365 daily reports analyzing Lebanon security and safety news. Complete archive with real-time sentiment analysis, historical trends, and security assessments.
             </p>
           </div>
