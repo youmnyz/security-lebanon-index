@@ -136,14 +136,14 @@ function getStatusFromScore(score: number): string {
 
 /**
  * Category Keyword Mapping
- * Maps news items to Lebanon security categories based on keywords
+ * Maps news items to security risk categories based on keywords
  */
 const CATEGORY_KEYWORDS: Record<string, string[]> = {
-  political: ['government', 'parliament', 'election', 'minister', 'state', 'politics', 'stability', 'governance', 'prime minister', 'president', 'hezbollah', 'houthi', 'amal', 'phalange', 'marada', 'cabinet', 'presidential', 'political', 'party'],
-  economic: ['economy', 'currency', 'bank', 'banking', 'market', 'financial', 'trade', 'investment', 'exchange rate', 'inflation', 'business', 'commerce', 'lira', 'dollar', 'price', 'gdp', 'credit', 'recession', 'economist'],
-  infrastructure: ['electricity', 'water', 'power', 'utilities', 'telecom', 'roads', 'transport', 'airport', 'port', 'bridge', 'highway', 'rail', 'sewage', 'grid', 'fuel', 'diesel', 'gasoline'],
-  humanitarian: ['aid', 'refugee', 'displaced', 'healthcare', 'hospital', 'health', 'welfare', 'crisis', 'ngo', 'unicef', 'unhcr', 'medicines', 'food', 'shelter', 'medical'],
-  regional: ['syria', 'israel', 'border', 'international', 'diplomatic', 'foreign', 'military', 'conflict', 'middle east', 'iran', 'saudi', 'jordan', 'turkey', 'airstrike', 'missile', 'drone', 'idf', 'un resolution']
+  fire: ['fire', 'wildfire', 'blaze', 'burn', 'burning', 'arson', 'firefight', 'fire department', 'extinguish', 'heat', 'smoke', 'evacuation', 'residential fire', 'building fire', 'house fire', 'forest fire'],
+  lightning: ['lightning', 'thunder', 'storm', 'weather', 'electrical hazard', 'power outage', 'blackout', 'voltage surge', 'electrical safety', 'meteorological', 'rain', 'wind', 'electricity', 'power cut', 'outage'],
+  criminal: ['crime', 'theft', 'robbery', 'burglary', 'criminal', 'police', 'arrest', 'suspect', 'perpetrator', 'investigation', 'prison', 'larceny', 'vandalism', 'fraud', 'assault', 'shooting', 'violence', 'attack', 'kidnapping'],
+  financial: ['economy', 'economic', 'currency', 'bank', 'banking', 'market', 'financial', 'trade', 'investment', 'exchange rate', 'inflation', 'business', 'commerce', 'lira', 'dollar', 'price', 'stock', 'credit', 'loan', 'interest'],
+  corporate: ['business', 'company', 'corporate', 'enterprise', 'firm', 'office', 'building', 'facility', 'headquarters', 'infrastructure', 'automation', 'technology', 'digital', 'security system', 'access control', 'management', 'operations']
 };
 
 /**

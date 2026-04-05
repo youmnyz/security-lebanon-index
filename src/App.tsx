@@ -289,7 +289,7 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
       {/* Row 4: Daily Security Feed (moved before intelligence findings) */}
       <div className="lg:col-span-8">
         <section className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-          <div className="p-4 md:p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 gap-3">
+          <div className="p-4 md:p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 gap-2">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2 mb-1">
                 <h3 className="text-lg md:text-2xl font-black tracking-tighter uppercase text-[#2D2D2D] italic truncate">Daily Security Feed</h3>
@@ -298,7 +298,7 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
                   Live
                 </div>
               </div>
-              <p className="text-[11px] font-bold uppercase tracking-widest text-[#E31E24] flex items-center gap-1 py-1">
+              <p className="text-[11px] font-bold uppercase tracking-widest text-[#E31E24] flex items-center gap-1 py-0.5">
                 Real-Time Intelligence Feed
               </p>
             </div>
@@ -310,9 +310,9 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
             </div>
           </div>
           <div className="relative">
-            <div className="p-4 md:p-6 space-y-4 md:space-y-6 max-h-[600px] overflow-y-auto custom-scrollbar">
+            <div className="p-4 md:p-6 space-y-2 md:space-y-3 max-h-[600px] overflow-y-auto custom-scrollbar">
               {(liveNews.length > 0 ? liveNews : []).map((item, idx) => (
-                <div key={item.url || idx} className="group border-b border-gray-50 last:border-0 pb-4 md:pb-6 last:pb-0">
+                <div key={item.url || idx} className="group border-b border-gray-50 last:border-0 pb-3 md:pb-4 last:pb-0">
                   <div className="flex justify-between items-start mb-2 gap-2">
                     <span className="text-[10px] font-mono uppercase tracking-widest opacity-40 font-bold shrink-0">
                       {safeFormatDate(item.timestamp)}
@@ -481,7 +481,7 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
       </div>
 
       {/* Row 5: Category News Feeds */}
-      <div className="lg:col-span-8 space-y-4 md:space-y-6">
+      <div className="lg:col-span-8 space-y-2 md:space-y-3">
         {(data.categories || []).map((category) => (
           <section key={category.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
             <div className="p-4 md:p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 gap-3">
@@ -509,9 +509,9 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
                 </div>
               </div>
             </div>
-            <div className="p-4 md:p-6 space-y-4 md:space-y-6 max-h-[600px] overflow-y-auto custom-scrollbar">
+            <div className="p-4 md:p-6 space-y-2 md:space-y-3 max-h-[600px] overflow-y-auto custom-scrollbar">
               {(category.news || []).map((item) => (
-                <div key={item.id} className="group border-b border-gray-50 last:border-0 pb-4 md:pb-6 last:pb-0">
+                <div key={item.id} className="group border-b border-gray-50 last:border-0 pb-3 md:pb-4 last:pb-0">
                   <div className="flex justify-between items-start mb-2 gap-2">
                     <span className="text-[10px] font-mono uppercase tracking-widest opacity-40 font-bold shrink-0">
                       {safeFormatDate(item.timestamp)}
@@ -552,11 +552,11 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
       </div>
 
       {/* SEO: Archive Link Section */}
-      <div className="lg:col-span-12 bg-gradient-to-r from-[#2D2D2D] to-[#1a1a1a] border border-[#E31E24]/20 rounded-xl p-6 md:p-8 mb-6 shadow-lg">
-        <div className="flex flex-col gap-4">
+      <div className="lg:col-span-12 bg-gradient-to-r from-[#2D2D2D] to-[#1a1a1a] border border-[#E31E24]/20 rounded-xl p-6 md:p-8 mb-4 shadow-lg">
+        <div className="flex flex-col gap-3">
           <div>
-            <h2 className="text-2xl font-bold text-white mb-2">Lebanon Security & Safety News Archive</h2>
-            <p className="text-gray-100">
+            <h2 className="text-2xl font-bold text-white/95 mb-2">Lebanon Security & Safety News Archive</h2>
+            <p className="text-white/80 font-medium leading-relaxed">
               Access 365 daily reports analyzing Lebanon security and safety news. Complete archive with real-time sentiment analysis, historical trends, and security assessments.
             </p>
           </div>
@@ -587,14 +587,14 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
       </div>
 
       {/* Bottom Sections */}
-      <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-6 mt-2 border-t border-gray-200 pt-6">
+      <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-4 mt-0 border-t border-gray-200 pt-4">
         {/* Historical Analysis */}
-        <section className="space-y-6">
+        <section className="space-y-3">
           <div className="flex items-center gap-2">
             <History className="w-5 h-5 text-[#2D2D2D]" />
             <h2 className="text-[10px] font-mono uppercase tracking-widest font-bold">Historical Analysis</h2>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-2">
             {[1, 2, 3, 4, 5].map((i) => {
               const date = new Date();
               date.setDate(date.getDate() - i);
