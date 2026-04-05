@@ -139,11 +139,11 @@ function getStatusFromScore(score: number): string {
  * Maps news items to security risk categories based on keywords
  */
 const CATEGORY_KEYWORDS: Record<string, string[]> = {
-  fire: ['fire', 'wildfire', 'blaze', 'burn', 'burning', 'arson', 'firefight', 'fire department', 'extinguish', 'heat', 'smoke', 'evacuation', 'residential fire', 'building fire', 'house fire', 'forest fire'],
-  lightning: ['lightning', 'thunder', 'storm', 'weather', 'electrical hazard', 'power outage', 'blackout', 'voltage surge', 'electrical safety', 'meteorological', 'rain', 'wind', 'electricity', 'power cut', 'outage'],
-  criminal: ['crime', 'theft', 'robbery', 'burglary', 'criminal', 'police', 'arrest', 'suspect', 'perpetrator', 'investigation', 'prison', 'larceny', 'vandalism', 'fraud', 'assault', 'shooting', 'violence', 'attack', 'kidnapping'],
-  financial: ['economy', 'economic', 'currency', 'bank', 'banking', 'market', 'financial', 'trade', 'investment', 'exchange rate', 'inflation', 'business', 'commerce', 'lira', 'dollar', 'price', 'stock', 'credit', 'loan', 'interest'],
-  corporate: ['business', 'company', 'corporate', 'enterprise', 'firm', 'office', 'building', 'facility', 'headquarters', 'infrastructure', 'automation', 'technology', 'digital', 'security system', 'access control', 'management', 'operations']
+  fire: ['blaze', 'wildfire', 'burn', 'arson', 'extinguish', 'smoke', 'flame', 'ignite', 'combustion'],
+  lightning: ['thunder', 'thunderstorm', 'electrical', 'power outage', 'blackout', 'grid', 'weather', 'rain', 'storm'],
+  criminal: ['murder', 'kill', 'dead', 'injured', 'wound', 'arrest', 'prison', 'theft', 'robbery', 'smuggling', 'gang'],
+  financial: ['economy', 'currency', 'lira', 'bank', 'market', 'inflation', 'credit', 'gdp', 'investment', 'commerce'],
+  corporate: ['headquarters', 'factory', 'company', 'enterprise', 'business', 'operations', 'industry', 'manufacturing', 'production']
 };
 
 /**
