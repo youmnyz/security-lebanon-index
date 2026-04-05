@@ -346,19 +346,6 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
                 </div>
               )}
             </div>
-            {/* Scroll Indicators */}
-            {liveNews.length > 0 && (
-              <>
-                {/* Right accent bar */}
-                <div className="absolute right-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-[#E31E24] via-[#E31E24]/60 to-transparent opacity-60" />
-                {/* Bottom fade gradient - indicates scrollable content */}
-                <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none opacity-80" />
-                {/* Scroll indicator text */}
-                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-center text-[10px] font-bold uppercase tracking-widest text-[#E31E24] opacity-60 animate-bounce pointer-events-none">
-                  ↓ Scroll for more ↓
-                </div>
-              </>
-            )}
           </div>
         </section>
       </div>
@@ -561,16 +548,6 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
                   </div>
                 )}
               </div>
-              {/* Scroll Indicators for Category */}
-              {category.news && category.news.length > 0 && (
-                <>
-                  <div className="absolute right-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-[#E31E24] via-[#E31E24]/60 to-transparent opacity-60" />
-                  <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none opacity-80" />
-                  <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-center text-[9px] font-bold uppercase tracking-widest text-[#E31E24] opacity-60 animate-bounce pointer-events-none">
-                    ↓ Scroll ↓
-                  </div>
-                </>
-              )}
             </div>
           </section>
         ))}

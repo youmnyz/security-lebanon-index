@@ -54,17 +54,56 @@ body {
 }
 
 @layer utilities {
+  .custom-scrollbar {
+    scrollbar-width: auto;
+    scrollbar-color: #E31E24 #f0f0f0;
+  }
+
   .custom-scrollbar::-webkit-scrollbar {
-    width: 4px;
+    width: 14px;
   }
+
   .custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #e5e7eb;
+    background: #f0f0f0;
     border-radius: 10px;
   }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #E31E24;
+    border-radius: 8px;
+    border: 2px solid #f0f0f0;
+    min-height: 40px;
+  }
+
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #d1d5db;
+    background: #c71620;
+    border-color: #e8e8e8;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-button {
+    display: block;
+    height: 16px;
+    background: #2D2D2D;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-button:hover {
+    background: #E31E24;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-button:vertical:increment {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 16" fill="white"><path d="M6 12L1 7h10z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-button:vertical:decrement {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 16" fill="white"><path d="M6 4l5 5H1z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 8px;
   }
 }
