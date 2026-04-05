@@ -745,7 +745,7 @@ Generate analysis in JSON format only (no markdown):
 
   // SEO: Enhanced Sitemap with 365 days for ranking "lebanon security" and "lebanon safety"
   app.get("/sitemap.xml", (req, res) => {
-    const baseUrl = process.env.APP_URL || "https://zodsecurity.com/security-index";
+    const baseUrl = process.env.APP_URL || "https://lebanon-security-index.zodsecurity.com";
     const today = new Date().toISOString().split('T')[0];
 
     // Generate entire year for SEO (365 days)
@@ -801,7 +801,7 @@ Generate analysis in JSON format only (no markdown):
 
   // Robots.txt
   app.get("/robots.txt", (req, res) => {
-    const baseUrl = process.env.APP_URL || "https://security-lebanon.run.app";
+    const baseUrl = process.env.APP_URL || "https://lebanon-security-index.zodsecurity.com";
     res.type("text/plain");
     res.send(`User-agent: *\nAllow: /\nSitemap: ${baseUrl}/sitemap.xml`);
   });

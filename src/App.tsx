@@ -206,15 +206,57 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
     "description": seoDescription,
     "url": window.location.href,
     "dateModified": data.lastUpdated,
+    "inLanguage": "en",
+    "spatialCoverage": {
+      "@type": "Place",
+      "name": "Lebanon"
+    },
+    "keywords": ["security lebanon", "safety lebanon", "lebanon security index", "lebanon news analysis", "lebanon safety monitoring"],
     "creator": {
       "@type": "Organization",
-      "name": "Intelligence Systems"
+      "name": "Intelligence Systems",
+      "url": "https://zodsecurity.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "ZodSecurity",
+      "url": "https://zodsecurity.com"
     },
     "variableMeasured": [
       {
         "@type": "PropertyValue",
         "name": "Overall Security Score",
         "value": data.overallScore,
+        "maxValue": 100
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Fire Risks",
+        "value": data.categories[0]?.score || 0,
+        "maxValue": 100
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Lightning Risks",
+        "value": data.categories[1]?.score || 0,
+        "maxValue": 100
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Criminal Risks",
+        "value": data.categories[2]?.score || 0,
+        "maxValue": 100
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Financial Risks",
+        "value": data.categories[3]?.score || 0,
+        "maxValue": 100
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Corporate News",
+        "value": data.categories[4]?.score || 0,
         "maxValue": 100
       }
     ]

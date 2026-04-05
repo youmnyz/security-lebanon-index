@@ -86,6 +86,13 @@ npm run build
 
 ## Disclaimer
 
+**ZOD is NOT responsible for:**
+- The accuracy or completeness of information displayed
+- Any decisions made based on this tool's analysis
+- Consequences arising from the use or misuse of this information
+- The reliability or availability of external news sources
+- Third-party content or editorial choices
+
 This tool does NOT provide:
 - Military intelligence
 - Police/law enforcement analysis
@@ -93,7 +100,10 @@ This tool does NOT provide:
 - Investment advice
 - Actionable threat intelligence
 
-It IS a public tool for understanding **news coverage trends**.
+It IS a public tool for understanding **news coverage trends** only.
+
+### Liability Statement
+This is an experimental, informational tool provided "as-is". Users access it entirely at their own risk. ZOD makes no warranties about the accuracy, completeness, or suitability of the information for any purpose. Do not rely on this tool for critical decisions.
 
 ## Questions?
 

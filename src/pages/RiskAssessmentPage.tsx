@@ -105,9 +105,24 @@ export default function RiskAssessmentPage() {
     "headline": seoTitle,
     "description": seoDescription,
     "datePublished": date,
+    "dateModified": date,
+    "inLanguage": "en",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `${typeof window !== 'undefined' ? window.location.href : ''}`
+    },
     "author": {
       "@type": "Organization",
-      "name": "Intelligence Systems"
+      "name": "Intelligence Systems",
+      "url": "https://zodsecurity.com"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "ZodSecurity",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://zodsecurity.com/logo.png"
+      }
     }
   };
 
