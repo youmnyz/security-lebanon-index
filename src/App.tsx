@@ -554,7 +554,7 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
       </div>
 
       {/* SEO: Archive Link Section */}
-      <div className="lg:col-span-12 bg-gradient-to-r from-[#2D2D2D] to-[#1a1a1a] border border-[#E31E24]/20 rounded-xl p-6 md:p-8 mb-4 shadow-lg">
+      <div className="lg:col-span-12 bg-gradient-to-r from-[#2D2D2D] to-[#1a1a1a] border border-[#E31E24]/20 rounded-xl p-6 md:p-8 mb-4 shadow-lg text-white">
         <div className="flex flex-col gap-3">
           <div>
             <h2 className="text-2xl font-bold text-white mb-2">Lebanon Security & Safety News Archive</h2>
