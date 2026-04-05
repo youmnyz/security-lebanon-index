@@ -384,6 +384,19 @@ async function startServer() {
     next();
   });
 
+  // Cache control — prevent aggressive caching for HTML/API
+  app.use((req, res, next) => {
+    // HTML: no-cache to force revalidation
+    if (req.path === '/' || req.path.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'public, max-age=300, must-revalidate');
+    }
+    // API: minimal caching
+    if (req.path.startsWith('/api/')) {
+      res.setHeader('Cache-Control', 'public, max-age=60');
+    }
+    next();
+  });
+
   // Live news from real RSS sources (with 30-day filtering and caching)
   app.get("/api/live-news", async (req, res) => {
     // Check cache first (5-10 min TTL)
