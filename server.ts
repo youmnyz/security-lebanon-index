@@ -518,7 +518,7 @@ Based on how positive/negative the news coverage would typically be for this dat
       res.json(result);
     } catch (err) {
       console.error("Risk assessment generation failed:", err);
-      res.status(500).json({
+      res.json({
         date,
         summary: "News sentiment analysis unavailable for this date.",
         threatLevel: "Moderate",
