@@ -631,27 +631,13 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 pt-4 border-t border-white/10">
+          <div className="pt-4 border-t border-white/10">
             <Link
               to="/archive"
-              className="bg-[#E31E24] hover:bg-[#c71620] text-white px-4 py-2 rounded-lg font-bold text-sm transition text-center"
+              className="bg-[#E31E24] hover:bg-[#c71620] text-white px-4 py-2 rounded-lg font-bold text-sm transition text-center inline-block"
             >
               View All (365)
             </Link>
-            {[
-              { label: 'Last 7 Days', offset: 7 },
-              { label: 'Last 30 Days', offset: 30 },
-              { label: 'Last 90 Days', offset: 90 },
-              { label: 'Last Year', offset: 365 }
-            ].map(({ label, offset }) => (
-              <Link
-                key={label}
-                to={`/risk-assessment/${new Date(new Date().setDate(new Date().getDate() - offset)).toISOString().split('T')[0]}`}
-                className="bg-white/15 hover:bg-white/25 text-white px-4 py-2 rounded-lg font-semibold text-sm transition text-center border border-white/20 hover:border-[#E31E24]"
-              >
-                {label}
-              </Link>
-            ))}
           </div>
         </div>
       </div>
