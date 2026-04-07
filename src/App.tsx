@@ -56,10 +56,7 @@ const getApiBaseUrl = () => {
   if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
     return 'http://localhost:3000';
   }
-  // In production, use the current domain (works for custom domains and Render URL)
-  if (typeof window !== 'undefined') {
-    return `${window.location.protocol}//${window.location.hostname}`;
-  }
+  // Always use Render backend for production (works for Vercel, custom domains, etc)
   return 'https://security-lebanon-index.onrender.com';
 };
 
