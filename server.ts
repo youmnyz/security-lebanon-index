@@ -485,8 +485,14 @@ async function startServer() {
   app.get("/api/risk-assessment/:date", async (req, res) => {
     const { date } = req.params;
     try {
+      const apiKey = process.env.GROQ_API_KEY;
+      if (!apiKey) {
+        console.warn("GROQ_API_KEY not set");
+        throw new Error("GROQ_API_KEY environment variable not configured");
+      }
+
       const { Groq } = await import("groq-sdk");
-      const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || "" });
+      const groq = new Groq({ apiKey });
 
       const response = await groq.chat.completions.create({
         model: "llama-3.3-70b-versatile",
@@ -517,7 +523,8 @@ Based on how positive/negative the news coverage would typically be for this dat
       const result = JSON.parse(content);
       res.json(result);
     } catch (err) {
-      console.error("Risk assessment generation failed:", err);
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      console.error(`[Risk Assessment] Failed for date ${date}: ${errorMsg}`);
       res.json({
         date,
         summary: "News sentiment analysis unavailable for this date.",
