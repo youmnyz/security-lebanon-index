@@ -53,11 +53,6 @@ export default function Footer() {
                 © 2026 <a href="https://zodsecurity.com" className="text-[#E31E24] hover:underline">ZOD Security</a>. Lebanon Security Index - News Analysis Tool.
               </p>
             </div>
-            <div className="flex gap-6">
-              <a href="/methodology" className="hover:text-[#E31E24] transition">How It Works</a>
-              <a href="#" className="hover:text-[#E31E24] transition">Privacy Policy</a>
-              <a href="#" className="hover:text-[#E31E24] transition">Terms of Service</a>
-            </div>
           </div>
 
           {/* Disclaimer */}
