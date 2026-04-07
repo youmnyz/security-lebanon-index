@@ -8,15 +8,19 @@ interface SEOProps {
   ogType?: string;
   ogImage?: string;
   jsonLd?: any;
+  jsonLdArray?: any[];
+  keywords?: string;
 }
 
-const SEO: React.FC<SEOProps> = ({ 
-  title, 
-  description, 
-  canonical, 
-  ogType = 'website', 
+const SEO: React.FC<SEOProps> = ({
+  title,
+  description,
+  canonical,
+  ogType = 'website',
   ogImage = 'https://picsum.photos/seed/security/1200/630',
-  jsonLd 
+  jsonLd,
+  jsonLdArray,
+  keywords
 }) => {
   const siteName = "Security Lebanon Index";
   const fullTitle = `${title} | ${siteName}`;
@@ -28,6 +32,9 @@ const SEO: React.FC<SEOProps> = ({
       {/* Standard Metadata */}
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
+      {keywords && <meta name="keywords" content={keywords} />}
+      <meta name="geo.placename" content="Lebanon" />
+      <meta name="geo.region" content="LB" />
       <link rel="canonical" href={fullCanonical} />
 
       {/* Open Graph / Facebook */}
@@ -50,6 +57,11 @@ const SEO: React.FC<SEOProps> = ({
           {JSON.stringify(jsonLd)}
         </script>
       )}
+      {jsonLdArray && jsonLdArray.map((schema, idx) => (
+        <script key={idx} type="application/ld+json">
+          {JSON.stringify(schema)}
+        </script>
+      ))}
     </Helmet>
   );
 };

@@ -17,6 +17,7 @@ import {
 import { motion } from 'motion/react';
 import SEO from './components/SEO';
 import Methodology from './components/Methodology';
+import Footer from './components/Footer';
 import ArchivePage from './pages/ArchivePage';
 import {
   ResponsiveContainer,
@@ -259,12 +260,40 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
     ]
   };
 
+  // LocalBusiness schema for GEO SEO
+  const localBusinessSchema = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "ZOD Security - Lebanon Security Index",
+    "description": "Lebanon security and safety analysis and consulting services",
+    "url": "https://zodsecurity.com",
+    "telephone": "+961-1-XXXX-XXXX",
+    "areaServed": {
+      "@type": "Place",
+      "name": "Lebanon",
+      "geo": {
+        "@type": "GeoShape",
+        "polygon": "33.854721,35.862395 33.854721,36.637932 32.359050,36.637932 32.359050,35.862395"
+      }
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "LB",
+      "addressLocality": "Beirut",
+      "postalCode": "1000"
+    },
+    "sameAs": ["https://zodsecurity.com"],
+    "priceRange": "$$$"
+  };
+
   return (
     <>
-      <SEO 
+      <SEO
         title={seoTitle}
         description={seoDescription}
         jsonLd={jsonLd}
+        jsonLdArray={[localBusinessSchema]}
+        keywords="lebanon security, lebanon safety, security index, safety analysis, lebanon news, real-time monitoring, political stability, economic safety, infrastructure threats, criminal risks"
       />
       <main className="max-w-7xl mx-auto p-2 md:p-4 grid grid-cols-1 lg:grid-cols-12 gap-3 items-stretch">
       {/* Row 1: Hero & AI Outlook - Modular & Autofill */}
@@ -1168,6 +1197,8 @@ export default function App() {
         <Route path="/archive" element={<ArchivePage />} />
         <Route path="/archive/page/:page" element={<ArchivePage />} />
       </Routes>
+
+      <Footer />
     </div>
   );
 }

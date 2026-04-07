@@ -52,6 +52,7 @@ export default function ArchivePage() {
         description={seoDescription}
         jsonLd={jsonLd}
         ogType="website"
+        keywords="lebanon security archive, daily reports, security analysis, lebanon news analysis, historical data, security trends"
       />
 
       <div className="min-h-screen bg-gray-50">
