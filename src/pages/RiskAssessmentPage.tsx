@@ -16,14 +16,10 @@ import SEO from '../components/SEO';
 import { RiskAssessment } from '../types';
 import { cn } from '../lib/utils';
 
-// Get API base URL - use localhost in dev, current domain in production
+// Get API base URL - use localhost in dev, Render backend in production
 const getApiBaseUrl = () => {
   if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
     return 'http://localhost:3000';
-  }
-  // In production, use the current domain (works for custom domains and Render URL)
-  if (typeof window !== 'undefined') {
-    return `${window.location.protocol}//${window.location.hostname}`;
   }
   return 'https://security-lebanon-index.onrender.com';
 };
