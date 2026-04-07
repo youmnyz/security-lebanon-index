@@ -498,25 +498,25 @@ async function startServer() {
         model: "llama-3.3-70b-versatile",
         messages: [
           {
+            role: "system",
+            content: "You are a news sentiment analyst. Always respond with valid JSON only, no markdown or extra text."
+          },
+          {
             role: "user",
-            content: `For date ${date}, provide a news sentiment briefing for Lebanon. This is a NEWS ANALYSIS tool, not intelligence.
-
-Based on how positive/negative the news coverage would typically be for this date, provide JSON format only (no markdown):
+            content: `For date ${date}, analyze news sentiment for Lebanon and respond with ONLY valid JSON (no markdown, no extra text):
 {
   "date": "${date}",
-  "summary": "What would typical news coverage on this date indicate about the situation? Focus on news tone and themes.",
-  "threatLevel": "Low|Moderate|Elevated|High|Extreme" (based on typical news negativity, NOT actual conditions),
-  "keyRisks": [
-    { "category": "category", "description": "What did news typically cover?", "mitigation": "What positive developments might be reported?" }
-  ],
-  "outlook24h": "What might the next day's news focus on?",
+  "summary": "Brief news coverage analysis",
+  "threatLevel": "Low",
+  "keyRisks": [{"category": "News Coverage", "description": "Media tone", "mitigation": "Keep informed"}],
+  "outlook24h": "Continued reporting",
   "seoTitle": "Lebanon News Briefing - ${new Date(date).toLocaleDateString('en-US', {month:'short',day:'numeric'})}",
-  "seoDescription": "News sentiment analysis briefing for Lebanon on ${new Date(date).toLocaleDateString('en-US', {month:'long',day:'numeric',year:'numeric'})}"
+  "seoDescription": "News sentiment analysis for Lebanon on ${new Date(date).toLocaleDateString('en-US', {month:'long',day:'numeric',year:'numeric'})}"
 }`
           }
         ],
-        temperature: 0.7,
-        max_tokens: 1024
+        temperature: 0.5,
+        max_tokens: 512
       });
 
       const content = response.choices[0]?.message?.content || "{}";
