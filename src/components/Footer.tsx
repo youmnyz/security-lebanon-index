@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer className="bg-[#2D2D2D] text-white mt-16 border-t border-gray-700">
       <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           {/* About Section */}
           <div>
             <h3 className="text-lg font-bold mb-4 text-[#E31E24]">Lebanon Security Index</h3>
@@ -13,16 +13,6 @@ export default function Footer() {
               Real-time news sentiment analysis tracking Lebanon security and safety from 8+ international sources.
               This tool measures media coverage patterns, not operational intelligence.
             </p>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-lg font-bold mb-4 text-[#E31E24]">Resources</h3>
-            <ul className="space-y-2 text-sm text-gray-300">
-              <li><a href="/" className="hover:text-[#E31E24] transition">Dashboard</a></li>
-              <li><a href="/archive" className="hover:text-[#E31E24] transition">Archives</a></li>
-              <li><a href="/methodology" className="hover:text-[#E31E24] transition">Methodology</a></li>
-            </ul>
           </div>
 
           {/* CTA Section */}
