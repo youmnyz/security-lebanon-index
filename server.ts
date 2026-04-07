@@ -371,9 +371,16 @@ async function startServer() {
 
   app.use(express.json({ limit: '1mb' }));
 
-  // CORS — allow zodsecurity.com and local dev
+  // CORS — allow zodsecurity.com, Vercel, and local dev
   app.use((req, res, next) => {
-    const allowed = ['https://zodsecurity.com', 'https://www.zodsecurity.com', 'http://localhost:3000', 'http://localhost:5173'];
+    const allowed = [
+      'https://zodsecurity.com',
+      'https://www.zodsecurity.com',
+      'https://lebanon-security-index.zodsecurity.com',
+      'https://security-lebanon-index.vercel.app',
+      'http://localhost:3000',
+      'http://localhost:5173'
+    ];
     const origin = req.headers.origin || '';
     if (allowed.includes(origin) || !origin) {
       res.setHeader('Access-Control-Allow-Origin', origin || '*');
