@@ -499,25 +499,31 @@ async function startServer() {
         messages: [
           {
             role: "system",
-            content: "You are a security risk assessment analyst for Lebanon. Analyze available information to assess security risks. Always respond with valid JSON only, no markdown or extra text."
+            content: "You are a security risk assessment analyst for Lebanon. Assess ACTUAL SECURITY RISKS - not news tone, sentiment, or media coverage. Evaluate real threats to political stability, economic security, infrastructure, and safety. Always respond with valid JSON only, no markdown or extra text."
           },
           {
             role: "user",
-            content: `For date ${date}, provide a comprehensive security risk assessment for Lebanon based on the current situation. Analyze political developments, economic conditions, infrastructure status, and regional security factors.
+            content: `For date ${date}, conduct a security risk assessment for Lebanon. DO NOT analyze news sentiment or media tone - assess actual security risks and threats.
 
-IMPORTANT: The "summary" must be a substantive analysis of the actual risk situation - explain WHY the threat level is what it is, based on identified risks. Avoid generic or placeholder text.
+Analyze: political stability risks, economic/financial vulnerabilities, infrastructure threats, and humanitarian concerns.
+
+CRITICAL:
+- "summary" must explain ACTUAL RISKS, not news sentiment or tone
+- Focus on WHY these specific risks exist
+- Threat level reflects actual security conditions, not negative reporting
+- keyRisks must be real security issues, not media coverage analysis
 
 Respond with ONLY valid JSON (no markdown, no extra text):
 {
   "date": "${date}",
-  "summary": "Substantive analysis of Lebanon's security situation on this date - explain the threat level based on political stability, economic conditions, and infrastructure status. Must reflect actual risk factors identified, not generic text.",
+  "summary": "Assessment of actual security risks and threats - explain the threat level based on real political, economic, and infrastructure factors, not news coverage",
   "threatLevel": "Low|Moderate|Elevated|High|Extreme",
   "keyRisks": [
-    {"category": "Political Stability", "description": "Specific political risks or developments", "mitigation": "Relevant mitigation approaches"},
-    {"category": "Economic Security", "description": "Actual economic/financial concerns", "mitigation": "Economic stabilization measures"},
-    {"category": "Infrastructure", "description": "Actual infrastructure issues or status", "mitigation": "Infrastructure improvement priorities"}
+    {"category": "Political Stability", "description": "Actual political risks or security concerns", "mitigation": "Actions to address risks"},
+    {"category": "Economic Security", "description": "Real financial/economic vulnerabilities", "mitigation": "Economic security measures"},
+    {"category": "Infrastructure", "description": "Actual infrastructure vulnerabilities or threats", "mitigation": "Infrastructure protection priorities"}
   ],
-  "outlook24h": "Specific expected developments based on current situation - avoid generic placeholder text about protests unless directly relevant",
+  "outlook24h": "Expected developments in security conditions",
   "seoTitle": "Lebanon Security Risk Assessment - ${new Date(date).toLocaleDateString('en-US', {month:'short',day:'numeric'})}",
   "seoDescription": "Security risk assessment for Lebanon on ${new Date(date).toLocaleDateString('en-US', {month:'long',day:'numeric',year:'numeric'})}"
 }`
