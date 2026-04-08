@@ -503,17 +503,19 @@ async function startServer() {
           },
           {
             role: "user",
-            content: `For date ${date}, provide a comprehensive security risk assessment for Lebanon. Consider political stability, economic security, infrastructure risks, and regional developments. Respond with ONLY valid JSON (no markdown, no extra text):
+            content: `For date ${date}, provide a comprehensive security risk assessment for Lebanon based on the current situation. Analyze political developments, economic conditions, infrastructure status, and regional security factors.
+
+Respond with ONLY valid JSON (no markdown, no extra text). For outlook24h, provide specific expected developments based on recent trends - avoid generic statements about protests unless relevant:
 {
   "date": "${date}",
-  "summary": "Overall security risk assessment for Lebanon on this date",
+  "summary": "Overall security risk assessment reflecting actual conditions on this date",
   "threatLevel": "Low|Moderate|Elevated|High|Extreme",
   "keyRisks": [
-    {"category": "Political Stability", "description": "Specific risks", "mitigation": "Recommended actions"},
-    {"category": "Economic Security", "description": "Financial/economic risks", "mitigation": "Mitigation strategies"},
-    {"category": "Infrastructure", "description": "Infrastructure vulnerabilities", "mitigation": "Protection measures"}
+    {"category": "Political Stability", "description": "Specific political risks or developments", "mitigation": "Relevant mitigation approaches"},
+    {"category": "Economic Security", "description": "Actual economic/financial concerns", "mitigation": "Economic stabilization measures"},
+    {"category": "Infrastructure", "description": "Actual infrastructure issues or status", "mitigation": "Infrastructure improvement priorities"}
   ],
-  "outlook24h": "Expected developments in next 24 hours",
+  "outlook24h": "Specific expected developments based on current situation (political developments, economic trends, infrastructure concerns, or diplomatic activity - avoid generic placeholder text)",
   "seoTitle": "Lebanon Security Risk Assessment - ${new Date(date).toLocaleDateString('en-US', {month:'short',day:'numeric'})}",
   "seoDescription": "Security risk assessment for Lebanon on ${new Date(date).toLocaleDateString('en-US', {month:'long',day:'numeric',year:'numeric'})}"
 }`
