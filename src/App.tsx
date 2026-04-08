@@ -335,7 +335,7 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
             <p className="text-sm md:text-base text-white/70 leading-relaxed max-w-xl mb-8">
               <span className="text-white font-bold">Lebanon security & safety</span> news analysis from
               <span className="text-[#E31E24] font-bold"> 8+ international sources</span>.
-              Real-time sentiment analysis of political stability, economic safety, infrastructure, humanitarian concerns, and regional developments.
+              Security risk assessment of political stability, economic safety, infrastructure, humanitarian concerns, and regional developments.
             </p>
             
           </div>
@@ -732,7 +732,7 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
           <div className="space-y-3 text-sm">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
               <p className="text-[11px] text-blue-900 font-medium mb-1">8 International News Sources</p>
-              <p className="text-[10px] text-blue-700">Real-time sentiment analysis from Naharnet, Al Jazeera, BBC, Reuters, and more.</p>
+              <p className="text-[10px] text-blue-700">Security risk assessment from Naharnet, Al Jazeera, BBC, Reuters, and more.</p>
             </div>
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
               <p className="text-[11px] text-amber-900 font-medium mb-1">30-Day Window</p>
@@ -1113,7 +1113,7 @@ export default function App() {
       {/* Transparency Banner */}
       <div className="bg-blue-50 border-b border-blue-200 px-4 md:px-8 py-3">
         <p className="text-xs md:text-sm text-blue-900 text-center">
-          <strong>Transparency Notice:</strong> This index analyzes news sentiment. Scores reflect media coverage, not definitive security assessments.
+          <strong>Transparency Notice:</strong> This index assesses security risks based on available information. Threat levels reflect analyzed risk factors, not definitive intelligence.
         </p>
       </div>
 

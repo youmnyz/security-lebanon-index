@@ -164,7 +164,7 @@ export default function RiskAssessmentPage() {
               <p className="text-base md:text-lg leading-relaxed opacity-90 font-medium italic">
                 "{assessment.summary}"
               </p>
-              <p className="text-xs opacity-50 mt-3">Based on news sentiment analysis from multiple sources</p>
+              <p className="text-xs opacity-50 mt-3">Security risk assessment based on available information from multiple sources</p>
             </div>
           </div>
         </div>

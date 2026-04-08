@@ -10,8 +10,8 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-bold mb-4 text-[#E31E24]">Lebanon Security Index</h3>
             <p className="text-sm text-gray-300 leading-relaxed">
-              Real-time news sentiment analysis tracking Lebanon security and safety from 8+ international sources.
-              This tool measures media coverage patterns, not operational intelligence.
+              Security risk assessment for Lebanon tracking political stability, economic security, and infrastructure risks from 8+ international sources.
+              This is a risk assessment tool, not intelligence or security consulting.
             </p>
           </div>
 

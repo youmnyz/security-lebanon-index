@@ -22,7 +22,7 @@ export default function ArchivePage() {
   const pageDates = allDates.slice(startIdx, startIdx + itemsPerPage);
 
   const seoTitle = `Lebanon Security & Safety News Archive | ${allDates.length} Reports | zodsecurity.com`;
-  const seoDescription = `Complete archive of Lebanon security and safety news analysis. ${allDates.length} daily reports with sentiment analysis, political stability trends, economic safety assessments, and regional security developments.`;
+  const seoDescription = `Complete archive of Lebanon security and safety news analysis. ${allDates.length} daily reports with security risk assessment, political stability trends, economic safety assessments, and regional security developments.`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -67,7 +67,7 @@ export default function ArchivePage() {
             </div>
             <p className="text-lg text-gray-600 max-w-3xl">
               Complete archive of {allDates.length} daily Lebanon security and safety news analysis reports.
-              Real-time sentiment analysis of political stability, economic safety, infrastructure, humanitarian
+              Real-time security risk assessment of political stability, economic safety, infrastructure, humanitarian
               concerns, and regional developments affecting Lebanon.
             </p>
           </div>
@@ -172,7 +172,7 @@ export default function ArchivePage() {
             <h2 className="text-xl font-bold text-blue-900 mb-3">About Lebanon Security Analysis</h2>
             <p className="text-blue-800 mb-3">
               This archive contains {allDates.length} daily reports analyzing Lebanon security and safety news coverage
-              from 8+ international news sources. Each report provides real-time sentiment analysis across five key categories:
+              from 8+ international news sources. Each report provides real-time security risk assessment across five key categories:
             </p>
             <ul className="space-y-2 text-blue-800">
               <li>• <strong>Lebanon Political Security</strong> - Government stability and governance developments</li>
