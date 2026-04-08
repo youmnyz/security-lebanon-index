@@ -11,10 +11,10 @@ export default function Methodology() {
           <div>
             <h3 className="font-bold text-blue-900 mb-2">About This Index</h3>
             <p className="text-blue-800 text-sm leading-relaxed">
-              This security index is an analytical tool based on news sentiment analysis. It reflects
-              the frequency and tone of security-related reporting, not ground-truth security assessments.
-              Scores should be interpreted as indicators of media coverage intensity, not definitive measures
-              of actual safety conditions.
+              This security index is an analytical tool that assesses security risks for Lebanon based on available information,
+              news reports, and regional developments. Threat levels reflect analyzed risk factors including political stability,
+              economic security, infrastructure concerns, and humanitarian issues. This is a risk assessment tool, not an
+              intelligence agency report. Assessments should inform awareness and planning, not replace professional security consultation.
             </p>
           </div>
         </div>
@@ -55,24 +55,24 @@ export default function Methodology() {
           <div className="bg-white border border-gray-200 rounded-lg p-6">
             <div className="flex items-center gap-3 mb-4">
               <BarChart3 className="w-5 h-5 text-blue-600" />
-              <h3 className="font-bold text-lg text-[#2D2D2D]">How Scores Are Calculated</h3>
+              <h3 className="font-bold text-lg text-[#2D2D2D]">How Risk Assessment Works</h3>
             </div>
             <ol className="space-y-3 text-sm text-gray-700">
               <li className="flex gap-3">
                 <span className="font-bold text-[#E31E24] shrink-0">1.</span>
-                <span><strong>Sentiment Analysis:</strong> Each article is analyzed for keywords indicating positive, neutral, or negative sentiment (e.g., "attack", "stable", "crisis", "progress")</span>
+                <span><strong>Information Gathering:</strong> Analyzes news from 8+ international sources covering political developments, economic indicators, infrastructure status, and regional security events</span>
               </li>
               <li className="flex gap-3">
                 <span className="font-bold text-[#E31E24] shrink-0">2.</span>
-                <span><strong>Weighting:</strong> Articles are weighted by recency (newer articles count more) and severity tags (High/Medium/Low severity incidents weighted differently)</span>
+                <span><strong>Risk Identification:</strong> Identifies key risk categories including Political Stability, Economic Security, Infrastructure, and Humanitarian concerns</span>
               </li>
               <li className="flex gap-3">
                 <span className="font-bold text-[#E31E24] shrink-0">3.</span>
-                <span><strong>Aggregation:</strong> Weighted sentiments are averaged to produce a score from -1 (very negative reporting) to +1 (very positive reporting)</span>
+                <span><strong>Threat Assessment:</strong> Evaluates threat level (Low/Moderate/Elevated/High/Extreme) based on identified risks and their potential impact</span>
               </li>
               <li className="flex gap-3">
                 <span className="font-bold text-[#E31E24] shrink-0">4.</span>
-                <span><strong>Conversion:</strong> Sentiment score is converted to a 0-100 scale: -1 sentiment = 0 (dangerous), 0 sentiment = 50 (neutral), +1 sentiment = 100 (safe)</span>
+                <span><strong>Mitigation Planning:</strong> Provides recommended actions and mitigation strategies for each identified risk category</span>
               </li>
             </ol>
           </div>
