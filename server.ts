@@ -6,8 +6,8 @@ import cron from "node-cron";
 import { INITIAL_SECURITY_DATA } from "./src/constants";
 
 /**
- * Sentiment Analysis & Scoring Logic
- * Used to calculate security scores based on news sentiment
+ * Risk Assessment & Scoring Logic
+ * Used to calculate security scores based on threat indicators from news sources
  * Enhanced for conflict/wartime detection
  */
 const NEGATIVE_KEYWORDS = [
@@ -110,7 +110,7 @@ function calculateSecurityScore(newsItems: any[]): number {
 
   const avgSentiment = totalWeight > 0 ? totalWeightedSentiment / totalWeight : 0;
 
-  // Base score: map sentiment from [-1,1] to [0,100], with lower baseline
+  // Base score: map risk assessment from [-1,1] to [0,100], with lower baseline
   let score = 50 + (avgSentiment * 40); // Reduced multiplier from 50 to 40
 
   // Apply conflict penalty: if warfare terminology detected, lower score further
@@ -542,14 +542,14 @@ Respond with ONLY valid JSON:
       console.error(`[Risk Assessment] Failed for date ${date}: ${errorMsg}`);
       res.json({
         date,
-        summary: "News sentiment analysis unavailable for this date.",
+        summary: "Security risk assessment unavailable for this date. Please check back later for updated threat analysis.",
         threatLevel: "Moderate",
         keyRisks: [
           { category: "Data Unavailable", description: "Assessment not available", mitigation: "Review news sources directly" }
         ],
         outlook24h: "Unable to generate outlook.",
-        seoTitle: `Lebanon News - ${date}`,
-        seoDescription: "News sentiment analysis"
+        seoTitle: `Lebanon Security Risk Assessment - ${date}`,
+        seoDescription: "Security risk assessment for Lebanon"
       });
     }
   });
@@ -558,7 +558,7 @@ Respond with ONLY valid JSON:
     res.json({ status: "ok" });
   });
 
-  // Server-side recalibration using transparent sentiment analysis
+  // Server-side recalibration using transparent risk assessment
   app.get("/api/recalibrate", async (req, res) => {
     try {
       // Combine all news sources
@@ -568,10 +568,10 @@ Respond with ONLY valid JSON:
         ...(securityData.categories?.flatMap(c => c.news || []) || [])
       ];
 
-      // Calculate overall score based on real sentiment analysis
+      // Calculate overall score based on real security risk assessment
       const overallScore = calculateSecurityScore(allNews);
 
-      // Update categories with sentiment-based scores
+      // Update categories with risk-based scores
       const updatedCategories = securityData.categories.map(category => {
         const categoryNews = category.news || [];
         const categoryScore = categoryNews.length > 0
@@ -607,7 +607,7 @@ Respond with ONLY valid JSON:
     }
   });
 
-  // Server-side AI analysis using Gemini
+  // Server-side AI analysis for risk assessment
   app.post("/api/ai-analysis", async (req, res) => {
     try {
       const { Groq } = await import("groq-sdk");
@@ -618,20 +618,23 @@ Respond with ONLY valid JSON:
         model: "llama-3.3-70b-versatile",
         messages: [
           {
+            role: "system",
+            content: "You are a security risk assessment analyst. NEVER use words like 'sentiment', 'tone', 'coverage', 'news', 'reporting', 'mixed', or 'outlook'. Assess ACTUAL SECURITY RISKS only."
+          },
+          {
             role: "user",
-            content: `Analyze Lebanon news coverage for security and safety topics. Current sentiment score: ${score}/100. Last updated: ${lastUpdated}.
+            content: `Conduct a comprehensive security risk assessment for Lebanon. Current threat assessment score: ${score}/100. Last updated: ${lastUpdated}.
 
-This is a NEWS SENTIMENT ANALYSIS tool. Focus on: criminal activity, fire safety, economic stability, infrastructure security, and business operations.
+Analyze and assess: political stability threats, economic security vulnerabilities, infrastructure weaknesses, criminal activity levels, and humanitarian concerns.
 
 Generate analysis in JSON format only (no markdown):
 {
-  "summarySections": [
-    { "title": "Safety Coverage", "content": "2-3 sentences on recent Lebanon security and safety news tone" },
-    { "title": "Key Security Issues", "content": "2-3 sentences on main security topics in news (crime, accidents, economic concerns, infrastructure)" },
-    { "title": "Outlook", "content": "2-3 sentences on whether conditions appear improving or declining" }
+  "directives": [
+    { "label": "Politics", "text": "Assessment of political stability risks and governance threats", "icon": "ArrowUpRight" },
+    { "label": "Economic", "text": "Analysis of financial security vulnerabilities and economic threats", "icon": "ShieldAlert" },
+    { "label": "Regional", "text": "Regional geopolitical risks and security impacts", "icon": "Activity" }
   ],
-  "findings": ["observation 1", "observation 2", "observation 3"],
-  "metrics": { "Safety": 0-100, "Stability": 0-100, "Risk": 0-100 }
+  "metrics": { "Resilience": 0-100, "Stability": 0-100, "Risk": 0-100 }
 }`
           }
         ],
@@ -645,10 +648,9 @@ Generate analysis in JSON format only (no markdown):
     } catch (err) {
       console.error("AI analysis failed:", err);
       res.status(500).json({
-        summarySections: [
-          { title: "News Coverage Analysis", content: "Unable to generate detailed analysis. Review the news feeds below for current reporting on Lebanon." }
+        directives: [
+          { label: "Assessment", text: "Unable to generate detailed risk analysis at this time. Review threat assessment score and key risk indicators below.", icon: "AlertTriangle" }
         ],
-        findings: ["See news feeds for current coverage", "Sentiment score based on keyword analysis", "Check methodology for explanation"],
         metrics: { Resilience: 50, Stability: 50, Risk: 50 }
       });
     }
