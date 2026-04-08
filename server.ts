@@ -499,31 +499,32 @@ async function startServer() {
         messages: [
           {
             role: "system",
-            content: "You are a security risk assessment analyst for Lebanon. Assess ACTUAL SECURITY RISKS - not news tone, sentiment, or media coverage. Evaluate real threats to political stability, economic security, infrastructure, and safety. Always respond with valid JSON only, no markdown or extra text."
+            content: "You are a security risk assessment analyst for Lebanon. NEVER use words like 'tone', 'sentiment', 'mixed', 'outlook', 'neutral', or 'reporting'. Assess ACTUAL SECURITY RISKS only - real threats to political stability, economic security, infrastructure, and safety. Always respond with valid JSON only, no markdown or extra text."
           },
           {
             role: "user",
-            content: `For date ${date}, conduct a security risk assessment for Lebanon. DO NOT analyze news sentiment or media tone - assess actual security risks and threats.
+            content: `For date ${date}, conduct a SECURITY RISK ASSESSMENT for Lebanon. NEVER mention sentiment, tone, or news coverage.
 
-Analyze: political stability risks, economic/financial vulnerabilities, infrastructure threats, and humanitarian concerns.
+Identify and assess: political stability threats, economic/financial vulnerabilities, infrastructure weaknesses, humanitarian risks.
 
-CRITICAL:
-- "summary" must explain ACTUAL RISKS, not news sentiment or tone
-- Focus on WHY these specific risks exist
-- Threat level reflects actual security conditions, not negative reporting
-- keyRisks must be real security issues, not media coverage analysis
+ABSOLUTE RULES:
+- NEVER use words: sentiment, tone, mixed, neutral, outlook, reporting, coverage, positive, negative, balanced
+- "summary" must describe ACTUAL SECURITY SITUATION and identified risks only
+- Explain WHY threat level is assessed at this level based on real factors
+- Each risk in keyRisks must be a concrete security issue with specific mitigation
+- All language must be about RISKS, THREATS, VULNERABILITIES, not about media or news
 
-Respond with ONLY valid JSON (no markdown, no extra text):
+Respond with ONLY valid JSON:
 {
   "date": "${date}",
-  "summary": "Assessment of actual security risks and threats - explain the threat level based on real political, economic, and infrastructure factors, not news coverage",
+  "summary": "Specific security risks and threat factors identified for Lebanon on this date. Explain why the threat level is assessed as [threatLevel] based on political, economic, and infrastructure conditions.",
   "threatLevel": "Low|Moderate|Elevated|High|Extreme",
   "keyRisks": [
-    {"category": "Political Stability", "description": "Actual political risks or security concerns", "mitigation": "Actions to address risks"},
-    {"category": "Economic Security", "description": "Real financial/economic vulnerabilities", "mitigation": "Economic security measures"},
-    {"category": "Infrastructure", "description": "Actual infrastructure vulnerabilities or threats", "mitigation": "Infrastructure protection priorities"}
+    {"category": "Political Stability", "description": "Specific political security threats", "mitigation": "Responses to manage risks"},
+    {"category": "Economic Security", "description": "Financial vulnerabilities and economic threats", "mitigation": "Economic security measures"},
+    {"category": "Infrastructure", "description": "Physical infrastructure vulnerabilities", "mitigation": "Infrastructure hardening priorities"}
   ],
-  "outlook24h": "Expected developments in security conditions",
+  "outlook24h": "Expected security developments in next 24 hours",
   "seoTitle": "Lebanon Security Risk Assessment - ${new Date(date).toLocaleDateString('en-US', {month:'short',day:'numeric'})}",
   "seoDescription": "Security risk assessment for Lebanon on ${new Date(date).toLocaleDateString('en-US', {month:'long',day:'numeric',year:'numeric'})}"
 }`
