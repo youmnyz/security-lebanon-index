@@ -437,7 +437,20 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
             ) : (
               <div className="flex flex-col h-full gap-4">
                 <div className="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-4">
-                  {aiAnalysis.summarySections ? (
+                  {aiAnalysis.directives ? (
+                    aiAnalysis.directives.map((directive: any, idx: number) => (
+                      <div key={idx} className="bg-gray-50 border border-gray-200 rounded-lg p-3 hover:bg-gray-100 transition-colors">
+                        {directive.label && (
+                          <h3 className="text-[9px] font-bold uppercase tracking-widest text-[#E31E24] mb-2 border-b border-gray-200 pb-1">
+                            {directive.label}
+                          </h3>
+                        )}
+                        <div className="text-[11px] leading-relaxed opacity-80 font-medium markdown-body text-gray-700">
+                          <Markdown>{directive.text}</Markdown>
+                        </div>
+                      </div>
+                    ))
+                  ) : aiAnalysis.summarySections ? (
                     aiAnalysis.summarySections.map((section: any, idx: number) => (
                       <div key={idx} className="bg-gray-50 border border-gray-200 rounded-lg p-3 hover:bg-gray-100 transition-colors">
                         {section.title && (
@@ -459,12 +472,15 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
 
                 <div className="pt-4 border-t border-gray-200 shrink-0">
                   <ul className="space-y-2">
-                    {(aiAnalysis.findings || []).slice(0, 3).map((finding: string, i: number) => (
-                      <li key={i} className="flex items-start gap-3 text-xs opacity-70 leading-tight">
-                        <div className="w-1.5 h-1.5 bg-[#E31E24] rounded-full mt-1 shrink-0 shadow-[0_0_8px_#E31E24]" />
-                        <span className="truncate">{finding}</span>
-                      </li>
-                    ))}
+                    {(aiAnalysis.findings || aiAnalysis.directives?.flatMap((d: any) => d.sub_directives || [])?.slice(0, 3) || []).map((finding: any, i: number) => {
+                      const text = typeof finding === 'string' ? finding : finding?.label || finding?.text;
+                      return (
+                        <li key={i} className="flex items-start gap-3 text-xs opacity-70 leading-tight">
+                          <div className="w-1.5 h-1.5 bg-[#E31E24] rounded-full mt-1 shrink-0 shadow-[0_0_8px_#E31E24]" />
+                          <span className="truncate">{text}</span>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               </div>
