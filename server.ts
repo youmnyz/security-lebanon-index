@@ -499,24 +499,28 @@ async function startServer() {
         messages: [
           {
             role: "system",
-            content: "You are a news sentiment analyst. Always respond with valid JSON only, no markdown or extra text."
+            content: "You are a security risk assessment analyst for Lebanon. Analyze available information to assess security risks. Always respond with valid JSON only, no markdown or extra text."
           },
           {
             role: "user",
-            content: `For date ${date}, analyze news sentiment for Lebanon and respond with ONLY valid JSON (no markdown, no extra text):
+            content: `For date ${date}, provide a comprehensive security risk assessment for Lebanon. Consider political stability, economic security, infrastructure risks, and regional developments. Respond with ONLY valid JSON (no markdown, no extra text):
 {
   "date": "${date}",
-  "summary": "Brief news coverage analysis",
-  "threatLevel": "Low",
-  "keyRisks": [{"category": "News Coverage", "description": "Media tone", "mitigation": "Keep informed"}],
-  "outlook24h": "Continued reporting",
-  "seoTitle": "Lebanon News Briefing - ${new Date(date).toLocaleDateString('en-US', {month:'short',day:'numeric'})}",
-  "seoDescription": "News sentiment analysis for Lebanon on ${new Date(date).toLocaleDateString('en-US', {month:'long',day:'numeric',year:'numeric'})}"
+  "summary": "Overall security risk assessment for Lebanon on this date",
+  "threatLevel": "Low|Moderate|Elevated|High|Extreme",
+  "keyRisks": [
+    {"category": "Political Stability", "description": "Specific risks", "mitigation": "Recommended actions"},
+    {"category": "Economic Security", "description": "Financial/economic risks", "mitigation": "Mitigation strategies"},
+    {"category": "Infrastructure", "description": "Infrastructure vulnerabilities", "mitigation": "Protection measures"}
+  ],
+  "outlook24h": "Expected developments in next 24 hours",
+  "seoTitle": "Lebanon Security Risk Assessment - ${new Date(date).toLocaleDateString('en-US', {month:'short',day:'numeric'})}",
+  "seoDescription": "Security risk assessment for Lebanon on ${new Date(date).toLocaleDateString('en-US', {month:'long',day:'numeric',year:'numeric'})}"
 }`
           }
         ],
         temperature: 0.5,
-        max_tokens: 512
+        max_tokens: 1024
       });
 
       const content = response.choices[0]?.message?.content || "{}";
