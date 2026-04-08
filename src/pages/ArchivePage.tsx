@@ -22,7 +22,7 @@ export default function ArchivePage() {
   const pageDates = allDates.slice(startIdx, startIdx + itemsPerPage);
 
   const seoTitle = `Lebanon Security & Safety News Archive | ${allDates.length} Reports | zodsecurity.com`;
-  const seoDescription = `Complete archive of Lebanon security and safety news analysis. ${allDates.length} daily reports with security risk assessment, political stability trends, economic safety assessments, and regional security developments.`;
+  const seoDescription = `Complete archive of Lebanon security and safety risk assessments. ${allDates.length} daily reports with detailed threat analysis, political stability evaluation, economic security trends, and regional development tracking.`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -52,7 +52,7 @@ export default function ArchivePage() {
         description={seoDescription}
         jsonLd={jsonLd}
         ogType="website"
-        keywords="lebanon security archive, daily reports, security analysis, lebanon news analysis, historical data, security trends"
+        keywords="lebanon security archive, daily reports, risk assessment, security analysis, historical data, security trends"
       />
 
       <div className="min-h-screen bg-gray-50">
@@ -66,9 +66,8 @@ export default function ArchivePage() {
               </h1>
             </div>
             <p className="text-lg text-gray-600 max-w-3xl">
-              Complete archive of {allDates.length} daily Lebanon security and safety news analysis reports.
-              Real-time security risk assessment of political stability, economic safety, infrastructure, humanitarian
-              concerns, and regional developments affecting Lebanon.
+              Complete archive of {allDates.length} daily Lebanon security and safety risk assessments.
+              Comprehensive security threat evaluation covering political stability, economic security, infrastructure resilience, humanitarian concerns, and regional developments affecting Lebanon.
             </p>
           </div>
 
@@ -98,7 +97,7 @@ export default function ArchivePage() {
                   </div>
 
                   <p className="text-sm text-gray-600 mb-4">
-                    Lebanon security and safety news analysis report
+                    Lebanon security and safety risk assessment report
                   </p>
 
                   <div className="flex items-center text-[#E31E24] font-semibold text-sm group-hover:gap-2 transition-all">

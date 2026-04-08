@@ -143,10 +143,10 @@ export default function Methodology() {
         <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-3 text-sm text-gray-700">
           <p>
             <strong>Update Frequency:</strong> The index recalibrates every time you load the page or click "Recalibrate"
-            by fetching the latest RSS feeds and reanalyzing sentiment.
+            by fetching the latest news sources and reassessing security risks.
           </p>
           <p>
-            <strong>Historical Data:</strong> 7-day historical trend shows how sentiment has changed over the past week.
+            <strong>Historical Data:</strong> 7-day historical trend shows how risk assessment has evolved over the past week.
           </p>
           <p>
             <strong>No Caching of Scores:</strong> Scores are recalculated on-demand from fresh feed data, ensuring current information.

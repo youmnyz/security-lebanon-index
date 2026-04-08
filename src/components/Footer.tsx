@@ -47,7 +47,7 @@ export default function Footer() {
 
           {/* Disclaimer */}
           <div className="mt-6 p-4 bg-gray-800 bg-opacity-50 rounded border border-gray-700 text-xs text-gray-400">
-            <strong>Disclaimer:</strong> This is a news analysis tool measuring media coverage sentiment, not operational intelligence or security assessment.
+            <strong>Disclaimer:</strong> This is a security risk assessment tool based on available information analysis, not operational intelligence or professional security consulting.
             ZOD is not responsible for the accuracy or completeness of information displayed. Users access this service entirely at their own risk.
             For professional security consulting, visit <a href="https://zodsecurity.com" className="text-[#E31E24] hover:underline">zodsecurity.com</a>.
           </div>

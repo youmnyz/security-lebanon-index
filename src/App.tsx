@@ -194,8 +194,8 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
 
   const todayStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
   // SEO: Optimized for "lebanon security" and "lebanon safety" keywords
-  const seoTitle = aiAnalysis?.seoTitle || `Lebanon Security Index - Safety News & Analysis | ${data.overallScore}/100`;
-  const seoDescription = aiAnalysis?.seoDescription || `Lebanon security and safety news tracker. Real-time analysis of Lebanon safety index covering criminal risks, fire safety, financial security, infrastructure threats, and business continuity. Current safety score: ${data.overallScore}/100`;
+  const seoTitle = aiAnalysis?.seoTitle || `Lebanon Security Index - Risk Assessment | ${data.overallScore}/100`;
+  const seoDescription = aiAnalysis?.seoDescription || `Lebanon security and safety risk assessment. Real-time analysis of political stability, economic security, infrastructure threats, criminal activity, and humanitarian concerns. Current threat level: ${data.overallScore}/100`;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -209,7 +209,7 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
       "@type": "Place",
       "name": "Lebanon"
     },
-    "keywords": ["security lebanon", "safety lebanon", "lebanon security index", "lebanon news analysis", "lebanon safety monitoring"],
+    "keywords": ["security lebanon", "safety lebanon", "lebanon security index", "lebanon risk assessment", "lebanon safety monitoring"],
     "creator": {
       "@type": "Organization",
       "name": "Intelligence Systems",
@@ -323,9 +323,9 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
                     data.overallScore > data.historicalData[data.historicalData.length - 2].score ? "text-red-500" : "text-emerald-500"
                   )}>
                     {data.overallScore > data.historicalData[data.historicalData.length - 2].score ? (
-                      <><ArrowUpRight className="w-3 h-3 mr-1" /> More Negative</>
+                      <><ArrowUpRight className="w-3 h-3 mr-1" /> Risk Increased</>
                     ) : (
-                      <><TrendingDown className="w-3 h-3 mr-1" /> More Positive</>
+                      <><TrendingDown className="w-3 h-3 mr-1" /> Risk Decreased</>
                     )}
                   </div>
                 )}
@@ -333,9 +333,9 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
             </div>
 
             <p className="text-sm md:text-base text-white/70 leading-relaxed max-w-xl mb-8">
-              <span className="text-white font-bold">Lebanon security & safety</span> news analysis from
+              <span className="text-white font-bold">Lebanon security & safety risk assessment</span> from
               <span className="text-[#E31E24] font-bold"> 8+ international sources</span>.
-              Security risk assessment of political stability, economic safety, infrastructure, humanitarian concerns, and regional developments.
+              Comprehensive evaluation of political stability, economic security, infrastructure threats, humanitarian concerns, and regional developments.
             </p>
             
           </div>
@@ -627,7 +627,7 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
           <div>
             <h2 className="text-2xl font-bold text-white mb-2">Lebanon Security & Safety News Archive</h2>
             <p className="text-white font-medium leading-relaxed">
-              Access 365 daily reports analyzing Lebanon security and safety news. Complete archive with real-time sentiment analysis, historical trends, and security assessments.
+              Access 365 daily reports assessing Lebanon security and safety risks. Complete archive with real-time threat analysis, historical trends, and detailed risk assessments.
             </p>
           </div>
 
@@ -711,9 +711,9 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
             </div>
             <div className="bg-[#2D2D2D] text-white rounded-xl p-4 md:p-6 relative overflow-hidden shadow-xl">
               <div className="relative z-10">
-                <h3 className="text-base font-bold mb-3">News-Based Security Analysis</h3>
+                <h3 className="text-base font-bold mb-3">Security Risk Assessment</h3>
                 <p className="text-[11px] opacity-70 leading-relaxed">
-                  This index analyzes sentiment from 8+ news sources to track coverage trends. Scores reflect reporting tone, not operational ground truth.
+                  This index assesses security risks from 8+ international news sources to evaluate real-world threat levels. Threat assessments are based on analyzed information, not official intelligence.
                 </p>
               </div>
               <div className="absolute -bottom-4 -right-4 opacity-5">
@@ -739,8 +739,8 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
               <p className="text-[10px] text-amber-700">Only news from the last 30 days included in score calculations.</p>
             </div>
             <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
-              <p className="text-[11px] text-emerald-900 font-medium mb-1">Sentiment Analysis</p>
-              <p className="text-[10px] text-emerald-700">Keyword-based sentiment scoring with severity weighting.</p>
+              <p className="text-[11px] text-emerald-900 font-medium mb-1">Risk Assessment Methodology</p>
+              <p className="text-[10px] text-emerald-700">Multi-factor security analysis with threat severity weighting across political, economic, and infrastructure categories.</p>
             </div>
           </div>
         </section>
@@ -1131,8 +1131,8 @@ export default function App() {
             <Lock className="text-[#2D2D2D] w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-lg md:text-xl font-extrabold uppercase tracking-tight leading-none">Lebanon News Index</h1>
-            <p className="text-[9px] font-mono opacity-70 uppercase tracking-widest mt-1">News-Based Security Analysis</p>
+            <h1 className="text-lg md:text-xl font-extrabold uppercase tracking-tight leading-none">Lebanon Security Index</h1>
+            <p className="text-[9px] font-mono opacity-70 uppercase tracking-widest mt-1">Security Risk Assessment</p>
           </div>
         </Link>
         <div className="flex items-center gap-4">
