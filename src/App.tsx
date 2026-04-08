@@ -1057,23 +1057,7 @@ export default function App() {
       });
       if (!response.ok) throw new Error('Server AI analysis failed');
       const result = await response.json();
-
-      // Transform directives response into summarySections format for the UI
-      const transformed = result.directives
-        ? {
-            summarySections: result.directives.map((directive: any) => ({
-              title: directive.label,
-              content: directive.text
-            })),
-            findings: result.directives
-              .flatMap((d: any) => d.sub_directives || [])
-              .slice(0, 3)
-              .map((sub: any) => sub.label || sub.text),
-            metrics: result.metrics || { Resilience: 50, Stability: 50, Risk: 50 }
-          }
-        : result;
-
-      setAiAnalysis(transformed);
+      setAiAnalysis(result);
     } catch (error) {
       if (isQuotaError(error)) {
         console.warn("Gemini Quota Exhausted during AI analysis. Using fallback text.");
