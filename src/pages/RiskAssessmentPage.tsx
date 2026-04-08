@@ -145,9 +145,9 @@ export default function RiskAssessmentPage() {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-2 h-2 bg-[#E31E24] rounded-full" />
-                  <span className="text-[10px] font-mono uppercase tracking-[0.3em] font-bold opacity-70">News Sentiment Briefing</span>
+                  <span className="text-[10px] font-mono uppercase tracking-[0.3em] font-bold opacity-70">Risk Assessment Briefing</span>
                 </div>
-                <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">Daily News Analysis</h1>
+                <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">Daily Risk Assessment</h1>
                 <p className="text-lg opacity-60 mt-2 font-medium">Based on news coverage for {new Date(date!).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
               </div>
               <div className="flex flex-col items-end">
@@ -160,7 +160,7 @@ export default function RiskAssessmentPage() {
             </div>
             
             <div className="bg-white/5 backdrop-blur-sm border border-white/10 p-6 rounded-lg">
-              <h3 className="text-xs font-bold uppercase tracking-widest mb-3 text-[#E31E24]">News Summary</h3>
+              <h3 className="text-xs font-bold uppercase tracking-widest mb-3 text-[#E31E24]">Risk Assessment Summary</h3>
               <p className="text-base md:text-lg leading-relaxed opacity-90 font-medium italic">
                 "{assessment.summary}"
               </p>
@@ -175,7 +175,7 @@ export default function RiskAssessmentPage() {
           <section>
             <div className="flex items-center gap-3 mb-8">
               <AlertTriangle className="w-6 h-6 text-[#E31E24]" />
-              <h2 className="text-xl font-black uppercase tracking-tight text-[#2D2D2D]">News Topics & Themes</h2>
+              <h2 className="text-xl font-black uppercase tracking-tight text-[#2D2D2D]">Risk Assessment Areas</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {(assessment.keyRisks || []).map((risk, idx) => (
@@ -221,10 +221,10 @@ export default function RiskAssessmentPage() {
         {/* Footer */}
         <div className="bg-gray-50 border-t border-gray-100 p-6 text-center space-y-2">
           <p className="text-[10px] font-mono uppercase tracking-widest text-gray-400 font-bold">
-            News Sentiment Analysis • Based on public news sources • © 2026 Lebanon News Index
+            Security Risk Assessment • Based on multiple information sources • © 2026 Lebanon Security Index
           </p>
           <p className="text-[9px] text-gray-500">
-            This analysis reflects news coverage patterns, not operational intelligence assessments.
+            This assessment evaluates security risks and threat factors based on available information from multiple sources.
           </p>
         </div>
       </div>
