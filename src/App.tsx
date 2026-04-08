@@ -426,7 +426,7 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
           </div>
           <div className="flex items-center gap-2 mb-4 relative z-10">
             <Activity className="w-4 h-4 text-[#E31E24]" />
-            <h2 className="text-[9px] font-mono uppercase tracking-widest font-bold">News Analysis Summary</h2>
+            <h2 className="text-[9px] font-mono uppercase tracking-widest font-bold">Risk Assessment Summary</h2>
           </div>
 
           <div className="flex-1 overflow-hidden relative z-10">
