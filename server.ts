@@ -498,12 +498,15 @@ async function startServer() {
       const { Groq } = await import("groq-sdk");
       const groq = new Groq({ apiKey });
 
-      // Get news from that date for context (if available from cache)
-      const newsContext = securityData.newsFeed
+      // Get news from that date for context, fall back to recent news if none for that date
+      let dateSpecificNews = securityData.newsFeed
         ?.filter((item: any) => item.timestamp?.startsWith(date))
-        ?.slice(0, 5)
-        ?.map((item: any) => `- ${item.title}: ${item.summary || ''}`)
-        ?.join('\n') || 'No specific incidents recorded for this date';
+        ?.slice(0, 5) || [];
+
+      const newsContext = dateSpecificNews.length > 0
+        ? dateSpecificNews.map((item: any) => `- [${item.timestamp?.split('T')[0]}] ${item.title}: ${item.summary || ''}`).join('\n')
+        : `RECENT INCIDENTS (no specific incidents recorded for ${date}, using recent context):
+${securityData.newsFeed?.slice(0, 10)?.map((item: any) => `- [${item.timestamp?.split('T')[0]}] ${item.title}: ${item.summary || ''}`).join('\n') || 'No recent incidents in database'}`;
 
       const response = await groq.chat.completions.create({
         model: "llama-3.3-70b-versatile",
@@ -514,19 +517,22 @@ async function startServer() {
           },
           {
             role: "user",
-            content: `For date ${date}, conduct a SECURITY RISK ASSESSMENT for Lebanon based on documented incidents and security conditions.
+            content: `For date ${date}, conduct a SECURITY RISK ASSESSMENT for Lebanon based on documented incidents and structural security conditions.
 
-DOCUMENTED INCIDENTS FOR THIS DATE:
+NEWS CONTEXT:
 ${newsContext}
 
 Identify and assess: political stability threats, economic/financial vulnerabilities, infrastructure weaknesses, humanitarian risks.
 
+IMPORTANT: Even if no specific incidents are recorded for this date, provide a comprehensive security assessment based on structural/ongoing threats and the broader security context. Do NOT return "unavailable" - always provide substantive analysis.
+
 ABSOLUTE RULES:
-- NEVER use words: sentiment, tone, mixed, neutral, outlook, reporting, coverage, positive, negative, balanced
+- NEVER use words: sentiment, tone, mixed, neutral, outlook, reporting, coverage, positive, negative, balanced, unavailable
 - "summary" must describe ACTUAL SECURITY SITUATION and identified risks only
-- Reference specific incidents if available, or explain structural/ongoing risks
+- Reference specific incidents if available, otherwise explain structural/ongoing risks
 - Each risk in keyRisks must be a concrete security issue with specific mitigation
 - All language must be about RISKS, THREATS, VULNERABILITIES, not about media or news
+- Always provide complete assessment even if no breaking news for that specific date
 
 Respond with ONLY valid JSON:
 {
