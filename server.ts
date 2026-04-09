@@ -1,8 +1,10 @@
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
+import fs from "fs/promises";
+import { existsSync, mkdirSync } from "fs";
 
-// Deployment version: 2026-04-09 - Force Render redeploy
+// Deployment version: 2026-04-09 - Daily Risk Assessment Generation at 6 AM Beirut Time
 import { fileURLToPath } from "url";
 import cron from "node-cron";
 import { INITIAL_SECURITY_DATA } from "./src/constants";
@@ -323,6 +325,153 @@ async function recalibrateWithLiveNews(securityData: any, currentRSSFetch?: any)
   }
 }
 
+/**
+ * Risk Assessment Storage - JSON File
+ * Assessments generated daily and persisted for serving without token usage
+ */
+
+const DATA_DIR = "./data";
+const ASSESSMENTS_FILE = path.join(DATA_DIR, "risk-assessments.json");
+
+// Ensure data directory exists
+function ensureDataDir() {
+  if (!existsSync(DATA_DIR)) {
+    mkdirSync(DATA_DIR, { recursive: true });
+  }
+}
+
+// Load all risk assessments from JSON file
+async function loadRiskAssessments(): Promise<Map<string, any>> {
+  try {
+    ensureDataDir();
+    if (existsSync(ASSESSMENTS_FILE)) {
+      const data = await fs.readFile(ASSESSMENTS_FILE, "utf-8");
+      const assessments = JSON.parse(data);
+      console.log(`[Storage] Loaded ${Object.keys(assessments).length} risk assessments from file`);
+      return new Map(Object.entries(assessments));
+    }
+  } catch (err) {
+    console.error("[Storage] Error loading assessments:", err);
+  }
+  return new Map();
+}
+
+// Save risk assessment to JSON file
+async function saveRiskAssessment(date: string, assessment: any): Promise<void> {
+  try {
+    ensureDataDir();
+
+    // Load current assessments
+    const existing = new Map(await loadRiskAssessments());
+    existing.set(date, assessment);
+
+    // Convert to object and save
+    const obj: any = {};
+    existing.forEach((value, key) => {
+      obj[key] = value;
+    });
+
+    await fs.writeFile(ASSESSMENTS_FILE, JSON.stringify(obj, null, 2));
+    console.log(`[Storage] Saved risk assessment for ${date}`);
+  } catch (err) {
+    console.error("[Storage] Error saving assessment:", err);
+  }
+}
+
+// Generate daily risk assessment at 6 AM Beirut time
+async function scheduleDailyAssessmentGeneration(groq: any, allNews: any[]) {
+  // 6 AM = hour 6, minute 0
+  // Note: Ensure server TZ is set to Asia/Beirut or adjust cron expression
+  const cronExpression = "0 6 * * *";
+
+  console.log("[Scheduler] Setting up daily risk assessment generation at 6 AM Beirut time");
+
+  cron.schedule(cronExpression, async () => {
+    console.log(`[Scheduler] Starting daily risk assessment generation at ${new Date().toISOString()}`);
+
+    try {
+      const today = new Date().toISOString().split('T')[0];
+
+      // Fetch fresh live news for today
+      const liveNews = allNews.slice(0, 20);
+
+      const newsContext = liveNews.length > 0
+        ? liveNews.map((item: any) => `- [${item.timestamp?.split('T')[0]}] ${item.title}: ${item.summary || ''}`).join('\n')
+        : 'No incidents recorded for today';
+
+      const securityScore = calculateSecurityScore(liveNews);
+      const guidedThreatLevel = getThreatLevelFromScore(securityScore);
+
+      console.log(`[Scheduler] Generating assessment for ${today}, score: ${securityScore}`);
+
+      // Call Groq to generate assessment
+      const response = await groq.chat.completions.create({
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          {
+            role: "system",
+            content: "You are a security risk assessment analyst for Lebanon. NEVER use words like 'sentiment', 'tone', 'coverage', 'news', 'reporting', 'mixed', or 'outlook'. Assess ACTUAL SECURITY RISKS based on documented incidents and structural conditions. You MUST respond with VALID JSON ONLY - no markdown or preamble, start directly with { and end with }"
+          },
+          {
+            role: "user",
+            content: `For date ${today}, conduct a SECURITY RISK ASSESSMENT for Lebanon based on documented incidents and structural security conditions.
+
+SECURITY ASSESSMENT GUIDANCE:
+- Security risk score calculated: ${securityScore}/100 (where 100 = maximum risk)
+- Score-based threat level guidance: ${guidedThreatLevel}
+- Use this as a reference for your overall threat assessment
+
+NEWS CONTEXT:
+${newsContext}
+
+Identify and assess: political stability threats, economic/financial vulnerabilities, infrastructure weaknesses, humanitarian risks.
+
+IMPORTANT: Always provide substantive security analysis based on structural/ongoing threats and the broader security context.
+
+ABSOLUTE RULES:
+- NEVER use words: sentiment, tone, mixed, neutral, outlook, reporting, coverage, positive, negative, balanced, unavailable
+- "summary" must describe ACTUAL SECURITY SITUATION and identified risks only
+- Reference specific incidents if available, otherwise explain structural/ongoing risks
+- Each risk in keyRisks must be a concrete security issue with specific mitigation
+- All language must be about RISKS, THREATS, VULNERABILITIES
+- threatLevel must correspond to the security risk score: Low (0-25), Moderate (25-50), Elevated (50-75), High (75-90), Extreme (90-100)
+
+Respond with ONLY valid JSON:
+{
+  "date": "${today}",
+  "summary": "Specific security risks and threat factors identified for Lebanon on this date based on documented incidents and security conditions.",
+  "threatLevel": "Low|Moderate|Elevated|High|Extreme",
+  "keyRisks": [
+    {"category": "Political Stability", "description": "Specific political security threats", "mitigation": "Responses to manage risks"},
+    {"category": "Economic Security", "description": "Financial vulnerabilities and economic threats", "mitigation": "Economic security measures"},
+    {"category": "Infrastructure", "description": "Physical infrastructure vulnerabilities", "mitigation": "Infrastructure hardening priorities"}
+  ],
+  "outlook24h": "Expected security developments in next 24 hours",
+  "seoTitle": "Lebanon Security Risk Assessment - ${new Date(today).toLocaleDateString('en-US', {month:'short',day:'numeric'})}",
+  "seoDescription": "Security risk assessment for Lebanon on ${new Date(today).toLocaleDateString('en-US', {month:'long',day:'numeric',year:'numeric'})}"
+}`
+          }
+        ],
+        temperature: 0.5,
+        max_tokens: 4096
+      });
+
+      const content = response.choices[0]?.message?.content || "";
+      if (!content) throw new Error("Empty Groq response");
+
+      const assessment = JSON.parse(content);
+
+      // Save to file
+      await saveRiskAssessment(today, assessment);
+
+      console.log(`[Scheduler] ✅ Successfully generated and saved assessment for ${today}`);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      console.error(`[Scheduler] ❌ Failed to generate assessment: ${errorMsg}`);
+    }
+  });
+}
+
 async function startServer() {
   const app = express();
   const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
@@ -466,6 +615,16 @@ async function startServer() {
   app.get("/api/risk-assessment/:date", async (req, res) => {
     const { date } = req.params;
     try {
+      // Check JSON storage first - if assessment exists for this date, return it without API call
+      const riskAssessments = await loadRiskAssessments();
+      const storedAssessment = riskAssessments.get(date);
+      if (storedAssessment) {
+        console.log(`[Risk Assessment] Returning stored assessment for ${date} (no API call needed)`);
+        return res.json(storedAssessment);
+      }
+
+      console.log(`[Risk Assessment] No stored assessment for ${date}, generating new assessment via API`);
+
       const apiKey = process.env.GROQ_API_KEY;
       if (!apiKey) {
         console.warn("GROQ_API_KEY not set");
@@ -556,6 +715,8 @@ Respond with ONLY valid JSON:
 
       const content = response.choices[0]?.message?.content || "{}";
       const result = JSON.parse(content);
+      // Save to JSON file for future requests
+      await saveRiskAssessment(date, result);
       // Cache successful response for this date
       riskAssessmentCache.set(date, result);
       res.json(result);
@@ -1067,10 +1228,26 @@ Generate analysis in JSON format only (no markdown):
   // Run on startup to populate cache immediately
   await generatePageCache();
 
+  // Initialize risk assessments from JSON storage
+  riskAssessmentCache = await loadRiskAssessments();
+
+  // Initialize Groq client for daily scheduler
+  const apiKey = process.env.GROQ_API_KEY;
+  if (apiKey) {
+    const { Groq } = await import("groq-sdk");
+    const groq = new Groq({ apiKey });
+    // Start daily assessment generation at 6 AM Beirut time
+    scheduleDailyAssessmentGeneration(groq, newsCache.data);
+    console.log("[Scheduler] ✅ Daily assessment generation scheduled at 6 AM Beirut time");
+  } else {
+    console.warn("[Scheduler] ⚠️ GROQ_API_KEY not configured - daily generation disabled");
+  }
+
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
     console.log(`[SEO] Page cache initialized with ${pageCache.size} pages`);
     console.log(`[SEO] Next daily regeneration: 6 AM tomorrow`);
+    console.log(`[Storage] Risk assessments loaded: ${riskAssessmentCache.size} dates cached`);
   });
 }
 
