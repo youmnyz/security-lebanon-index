@@ -498,15 +498,27 @@ async function startServer() {
       const { Groq } = await import("groq-sdk");
       const groq = new Groq({ apiKey });
 
+      // Fetch fresh live news data for this date
+      let liveNews = newsCache.data;
+
+      // If cache is empty or expired, fetch fresh news
+      if (liveNews.length === 0 || Date.now() - newsCache.timestamp >= newsCache.TTL) {
+        console.log(`[Risk Assessment] Cache expired or empty for ${date}, fetching fresh news...`);
+        const liveNewsResponse = await fetch(`${req.protocol}://${req.get('host')}/api/live-news`);
+        if (liveNewsResponse.ok) {
+          liveNews = await liveNewsResponse.json();
+        }
+      }
+
       // Get news from that date for context, fall back to recent news if none for that date
-      let dateSpecificNews = securityData.newsFeed
+      let dateSpecificNews = liveNews
         ?.filter((item: any) => item.timestamp?.startsWith(date))
         ?.slice(0, 5) || [];
 
       const newsContext = dateSpecificNews.length > 0
         ? dateSpecificNews.map((item: any) => `- [${item.timestamp?.split('T')[0]}] ${item.title}: ${item.summary || ''}`).join('\n')
         : `RECENT INCIDENTS (no specific incidents recorded for ${date}, using recent context):
-${securityData.newsFeed?.slice(0, 10)?.map((item: any) => `- [${item.timestamp?.split('T')[0]}] ${item.title}: ${item.summary || ''}`).join('\n') || 'No recent incidents in database'}`;
+${liveNews?.slice(0, 10)?.map((item: any) => `- [${item.timestamp?.split('T')[0]}] ${item.title}: ${item.summary || ''}`).join('\n') || 'No recent incidents in database'}`;
 
       const response = await groq.chat.completions.create({
         model: "llama-3.3-70b-versatile",
