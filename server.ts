@@ -1399,49 +1399,80 @@ Generate analysis in JSON format only (no markdown):
     }
   });
 
-  // SEO: Enhanced Sitemap with 365 days for ranking "lebanon security" and "lebanon safety"
+  // SEO: Sitemap Index - Google Search Console best practice for 300+ URLs
   app.get("/sitemap.xml", (req, res) => {
     const baseUrl = process.env.APP_URL || "https://lebanon-security-index.zodsecurity.com";
     const today = new Date().toISOString().split('T')[0];
 
-    // Generate entire year for SEO (365 days)
-    const yearOfDates = Array.from({ length: 365 }, (_, i) => {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      return d.toISOString().split('T')[0];
-    });
+    const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>${baseUrl}/sitemap-core.xml</loc>
+    <lastmod>${today}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${baseUrl}/sitemap-assessments.xml</loc>
+    <lastmod>${today}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${baseUrl}/sitemap-static.xml</loc>
+    <lastmod>${today}</lastmod>
+  </sitemap>
+</sitemapindex>`;
 
-    // Archive pagination (30 reports per page = ~12 pages)
-    const archivePages = Array.from({ length: 12 }, (_, i) => i + 1);
+    res.set('Content-Type', 'application/xml');
+    res.send(sitemapIndex);
+  });
+
+  // Sitemap 1: Core Pages (Homepage, Archive, Methodology)
+  app.get("/sitemap-core.xml", (req, res) => {
+    const baseUrl = process.env.APP_URL || "https://lebanon-security-index.zodsecurity.com";
+    const today = new Date().toISOString().split('T')[0];
 
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Homepage: Highest priority for "lebanon security" and "lebanon safety" keywords -->
   <url>
     <loc>${baseUrl}/</loc>
     <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-
-  <!-- Archive Hub: Important for SEO crawlability -->
+  <url>
+    <loc>${baseUrl}/methodology</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
   <url>
     <loc>${baseUrl}/archive</loc>
     <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
-
-  <!-- Archive Pagination Pages -->
-  ${archivePages.map(page => `
+  ${Array.from({ length: 12 }, (_, i) => i + 1).map(page => `
   <url>
     <loc>${baseUrl}/archive/page/${page}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>`).join('')}
+</urlset>`;
 
-  <!-- Daily Reports: 365 days of content for "lebanon security" and "lebanon safety" ranking -->
+    res.set('Content-Type', 'application/xml');
+    res.send(sitemap);
+  });
+
+  // Sitemap 2: Assessment Pages (365 days) - React SPA routes
+  app.get("/sitemap-assessments.xml", (req, res) => {
+    const baseUrl = process.env.APP_URL || "https://lebanon-security-index.zodsecurity.com";
+    const yearOfDates = Array.from({ length: 365 }, (_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      return d.toISOString().split('T')[0];
+    });
+
+    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${yearOfDates.map(date => `
   <url>
     <loc>${baseUrl}/risk-assessment/${date}</loc>
@@ -1451,7 +1482,31 @@ Generate analysis in JSON format only (no markdown):
   </url>`).join('')}
 </urlset>`;
 
-    res.header('Content-Type', 'application/xml');
+    res.set('Content-Type', 'application/xml');
+    res.send(sitemap);
+  });
+
+  // Sitemap 3: Static HTML Assessment Pages (365 days) - SEO-optimized static files
+  app.get("/sitemap-static.xml", (req, res) => {
+    const baseUrl = process.env.APP_URL || "https://lebanon-security-index.zodsecurity.com";
+    const yearOfDates = Array.from({ length: 365 }, (_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      return d.toISOString().split('T')[0];
+    });
+
+    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  ${yearOfDates.map(date => `
+  <url>
+    <loc>${baseUrl}/risk-assessment/${date}.html</loc>
+    <lastmod>${date}</lastmod>
+    <changefreq>never</changefreq>
+    <priority>0.7</priority>
+  </url>`).join('')}
+</urlset>`;
+
+    res.set('Content-Type', 'application/xml');
     res.send(sitemap);
   });
 
