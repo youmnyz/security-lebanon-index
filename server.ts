@@ -694,7 +694,7 @@ Respond with ONLY valid JSON:
           messages: [
             {
               role: "system",
-              content: "You are a security risk assessment analyst. NEVER use words like 'sentiment', 'tone', 'coverage', 'news', 'reporting', 'mixed', or 'outlook'. Assess ACTUAL SECURITY RISKS based on documented incidents and structural conditions."
+              content: "You are a security risk assessment analyst. NEVER use words like 'sentiment', 'tone', 'coverage', 'news', 'reporting', 'mixed', or 'outlook'. Assess ACTUAL SECURITY RISKS based on documented incidents and structural conditions. You MUST respond with VALID JSON ONLY - no markdown, no preamble, no explanation. Start directly with { and end with }"
             },
             {
               role: "user",
@@ -761,8 +761,8 @@ Generate analysis in JSON format only (no markdown):
 }`
           }
         ],
-        temperature: 0.7,
-        max_tokens: 2048
+        temperature: 0.5,
+        max_tokens: 4096
       });
       console.log("[AI Analysis] Groq API call successful");
       } catch (groqErr) {
