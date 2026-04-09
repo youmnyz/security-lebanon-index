@@ -639,32 +639,81 @@ Respond with ONLY valid JSON:
       const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || "" });
       const { score, lastUpdated } = req.body;
 
+      // Get recent news for context (last 10 items)
+      const recentNews = securityData.newsFeed?.slice(0, 10) || [];
+      const newsContext = recentNews.length > 0
+        ? recentNews.map((item: any) => `- ${item.title}: ${item.summary || ''}`).join('\n')
+        : 'No recent incidents in news feed';
+
       const response = await groq.chat.completions.create({
         model: "llama-3.3-70b-versatile",
         messages: [
           {
             role: "system",
-            content: "You are a security risk assessment analyst. NEVER use words like 'sentiment', 'tone', 'coverage', 'news', 'reporting', 'mixed', or 'outlook'. Assess ACTUAL SECURITY RISKS only."
+            content: "You are a security risk assessment analyst. NEVER use words like 'sentiment', 'tone', 'coverage', 'news', 'reporting', 'mixed', or 'outlook'. Assess ACTUAL SECURITY RISKS based on documented incidents and structural conditions."
           },
           {
             role: "user",
-            content: `Conduct a comprehensive security risk assessment for Lebanon. Current threat assessment score: ${score}/100. Last updated: ${lastUpdated}.
+            content: `Conduct a comprehensive security risk assessment for Lebanon based on recent incidents and current conditions.
+Current threat assessment score: ${score}/100. Last updated: ${lastUpdated}.
+
+RECENT INCIDENTS AND INCIDENTS:
+${newsContext}
 
 Analyze and assess: political stability threats, economic security vulnerabilities, infrastructure weaknesses, criminal activity levels, and humanitarian concerns.
+Base your assessment on the documented incidents above and structural/ongoing risks.
+For each category, provide specific sub-threats and their implications.
 
 Generate analysis in JSON format only (no markdown):
 {
   "directives": [
-    { "label": "Politics", "text": "Assessment of political stability risks and governance threats", "icon": "ArrowUpRight" },
-    { "label": "Economic", "text": "Analysis of financial security vulnerabilities and economic threats", "icon": "ShieldAlert" },
-    { "label": "Regional", "text": "Regional geopolitical risks and security impacts", "icon": "Activity" }
+    {
+      "label": "Politics",
+      "text": "Assessment of political stability risks and governance threats based on recent incidents",
+      "icon": "ArrowUpRight",
+      "sub_directives": [
+        { "label": "Specific Political Threat", "text": "Description based on recent events or structural issues" }
+      ]
+    },
+    {
+      "label": "Economic",
+      "text": "Analysis of financial security vulnerabilities and economic threats",
+      "icon": "ShieldAlert",
+      "sub_directives": [
+        { "label": "Specific Economic Threat", "text": "Description based on recent data" }
+      ]
+    },
+    {
+      "label": "Infrastructure",
+      "text": "Infrastructure vulnerabilities and service disruption risks",
+      "icon": "Activity",
+      "sub_directives": [
+        { "label": "Specific Infrastructure Issue", "text": "Description based on recent events" }
+      ]
+    },
+    {
+      "label": "Criminal Activity",
+      "text": "Criminal activity levels and security implications",
+      "icon": "AlertTriangle",
+      "sub_directives": [
+        { "label": "Crime Type", "text": "Recent activity and threat level" }
+      ]
+    },
+    {
+      "label": "Humanitarian",
+      "text": "Humanitarian concerns and vulnerable populations",
+      "icon": "HeartBreak",
+      "sub_directives": [
+        { "label": "Humanitarian Issue", "text": "Current situation and needs" }
+      ]
+    }
   ],
   "metrics": { "Resilience": 0-100, "Stability": 0-100, "Risk": 0-100 }
 }`
           }
         ],
         temperature: 0.7,
-        max_tokens: 1024
+        max_tokens: 2048
       });
 
       const content = response.choices[0]?.message?.content || "{}";
