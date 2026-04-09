@@ -353,6 +353,10 @@ async function startServer() {
   // Cache for RSS news (5-10 minute TTL to avoid hammering feeds)
   let newsCache = { data: [] as any[], timestamp: 0, TTL: 5 * 60 * 1000 };
 
+  // Cache for AI analysis responses to prevent showing fallback when API fails
+  let aiAnalysisCache: any = null;
+  let riskAssessmentCache: Map<string, any> = new Map();
+
   // In-memory data store (simulating a database)
   let securityData = {
     ...INITIAL_SECURITY_DATA,
@@ -546,21 +550,32 @@ Respond with ONLY valid JSON:
 
       const content = response.choices[0]?.message?.content || "{}";
       const result = JSON.parse(content);
+      // Cache successful response for this date
+      riskAssessmentCache.set(date, result);
       res.json(result);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);
       console.error(`[Risk Assessment] Failed for date ${date}: ${errorMsg}`);
-      res.json({
-        date,
-        summary: "Security risk assessment unavailable for this date. Please check back later for updated threat analysis.",
-        threatLevel: "Moderate",
-        keyRisks: [
-          { category: "Data Unavailable", description: "Assessment not available", mitigation: "Review news sources directly" }
-        ],
-        outlook24h: "Unable to generate outlook.",
-        seoTitle: `Lebanon Security Risk Assessment - ${date}`,
-        seoDescription: "Security risk assessment for Lebanon"
-      });
+
+      // If we have cached data for this date, return it instead of fallback
+      const cachedResult = riskAssessmentCache.get(date);
+      if (cachedResult) {
+        console.log(`Returning cached risk assessment for ${date}`);
+        res.json(cachedResult);
+      } else {
+        // Only show fallback if we have no cached data
+        res.json({
+          date,
+          summary: "Security risk assessment unavailable for this date. Please check back later for updated threat analysis.",
+          threatLevel: "Moderate",
+          keyRisks: [
+            { category: "Data Unavailable", description: "Assessment not available", mitigation: "Review news sources directly" }
+          ],
+          outlook24h: "Unable to generate outlook.",
+          seoTitle: `Lebanon Security Risk Assessment - ${date}`,
+          seoDescription: "Security risk assessment for Lebanon"
+        });
+      }
     }
   });
 
@@ -654,15 +669,24 @@ Generate analysis in JSON format only (no markdown):
 
       const content = response.choices[0]?.message?.content || "{}";
       const result = JSON.parse(content);
+      // Cache successful response
+      aiAnalysisCache = result;
       res.json(result);
     } catch (err) {
       console.error("AI analysis failed:", err);
-      res.status(500).json({
-        directives: [
-          { label: "Assessment", text: "Unable to generate detailed risk analysis at this time. Review threat assessment score and key risk indicators below.", icon: "AlertTriangle" }
-        ],
-        metrics: { Resilience: 50, Stability: 50, Risk: 50 }
-      });
+      // If we have cached data, return it instead of fallback template
+      if (aiAnalysisCache) {
+        console.log("Returning cached AI analysis due to API failure");
+        res.json(aiAnalysisCache);
+      } else {
+        // Only show fallback if we have no cached data
+        res.status(500).json({
+          directives: [
+            { label: "Assessment", text: "Unable to generate detailed risk analysis at this time. Review threat assessment score and key risk indicators below.", icon: "AlertTriangle" }
+          ],
+          metrics: { Resilience: 50, Stability: 50, Risk: 50 }
+        });
+      }
     }
   });
 
