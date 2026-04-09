@@ -110,18 +110,19 @@ function calculateSecurityScore(newsItems: any[]): number {
 
   const avgSentiment = totalWeight > 0 ? totalWeightedSentiment / totalWeight : 0;
 
-  // Base score: map risk assessment from [-1,1] to [0,100], with lower baseline
-  let score = 50 + (avgSentiment * 40); // Reduced multiplier from 50 to 40
+  // Base score: map risk assessment from [-1,1] to [0,100]
+  let score = 50 + (avgSentiment * 40);
 
-  // Apply conflict penalty: if warfare terminology detected, lower score further
+  // Apply conflict escalation: if warfare terminology detected, significantly increase risk (LOWER score)
   if (conflictIndicators > 0) {
-    const conflictPenalty = Math.min(15, conflictIndicators * 3); // 3 points per conflict indicator
-    score -= conflictPenalty;
-  }
+    // More conflict indicators = more severe threat = lower score
+    const conflictMultiplier = 1 + (conflictIndicators * 0.1); // 10% increase per indicator
+    score = score / conflictMultiplier; // Divide to lower the score (increase risk)
 
-  // Overall floor for conflict situations: no higher than 55 if any conflict detected
-  if (conflictIndicators > 0 && score > 55) {
-    score = 55;
+    // If multiple critical indicators detected, push into Critical range (0-25)
+    if (conflictIndicators >= 3) {
+      score = Math.min(score, 25); // Cap at Warning/Critical threshold
+    }
   }
 
   return Math.round(Math.max(0, Math.min(100, score)));
