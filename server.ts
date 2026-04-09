@@ -645,7 +645,13 @@ Respond with ONLY valid JSON:
       console.log("[AI Analysis] Request received, API Key configured:", !!apiKey);
       if (!apiKey) {
         console.error("[AI Analysis] GROQ_API_KEY not configured");
-        throw new Error("GROQ_API_KEY environment variable not configured");
+        // Return immediate fallback without trying Groq
+        return res.status(500).json({
+          directives: [
+            { label: "API Configuration Error", text: "GROQ_API_KEY not configured in environment", icon: "AlertTriangle" }
+          ],
+          metrics: { Resilience: 50, Stability: 50, Risk: 50 }
+        });
       }
 
       const { Groq } = await import("groq-sdk");
@@ -681,16 +687,18 @@ Respond with ONLY valid JSON:
       console.log("[AI Analysis] News context length:", newsContext.length, "chars, items:", recentNews.length);
 
       console.log("[AI Analysis] Calling Groq API...");
-      const response = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
-        messages: [
-          {
-            role: "system",
-            content: "You are a security risk assessment analyst. NEVER use words like 'sentiment', 'tone', 'coverage', 'news', 'reporting', 'mixed', or 'outlook'. Assess ACTUAL SECURITY RISKS based on documented incidents and structural conditions."
-          },
-          {
-            role: "user",
-            content: `Conduct a comprehensive security risk assessment for Lebanon based on recent incidents and current conditions.
+      let response;
+      try {
+        response = await groq.chat.completions.create({
+          model: "llama-3.3-70b-versatile",
+          messages: [
+            {
+              role: "system",
+              content: "You are a security risk assessment analyst. NEVER use words like 'sentiment', 'tone', 'coverage', 'news', 'reporting', 'mixed', or 'outlook'. Assess ACTUAL SECURITY RISKS based on documented incidents and structural conditions."
+            },
+            {
+              role: "user",
+              content: `Conduct a comprehensive security risk assessment for Lebanon based on recent incidents and current conditions.
 Current threat assessment score: ${score}/100. Last updated: ${lastUpdated}.
 
 RECENT INCIDENTS AND INCIDENTS:
@@ -756,6 +764,12 @@ Generate analysis in JSON format only (no markdown):
         temperature: 0.7,
         max_tokens: 2048
       });
+      console.log("[AI Analysis] Groq API call successful");
+      } catch (groqErr) {
+        const groqErrorMsg = groqErr instanceof Error ? groqErr.message : String(groqErr);
+        console.error("[AI Analysis] Groq API call failed:", groqErrorMsg);
+        throw new Error(`Groq API Error: ${groqErrorMsg}`);
+      }
 
       const content = response.choices[0]?.message?.content || "";
       console.log("[AI Analysis] Groq response received, content length:", content.length);
