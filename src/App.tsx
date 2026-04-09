@@ -435,9 +435,9 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
             <div className="flex-1 flex flex-col justify-between relative z-10">
               <div className="space-y-4">
                 {[
-                  { label: "Resilience", value: aiAnalysis.metrics.Resilience, color: "emerald" },
-                  { label: "Stability", value: aiAnalysis.metrics.Stability, color: "blue" },
-                  { label: "Risk", value: aiAnalysis.metrics.Risk, color: "red" }
+                  { label: "Resilience", value: aiAnalysis.metrics.Resilience, bgColor: "#10b981" },
+                  { label: "Stability", value: aiAnalysis.metrics.Stability, bgColor: "#3b82f6" },
+                  { label: "Risk", value: aiAnalysis.metrics.Risk, bgColor: "#ef4444" }
                 ].map((metric) => (
                   <div key={metric.label}>
                     <div className="flex justify-between items-center mb-1">
@@ -446,8 +446,8 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
                     </div>
                     <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div
-                        className={`h-full transition-all bg-${metric.color}-500`}
-                        style={{ width: `${metric.value}%` }}
+                        className="h-full transition-all"
+                        style={{ width: `${metric.value}%`, backgroundColor: metric.bgColor }}
                       />
                     </div>
                   </div>
