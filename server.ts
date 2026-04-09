@@ -138,6 +138,20 @@ function getStatusFromScore(score: number): string {
   return 'Secure';
 }
 
+function getThreatLevelFromScore(score: number): string {
+  // Maps security score (0-100, where high = high risk) to threat level names
+  // 0-25: Secure (low risk)
+  // 25-50: Moderate (medium risk)
+  // 50-75: Elevated (medium-high risk)
+  // 75-90: High (high risk)
+  // 90-100: Extreme (extreme risk)
+  if (score >= 90) return 'Extreme';
+  if (score >= 75) return 'High';
+  if (score >= 50) return 'Elevated';
+  if (score >= 25) return 'Moderate';
+  return 'Low';
+}
+
 /**
  * Category Keyword Mapping
  * Maps news items to security risk categories based on keywords
@@ -524,6 +538,11 @@ async function startServer() {
         : `RECENT INCIDENTS (no specific incidents recorded for ${date}, using recent context):
 ${liveNews?.slice(0, 10)?.map((item: any) => `- [${item.timestamp?.split('T')[0]}] ${item.title}: ${item.summary || ''}`).join('\n') || 'No recent incidents in database'}`;
 
+      // Calculate security score to guide threat level assessment
+      const newsForScoring = dateSpecificNews.length > 0 ? dateSpecificNews : liveNews?.slice(0, 10) || [];
+      const securityScore = calculateSecurityScore(newsForScoring);
+      const guidedThreatLevel = getThreatLevelFromScore(securityScore);
+
       const response = await groq.chat.completions.create({
         model: "llama-3.3-70b-versatile",
         messages: [
@@ -534,6 +553,11 @@ ${liveNews?.slice(0, 10)?.map((item: any) => `- [${item.timestamp?.split('T')[0]
           {
             role: "user",
             content: `For date ${date}, conduct a SECURITY RISK ASSESSMENT for Lebanon based on documented incidents and structural security conditions.
+
+SECURITY ASSESSMENT GUIDANCE:
+- Security risk score calculated: ${securityScore}/100 (where 100 = maximum risk)
+- Score-based threat level guidance: ${guidedThreatLevel}
+- Use this as a reference for your overall threat assessment
 
 NEWS CONTEXT:
 ${newsContext}
@@ -549,6 +573,7 @@ ABSOLUTE RULES:
 - Each risk in keyRisks must be a concrete security issue with specific mitigation
 - All language must be about RISKS, THREATS, VULNERABILITIES, not about media or news
 - Always provide complete assessment even if no breaking news for that specific date
+- threatLevel must correspond to the security risk score: Low (0-25), Moderate (25-50), Elevated (50-75), High (75-90), Extreme (90-100)
 
 Respond with ONLY valid JSON:
 {
