@@ -420,6 +420,59 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
         </section>
       </div>
 
+      {/* AI Analysis Metrics - Only show if real data (not fallback) */}
+      {aiAnalysis && !isAnalyzing && aiAnalysis.metrics && (
+        <div className="lg:col-span-4 flex flex-col">
+          <section className="bg-white text-[#2D2D2D] p-6 rounded-xl shadow-xl border border-gray-200 relative overflow-hidden h-full flex flex-col flex-1">
+            <div className="absolute top-0 right-0 p-4 opacity-5">
+              <Zap className="w-16 h-16 text-[#2D2D2D]" />
+            </div>
+            <div className="flex items-center gap-2 mb-4 relative z-10">
+              <Activity className="w-4 h-4 text-[#E31E24]" />
+              <h2 className="text-[9px] font-mono uppercase tracking-widest font-bold">Risk Metrics</h2>
+            </div>
+
+            <div className="flex-1 flex flex-col justify-between relative z-10">
+              <div className="space-y-4">
+                {[
+                  { label: "Resilience", value: aiAnalysis.metrics.Resilience, color: "emerald" },
+                  { label: "Stability", value: aiAnalysis.metrics.Stability, color: "blue" },
+                  { label: "Risk", value: aiAnalysis.metrics.Risk, color: "red" }
+                ].map((metric) => (
+                  <div key={metric.label}>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-[9px] font-bold uppercase tracking-widest opacity-70">{metric.label}</span>
+                      <span className="text-sm font-bold">{metric.value}</span>
+                    </div>
+                    <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full transition-all bg-${metric.color}-500`}
+                        style={{ width: `${metric.value}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="pt-4 border-t border-gray-200 shrink-0">
+                <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400 mb-2">Key Findings</p>
+                <ul className="space-y-2">
+                  {(aiAnalysis.findings || aiAnalysis.directives?.flatMap((d: any) => d.sub_directives || [])?.slice(0, 3) || []).map((finding: any, i: number) => {
+                    const text = typeof finding === 'string' ? finding : finding?.label || finding?.text;
+                    return (
+                      <li key={i} className="flex items-start gap-2 text-xs opacity-70">
+                        <div className="w-1 h-1 bg-[#E31E24] rounded-full mt-1.5 shrink-0" />
+                        <span className="line-clamp-2">{text}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            </div>
+          </section>
+        </div>
+      )}
+
       {/* Row 2: Daily Intelligence Infographic */}
       <div className="lg:col-span-12">
         <DailyInfographic data={data} aiAnalysis={aiAnalysis} mapImage={lebanonMap} mapStatus={mapStatus} />
