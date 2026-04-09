@@ -85,28 +85,28 @@ export default function Methodology() {
                 <div className="w-3 h-3 bg-red-600 rounded-full" />
                 <div className="flex-1">
                   <div className="font-bold text-red-900">0-25: Critical</div>
-                  <div className="text-xs text-red-700">Heavy negative reporting with urgent language</div>
+                  <div className="text-xs text-red-700">Severe security threats across multiple domains with urgent response required</div>
                 </div>
               </div>
               <div className="flex items-center gap-3 p-3 bg-amber-50 border border-amber-100 rounded">
                 <div className="w-3 h-3 bg-amber-600 rounded-full" />
                 <div className="flex-1">
                   <div className="font-bold text-amber-900">25-50: Warning</div>
-                  <div className="text-xs text-amber-700">Mixed reporting with some concerning developments</div>
+                  <div className="text-xs text-amber-700">Significant security vulnerabilities with manageable risks and some concerning incidents</div>
                 </div>
               </div>
               <div className="flex items-center gap-3 p-3 bg-blue-50 border border-blue-100 rounded">
                 <div className="w-3 h-3 bg-blue-600 rounded-full" />
                 <div className="flex-1">
                   <div className="font-bold text-blue-900">50-75: Stable</div>
-                  <div className="text-xs text-blue-700">Generally balanced reporting with some improvements</div>
+                  <div className="text-xs text-blue-700">Moderate security concerns with resilient infrastructure and improving conditions</div>
                 </div>
               </div>
               <div className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded">
                 <div className="w-3 h-3 bg-emerald-600 rounded-full" />
                 <div className="flex-1">
                   <div className="font-bold text-emerald-900">75-100: Secure</div>
-                  <div className="text-xs text-emerald-700">Predominantly positive reporting with constructive tone</div>
+                  <div className="text-xs text-emerald-700">Low security risks with strong resilience and stable security conditions</div>
                 </div>
               </div>
             </div>
@@ -119,20 +119,19 @@ export default function Methodology() {
         <h2 className="text-2xl font-bold text-[#2D2D2D]">Important Limitations</h2>
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 space-y-3 text-sm text-yellow-900">
           <p>
-            <strong>Media Bias:</strong> This index reflects news coverage, which may not represent actual conditions.
-            Underreported areas will have artificially high scores.
+            <strong>Data Limitations:</strong> This index is based on publicly available information and news sources. Events not covered by these sources may not be reflected in the assessment.
           </p>
           <p>
-            <strong>Language Limitation:</strong> Only English-language sources are included. Arabic and French reporting may have different perspectives.
+            <strong>Language Coverage:</strong> Analysis focuses on English-language sources. Security developments reported only in Arabic or French may not be captured.
           </p>
           <p>
-            <strong>Delayed Intelligence:</strong> News reporting lags behind actual events. Scores represent historical coverage, not real-time conditions.
+            <strong>Time Lag:</strong> There is a delay between actual security incidents and their reporting. Scores reflect analyzed available information, not real-time conditions.
           </p>
           <p>
-            <strong>Not Operational Intelligence:</strong> This is not a military, police, or intelligence agency assessment. It is a public-facing analytical tool.
+            <strong>Not Official Intelligence:</strong> This is not an assessment from military, police, or intelligence agencies. It is a public analytical tool based on available information.
           </p>
           <p>
-            <strong>Categories:</strong> The five reporting categories represent major topic areas in the news, not operational security domains.
+            <strong>Risk Categories:</strong> The five categories (Politics, Economic, Infrastructure, Criminal, Humanitarian) represent major security domains, not news topics.
           </p>
         </div>
       </section>
