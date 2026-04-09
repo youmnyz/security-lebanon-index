@@ -641,15 +641,36 @@ Respond with ONLY valid JSON:
   // Server-side AI analysis for risk assessment
   app.post("/api/ai-analysis", async (req, res) => {
     try {
+      const apiKey = process.env.GROQ_API_KEY;
+      if (!apiKey) {
+        console.error("[AI Analysis] GROQ_API_KEY not configured");
+        throw new Error("GROQ_API_KEY environment variable not configured");
+      }
+
       const { Groq } = await import("groq-sdk");
-      const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || "" });
+      const groq = new Groq({ apiKey });
       const { score, lastUpdated } = req.body;
 
-      // Get recent news for context (last 10 items)
-      const recentNews = securityData.newsFeed?.slice(0, 10) || [];
+      // Get recent news for context - fetch live news if not in securityData
+      let recentNews = securityData.newsFeed?.slice(0, 10) || [];
+
+      // If no cached news in securityData, fetch from live-news endpoint
+      if (recentNews.length === 0) {
+        try {
+          console.log("[AI Analysis] No news in securityData, fetching live news...");
+          const liveNewsResponse = await fetch(`${req.protocol}://${req.get('host')}/api/live-news`);
+          if (liveNewsResponse.ok) {
+            const liveNews = await liveNewsResponse.json();
+            recentNews = liveNews?.slice(0, 10) || [];
+          }
+        } catch (newsErr) {
+          console.warn("[AI Analysis] Failed to fetch live news:", newsErr);
+        }
+      }
+
       const newsContext = recentNews.length > 0
         ? recentNews.map((item: any) => `- ${item.title}: ${item.summary || ''}`).join('\n')
-        : 'No recent incidents in news feed';
+        : 'No recent incidents available';
 
       const response = await groq.chat.completions.create({
         model: "llama-3.3-70b-versatile",
