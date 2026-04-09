@@ -459,9 +459,9 @@ async function generateAssessmentHTML(date: string, assessment: any): Promise<vo
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${sanitizeHtml(assessment.seoTitle || `Lebanon Security Risk Assessment - ${formattedDate}`)}</title>
-  <meta name="description" content="${sanitizeHtml(assessment.seoDescription || assessment.summary)}">
-  <meta name="keywords" content="Lebanon security, Lebanon safety, threat assessment, security intelligence, Middle East">
+  <title>${sanitizeHtml(assessment.seoTitle || `Security Lebanon ${formattedDate} | Real-Time Risk Assessment & Safety Updates`)}</title>
+  <meta name="description" content="${sanitizeHtml(assessment.seoDescription || `Real-time Security Lebanon & Safety Lebanon assessment for ${formattedDate}. Live threat analysis, incident updates & security outlook.`)}">
+  <meta name="keywords" content="security lebanon, safety lebanon, lebanon security, threat assessment, real-time risk analysis, incident analysis, security intelligence">
   <meta name="author" content="ZodSecurity Intelligence Systems">
   <meta name="geo.placename" content="Lebanon">
   <meta name="geo.region" content="LB">
@@ -469,16 +469,16 @@ async function generateAssessmentHTML(date: string, assessment: any): Promise<vo
 
   <!-- Open Graph Tags for Social Sharing -->
   <meta property="og:type" content="article">
-  <meta property="og:title" content="${sanitizeHtml(assessment.seoTitle || `Lebanon Security Risk Assessment - ${formattedDate}`)}">
-  <meta property="og:description" content="${sanitizeHtml(assessment.seoDescription || assessment.summary)}">
+  <meta property="og:title" content="${sanitizeHtml(assessment.seoTitle || `Security Lebanon ${formattedDate} | Real-Time Risk Assessment & Safety Updates`)}">
+  <meta property="og:description" content="${sanitizeHtml(assessment.seoDescription || `Real-time Security Lebanon & Safety Lebanon assessment for ${formattedDate}. Live threat analysis, incident updates & security outlook.`)}">
   <meta property="og:url" content="https://lebanon-security-index.zodsecurity.com/risk-assessment/${date}">
   <meta property="og:site_name" content="Lebanon Security Index">
   <meta property="og:image" content="https://lebanon-security-index.zodsecurity.com/og-image.png">
 
   <!-- Twitter Card Tags -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="${sanitizeHtml(assessment.seoTitle || `Lebanon Security Risk Assessment - ${formattedDate}`)}">
-  <meta name="twitter:description" content="${sanitizeHtml(assessment.seoDescription || assessment.summary)}">
+  <meta name="twitter:title" content="${sanitizeHtml(assessment.seoTitle || `Security Lebanon ${formattedDate} | Risk Assessment`)}">
+  <meta name="twitter:description" content="${sanitizeHtml(assessment.seoDescription || `Real-time Security Lebanon & Safety Lebanon assessment for ${formattedDate}. Live threat analysis & security outlook.`)}">
   <meta name="twitter:image" content="https://lebanon-security-index.zodsecurity.com/og-image.png">
 
   <!-- JSON-LD Structured Data -->
@@ -582,8 +582,8 @@ async function generateAssessmentHTML(date: string, assessment: any): Promise<vo
 <body>
   <main class="container">
     <header>
-      <h1>Lebanon Security Risk Assessment</h1>
-      <p class="date">${formattedDate}</p>
+      <h1>Security Lebanon: Real-Time Risk Assessment & Safety Analysis</h1>
+      <p class="date">${formattedDate} | Threat Level: <strong>${sanitizeHtml(threatLevel)}</strong></p>
       <span class="threat-badge">${sanitizeHtml(threatLevel)}</span>
     </header>
 
@@ -592,6 +592,12 @@ async function generateAssessmentHTML(date: string, assessment: any): Promise<vo
         <strong>Assessment Summary:</strong><br><br>
         ${sanitizeHtml(assessment.summary)}
       </section>
+
+      <p style="color: #6b7280; font-size: 0.95rem; margin: 1rem 0; line-height: 1.6;">
+        This Security Lebanon report provides a real-time analysis of current safety conditions and threat assessment for ${formattedDate}.
+        Our Security Lebanon monitoring system tracks incidents and vulnerability indicators to deliver comprehensive Safety Lebanon updates
+        for informed decision-making.
+      </p>
 
       <section class="section">
         <h2>Key Risk Areas</h2>
@@ -695,8 +701,8 @@ Respond with ONLY valid JSON:
     {"category": "Infrastructure", "description": "Physical infrastructure vulnerabilities", "mitigation": "Infrastructure hardening priorities"}
   ],
   "outlook24h": "Expected security developments in next 24 hours",
-  "seoTitle": "Lebanon Security Risk Assessment - ${new Date(today).toLocaleDateString('en-US', {month:'short',day:'numeric'})}",
-  "seoDescription": "Security risk assessment for Lebanon on ${new Date(today).toLocaleDateString('en-US', {month:'long',day:'numeric',year:'numeric'})}"
+  "seoTitle": "Security Lebanon Risk Assessment ${new Date(today).toLocaleDateString('en-US', {month:'short',day:'numeric'})} | Real-Time Safety Updates",
+  "seoDescription": "Real-time Security Lebanon & Safety Lebanon threat assessment for ${new Date(today).toLocaleDateString('en-US', {month:'long',day:'numeric'})}. Live incident analysis, risk indicators & security outlook."
 }`
           }
         ],
@@ -955,8 +961,8 @@ Respond with ONLY valid JSON:
     {"category": "Infrastructure", "description": "Physical infrastructure vulnerabilities", "mitigation": "Infrastructure hardening priorities"}
   ],
   "outlook24h": "Expected security developments in next 24 hours",
-  "seoTitle": "Lebanon Security Risk Assessment - ${new Date(date).toLocaleDateString('en-US', {month:'short',day:'numeric'})}",
-  "seoDescription": "Security risk assessment for Lebanon on ${new Date(date).toLocaleDateString('en-US', {month:'long',day:'numeric',year:'numeric'})}"
+  "seoTitle": "Security Lebanon Risk Assessment ${new Date(date).toLocaleDateString('en-US', {month:'short',day:'numeric'})} | Real-Time Safety Updates",
+  "seoDescription": "Real-time Security Lebanon & Safety Lebanon threat assessment for ${new Date(date).toLocaleDateString('en-US', {month:'long',day:'numeric'})}. Live incident analysis, risk indicators & security outlook."
 }`
           }
         ],
