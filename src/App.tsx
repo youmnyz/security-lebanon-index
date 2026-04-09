@@ -1059,17 +1059,20 @@ export default function App() {
       const result = await response.json();
       setAiAnalysis(result);
     } catch (error) {
-      if (isQuotaError(error)) {
-        console.warn("Gemini Quota Exhausted during AI analysis. Using fallback text.");
-      } else {
-        console.error("AI Analysis failed:", error);
-      }
+      console.error("AI Analysis failed:", error);
+      // Set fallback with proper directives format that matches Groq response
       setAiAnalysis({
-        summarySections: [
-          { title: "Analysis Unavailable", content: "Unable to generate analysis summary at this time. Please try refreshing the page or clicking Update to fetch fresh data." },
-          { title: "Recommendation", content: "Review the raw news feeds below for current reporting. Use the Methodology page to understand how scores are calculated." }
+        directives: [
+          {
+            label: "Analysis Status",
+            text: "Unable to generate AI analysis at this time. Review the threat assessment score and key risk indicators below.",
+            icon: "AlertTriangle",
+            sub_directives: [
+              { label: "Action", text: "Refresh the page or click Update to fetch fresh data and regenerate analysis" },
+              { label: "Alternative", text: "Review raw news feeds directly and use the Methodology page to understand scoring" }
+            ]
+          }
         ],
-        findings: ["Refresh to get latest data", "Review news sources directly", "Check back in a few moments"],
         metrics: { Resilience: 50, Stability: 50, Risk: 50 }
       });
     } finally {

@@ -94,6 +94,23 @@ function getThreatLevelFromScore(score: number): string {
   return 'Low';
 }
 
+function calculateMetricsFromScore(score: number): { Resilience: number; Stability: number; Risk: number } {
+  // Calculate metrics based on security score (0-100 where high = high risk)
+  // Risk: Direct representation of threat level
+  const risk = Math.round(score);
+
+  // Resilience: Inverse of risk - ability to withstand threats
+  const resilience = Math.round(100 - score);
+
+  // Stability: Slightly different weighting - represents political/economic stability
+  // Decreases faster than risk in high-threat scenarios
+  let stability = 100 - (score * 1.1);
+  if (stability < 0) stability = 0;
+  stability = Math.round(stability);
+
+  return { Risk: risk, Resilience: resilience, Stability: stability };
+}
+
 /**
  * Category Keyword Mapping
  * Maps news items to security risk categories based on keywords
@@ -653,6 +670,11 @@ Analyze and assess: political stability threats, economic security vulnerabiliti
 Base your assessment on the documented incidents above and structural/ongoing risks.
 For each category, provide specific sub-threats and their implications.
 
+METRICS CALCULATION GUIDANCE:
+- Risk: Direct representation of threat level (0-100 where 100=max risk). Use the threat score ${score} as primary reference.
+- Resilience: Inverse of risk - ability to withstand and recover from threats. Calculate as: 100 - Risk
+- Stability: Political and economic stability based on identified threats. Low stability = high threat. Calculate based on severity of political/economic threats identified.
+
 Generate analysis in JSON format only (no markdown):
 {
   "directives": [
@@ -705,8 +727,45 @@ Generate analysis in JSON format only (no markdown):
         max_tokens: 2048
       });
 
-      const content = response.choices[0]?.message?.content || "{}";
-      const result = JSON.parse(content);
+      const content = response.choices[0]?.message?.content || "";
+      if (!content) {
+        throw new Error("Groq returned empty response");
+      }
+
+      let result;
+      try {
+        result = JSON.parse(content);
+      } catch (parseErr) {
+        console.error("Failed to parse Groq JSON response:", parseErr);
+        console.error("Raw content:", content.substring(0, 500));
+        throw new Error(`Invalid JSON from Groq: ${parseErr}`);
+      }
+
+      // Validate response has required fields
+      if (!result.directives || !Array.isArray(result.directives)) {
+        console.warn("Groq response missing directives array, adding fallback");
+        result.directives = result.directives || [];
+      }
+
+      // Validate and correct metrics based on security score
+      if (!result.metrics || typeof result.metrics !== 'object') {
+        console.warn("Groq response missing metrics, calculating from security score");
+        result.metrics = calculateMetricsFromScore(score);
+      } else {
+        // Validate metric values are in reasonable range (0-100)
+        const validMetrics = result.metrics;
+        let metricsValid = true;
+        ['Risk', 'Resilience', 'Stability'].forEach(key => {
+          if (typeof validMetrics[key] !== 'number' || validMetrics[key] < 0 || validMetrics[key] > 100) {
+            metricsValid = false;
+            console.warn(`Metric ${key} out of range (${validMetrics[key]}), recalculating`);
+          }
+        });
+        if (!metricsValid) {
+          result.metrics = calculateMetricsFromScore(score);
+        }
+      }
+
       // Cache successful response
       aiAnalysisCache = result;
       res.json(result);
