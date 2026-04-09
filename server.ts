@@ -1,6 +1,8 @@
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
+
+// Deployment version: 2026-04-09 - Force Render redeploy
 import { fileURLToPath } from "url";
 import cron from "node-cron";
 import { INITIAL_SECURITY_DATA } from "./src/constants";
