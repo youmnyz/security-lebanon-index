@@ -313,24 +313,26 @@ function Dashboard({ data, aiAnalysis, isAnalyzing, generateAiAnalysis, lebanonM
               )}
             </div>
 
-            <div className="flex items-end justify-center lg:justify-start gap-4 mb-6">
-              <span className="text-8xl md:text-9xl font-black tracking-tighter leading-none text-white drop-shadow-[0_0_30px_rgba(227,30,36,0.2)]">{data.overallScore}</span>
-              <div className="flex flex-col mb-3">
-                <span className="text-2xl md:text-3xl font-bold opacity-20">/100</span>
-                {data.historicalData && data.historicalData.length > 1 && (
-                  <div className={cn(
-                    "flex items-center text-[10px] font-bold uppercase tracking-widest mt-1",
-                    data.overallScore > data.historicalData[data.historicalData.length - 2].score ? "text-red-500" : "text-emerald-500"
-                  )}>
-                    {data.overallScore > data.historicalData[data.historicalData.length - 2].score ? (
-                      <><ArrowUpRight className="w-3 h-3 mr-1" /> Risk Increased</>
-                    ) : (
-                      <><TrendingDown className="w-3 h-3 mr-1" /> Risk Decreased</>
-                    )}
-                  </div>
-                )}
+            {!data.isInitial && (
+              <div className="flex items-end justify-center lg:justify-start gap-4 mb-6">
+                <span className="text-8xl md:text-9xl font-black tracking-tighter leading-none text-white drop-shadow-[0_0_30px_rgba(227,30,36,0.2)]">{data.overallScore}</span>
+                <div className="flex flex-col mb-3">
+                  <span className="text-2xl md:text-3xl font-bold opacity-20">/100</span>
+                  {data.historicalData && data.historicalData.length > 1 && (
+                    <div className={cn(
+                      "flex items-center text-[10px] font-bold uppercase tracking-widest mt-1",
+                      data.overallScore > data.historicalData[data.historicalData.length - 2].score ? "text-red-500" : "text-emerald-500"
+                    )}>
+                      {data.overallScore > data.historicalData[data.historicalData.length - 2].score ? (
+                        <><ArrowUpRight className="w-3 h-3 mr-1" /> Risk Increased</>
+                      ) : (
+                        <><TrendingDown className="w-3 h-3 mr-1" /> Risk Decreased</>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
 
             <p className="text-sm md:text-base text-white/70 leading-relaxed max-w-xl mb-8">
               <span className="text-white font-bold">Lebanon security & safety risk assessment</span> from
