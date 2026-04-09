@@ -830,6 +830,23 @@ Generate analysis in JSON format only (no markdown):
     }
   });
 
+  // Diagnostic endpoint to check if Groq API key is configured
+  app.get("/api/diagnostic", (req, res) => {
+    const diagnostic = {
+      timestamp: new Date().toISOString(),
+      groqApiKeySet: !!process.env.GROQ_API_KEY,
+      groqApiKeyLength: process.env.GROQ_API_KEY?.length || 0,
+      groqApiKeyPrefix: process.env.GROQ_API_KEY ? process.env.GROQ_API_KEY.substring(0, 10) + "..." : "NOT SET",
+      newsInCache: securityData.newsFeed?.length || 0,
+      aiAnalysisCached: !!aiAnalysisCache,
+      nodeEnv: process.env.NODE_ENV,
+      port: PORT,
+      timestamp2: new Date().toISOString()
+    };
+    console.log("[Diagnostic]", JSON.stringify(diagnostic, null, 2));
+    res.json(diagnostic);
+  });
+
   app.get("/api/security-data", async (req, res) => {
     try {
       // Recalibrate with live news data before responding
