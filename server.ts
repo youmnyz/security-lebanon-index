@@ -9,125 +9,67 @@ import { INITIAL_SECURITY_DATA } from "./src/constants";
 
 /**
  * Risk Assessment & Scoring Logic
- * Used to calculate security scores based on threat indicators from news sources
- * Enhanced for conflict/wartime detection
+ * Pure threat assessment based on conflict/security keywords
+ * No sentiment analysis - direct threat indicator counting
  */
-const NEGATIVE_KEYWORDS = [
-  'attack', 'crisis', 'danger', 'conflict', 'strike', 'violence',
-  'casualties', 'damage', 'displaced', 'hostility', 'emergency',
-  'critical', 'severe', 'extreme', 'alert', 'warning', 'risk',
-  'threat', 'explosion', 'military', 'armed', 'hostile', 'fatal',
-  'escalation', 'war', 'fighting', 'fire', 'missile', 'drone',
-  'bombing', 'shelling', 'refugee', 'evacuation', 'barrage',
-  'injured', 'killed', 'deaths', 'injured', 'ceasefire violation',
-  'airstrike', 'wounded', 'bombing', 'mortar', 'rocket',
-  'retaliatory', 'retaliation', 'aggressive', 'deterioration',
-  'tension', 'confrontation', 'standoff'
-];
 
-const POSITIVE_KEYWORDS = [
-  'stable', 'secure', 'peace', 'agreement', 'accord', 'cease-fire',
-  'resolve', 'cooperation', 'safe', 'improvement', 'recovery',
-  'progress', 'reconstruction', 'de-escalation', 'solution',
-  'ceasefire', 'truce', 'dialogue', 'talks', 'negotiation',
-  'peaceful', 'resolution', 'settlement', 'de-escalate'
-];
-
-function analyzeSentiment(text: string): { sentiment: string; score: number } {
-  const lowerText = text.toLowerCase();
-  let negativeCount = 0;
-  let positiveCount = 0;
-  let warfareIndicators = 0;
-
-  NEGATIVE_KEYWORDS.forEach(kw => {
-    const matches = lowerText.match(new RegExp(`\\b${kw}\\b`, 'gi'));
-    if (matches) {
-      const count = matches.length;
-      negativeCount += count;
-      // Warfare keywords get extra weight
-      const warfareTerms = ['attack', 'strike', 'missile', 'drone', 'airstrike', 'bombing',
-                           'shelling', 'barrage', 'rocket', 'mortar', 'killed', 'wounded',
-                           'casualties', 'evacuation', 'escalation', 'war'];
-      if (warfareTerms.includes(kw)) {
-        warfareIndicators += count;
-      }
-    }
-  });
-
-  POSITIVE_KEYWORDS.forEach(kw => {
-    const matches = lowerText.match(new RegExp(`\\b${kw}\\b`, 'gi'));
-    if (matches) positiveCount += matches.length;
-  });
-
-  const total = negativeCount + positiveCount;
-  let score = 0;
-  if (total > 0) {
-    // More sensitive to negative sentiment: use ratio with wartime adjustment
-    score = (positiveCount - negativeCount) / total;
-
-    // Apply wartime multiplier: if warfare keywords are present, more negative
-    if (warfareIndicators > 0) {
-      const warfareWeight = Math.min(0.5, warfareIndicators * 0.1); // Cap at 0.5
-      score = score - warfareWeight; // Push score more negative
-    }
-  }
-
-  score = Math.max(-1, Math.min(1, score));
-  const sentiment = score < -0.3 ? 'negative' : score > 0.3 ? 'positive' : 'neutral';
-
-  return { sentiment, score };
-}
 
 function calculateSecurityScore(newsItems: any[]): number {
-  if (!newsItems || newsItems.length === 0) return 45; // Baseline lowered from 50 for wartime context
+  if (!newsItems || newsItems.length === 0) return 0; // No news = low risk
 
   const now = new Date();
-  let totalWeightedSentiment = 0;
-  let totalWeight = 0;
-  let conflictIndicators = 0;
+  let totalConflictIndicators = 0;
+  let totalSeverityWeight = 0;
 
   newsItems.forEach((item: any) => {
     const itemDate = new Date(item.timestamp);
     const daysDiff = (now.getTime() - itemDate.getTime()) / (1000 * 60 * 60 * 24);
     if (daysDiff > 7) return;
 
+    // Calculate recency weight (recent = more important)
     const recencyWeight = Math.max(0.5, 1 - (daysDiff / 7) * 0.5);
-    let severityWeight = 1;
-    if (item.severity === 'High') severityWeight = 1.5;
-    else if (item.severity === 'Low') severityWeight = 0.7;
 
-    const analysis = analyzeSentiment(`${item.title} ${item.summary || ''}`);
-    const weight = recencyWeight * severityWeight;
+    // Severity multiplier
+    let severityMultiplier = 1;
+    if (item.severity === 'High') severityMultiplier = 1.5;
+    else if (item.severity === 'Low') severityMultiplier = 0.7;
 
-    totalWeightedSentiment += analysis.score * weight;
-    totalWeight += weight;
+    const weight = recencyWeight * severityMultiplier;
 
-    // Detect conflict keywords
-    const conflictTerms = ['attack', 'strike', 'airstrike', 'bombing', 'escalation', 'casualt', 'killed', 'died', 'war'];
+    // Count conflict/threat indicators - pure keyword-based threat detection
+    const threatKeywords = [
+      'attack', 'strike', 'airstrike', 'bombing', 'escalation', 'casualty', 'casualties',
+      'killed', 'died', 'dead', 'war', 'conflict', 'military', 'armed', 'violence',
+      'explosion', 'missile', 'drone', 'rocket', 'mortar', 'shelling', 'barrage',
+      'injured', 'wounded', 'emergency', 'crisis', 'danger', 'threat', 'danger zone',
+      'evacuation', 'displacement', 'hostility', 'retaliation', 'retaliatory'
+    ];
+
     const itemText = `${item.title} ${item.summary || ''}`.toLowerCase();
-    conflictTerms.forEach(term => {
-      if (itemText.includes(term)) conflictIndicators++;
+    let itemConflictCount = 0;
+
+    threatKeywords.forEach(keyword => {
+      const matches = itemText.match(new RegExp(`\\b${keyword}\\b`, 'gi'));
+      if (matches) {
+        itemConflictCount += matches.length;
+      }
     });
+
+    // Add weighted conflict count
+    totalConflictIndicators += itemConflictCount * weight;
+    totalSeverityWeight += weight;
   });
 
-  const avgSentiment = totalWeight > 0 ? totalWeightedSentiment / totalWeight : 0;
+  // Calculate score: pure threat indicator count with weights
+  // Base: 10 points per weighted threat indicator
+  let score = totalConflictIndicators * 10;
 
-  // Base score: map risk assessment from [-1,1] to [0,100]
-  // INVERTED: negative sentiment = higher risk (higher score)
-  let score = 50 + ((-avgSentiment) * 40);
-
-  // Apply conflict escalation: if warfare terminology detected, increase the score
-  if (conflictIndicators > 0) {
-    // More conflict indicators = more severe threat = higher score
-    const conflictMultiplier = 1 + (conflictIndicators * 0.1); // 10% increase per indicator
-    score = score * conflictMultiplier; // Multiply to increase the score (increase risk)
-
-    // If multiple critical indicators detected, push into Critical range (75-100)
-    if (conflictIndicators >= 3) {
-      score = Math.max(score, 75); // Push to Warning/Critical threshold
-    }
+  // Normalize by number of items to prevent score explosion
+  if (newsItems.length > 0) {
+    score = score / Math.sqrt(newsItems.length); // Sublinear scaling
   }
 
+  // Cap at 100
   return Math.round(Math.max(0, Math.min(100, score)));
 }
 
