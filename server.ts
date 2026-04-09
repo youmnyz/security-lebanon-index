@@ -494,6 +494,13 @@ async function startServer() {
       const { Groq } = await import("groq-sdk");
       const groq = new Groq({ apiKey });
 
+      // Get news from that date for context (if available from cache)
+      const newsContext = securityData.newsFeed
+        ?.filter((item: any) => item.timestamp?.startsWith(date))
+        ?.slice(0, 5)
+        ?.map((item: any) => `- ${item.title}: ${item.summary || ''}`)
+        ?.join('\n') || 'No specific incidents recorded for this date';
+
       const response = await groq.chat.completions.create({
         model: "llama-3.3-70b-versatile",
         messages: [
@@ -503,21 +510,24 @@ async function startServer() {
           },
           {
             role: "user",
-            content: `For date ${date}, conduct a SECURITY RISK ASSESSMENT for Lebanon. NEVER mention sentiment, tone, or news coverage.
+            content: `For date ${date}, conduct a SECURITY RISK ASSESSMENT for Lebanon based on documented incidents and security conditions.
+
+DOCUMENTED INCIDENTS FOR THIS DATE:
+${newsContext}
 
 Identify and assess: political stability threats, economic/financial vulnerabilities, infrastructure weaknesses, humanitarian risks.
 
 ABSOLUTE RULES:
 - NEVER use words: sentiment, tone, mixed, neutral, outlook, reporting, coverage, positive, negative, balanced
 - "summary" must describe ACTUAL SECURITY SITUATION and identified risks only
-- Explain WHY threat level is assessed at this level based on real factors
+- Reference specific incidents if available, or explain structural/ongoing risks
 - Each risk in keyRisks must be a concrete security issue with specific mitigation
 - All language must be about RISKS, THREATS, VULNERABILITIES, not about media or news
 
 Respond with ONLY valid JSON:
 {
   "date": "${date}",
-  "summary": "Specific security risks and threat factors identified for Lebanon on this date. Explain why the threat level is assessed as [threatLevel] based on political, economic, and infrastructure conditions.",
+  "summary": "Specific security risks and threat factors identified for Lebanon on this date based on documented incidents and security conditions.",
   "threatLevel": "Low|Moderate|Elevated|High|Extreme",
   "keyRisks": [
     {"category": "Political Stability", "description": "Specific political security threats", "mitigation": "Responses to manage risks"},
