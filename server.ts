@@ -113,17 +113,18 @@ function calculateSecurityScore(newsItems: any[]): number {
   const avgSentiment = totalWeight > 0 ? totalWeightedSentiment / totalWeight : 0;
 
   // Base score: map risk assessment from [-1,1] to [0,100]
-  let score = 50 + (avgSentiment * 40);
+  // INVERTED: negative sentiment = higher risk (higher score)
+  let score = 50 + ((-avgSentiment) * 40);
 
-  // Apply conflict escalation: if warfare terminology detected, significantly increase risk (LOWER score)
+  // Apply conflict escalation: if warfare terminology detected, increase the score
   if (conflictIndicators > 0) {
-    // More conflict indicators = more severe threat = lower score
+    // More conflict indicators = more severe threat = higher score
     const conflictMultiplier = 1 + (conflictIndicators * 0.1); // 10% increase per indicator
-    score = score / conflictMultiplier; // Divide to lower the score (increase risk)
+    score = score * conflictMultiplier; // Multiply to increase the score (increase risk)
 
-    // If multiple critical indicators detected, push into Critical range (0-25)
+    // If multiple critical indicators detected, push into Critical range (75-100)
     if (conflictIndicators >= 3) {
-      score = Math.min(score, 25); // Cap at Warning/Critical threshold
+      score = Math.max(score, 75); // Push to Warning/Critical threshold
     }
   }
 
@@ -131,9 +132,9 @@ function calculateSecurityScore(newsItems: any[]): number {
 }
 
 function getStatusFromScore(score: number): string {
-  if (score < 25) return 'Critical';
-  if (score < 50) return 'Warning';
-  if (score < 75) return 'Stable';
+  if (score >= 75) return 'Critical';
+  if (score >= 50) return 'Warning';
+  if (score >= 25) return 'Stable';
   return 'Secure';
 }
 
