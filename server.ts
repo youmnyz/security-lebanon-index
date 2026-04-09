@@ -642,6 +642,7 @@ Respond with ONLY valid JSON:
   app.post("/api/ai-analysis", async (req, res) => {
     try {
       const apiKey = process.env.GROQ_API_KEY;
+      console.log("[AI Analysis] Request received, API Key configured:", !!apiKey);
       if (!apiKey) {
         console.error("[AI Analysis] GROQ_API_KEY not configured");
         throw new Error("GROQ_API_KEY environment variable not configured");
@@ -650,9 +651,11 @@ Respond with ONLY valid JSON:
       const { Groq } = await import("groq-sdk");
       const groq = new Groq({ apiKey });
       const { score, lastUpdated } = req.body;
+      console.log("[AI Analysis] Request params - score:", score, "lastUpdated:", lastUpdated);
 
       // Get recent news for context - fetch live news if not in securityData
       let recentNews = securityData.newsFeed?.slice(0, 10) || [];
+      console.log("[AI Analysis] News from securityData:", recentNews.length, "items");
 
       // If no cached news in securityData, fetch from live-news endpoint
       if (recentNews.length === 0) {
@@ -662,6 +665,9 @@ Respond with ONLY valid JSON:
           if (liveNewsResponse.ok) {
             const liveNews = await liveNewsResponse.json();
             recentNews = liveNews?.slice(0, 10) || [];
+            console.log("[AI Analysis] Fetched live news:", recentNews.length, "items");
+          } else {
+            console.warn("[AI Analysis] Live news fetch returned status:", liveNewsResponse.status);
           }
         } catch (newsErr) {
           console.warn("[AI Analysis] Failed to fetch live news:", newsErr);
@@ -672,6 +678,9 @@ Respond with ONLY valid JSON:
         ? recentNews.map((item: any) => `- ${item.title}: ${item.summary || ''}`).join('\n')
         : 'No recent incidents available';
 
+      console.log("[AI Analysis] News context length:", newsContext.length, "chars, items:", recentNews.length);
+
+      console.log("[AI Analysis] Calling Groq API...");
       const response = await groq.chat.completions.create({
         model: "llama-3.3-70b-versatile",
         messages: [
@@ -749,28 +758,33 @@ Generate analysis in JSON format only (no markdown):
       });
 
       const content = response.choices[0]?.message?.content || "";
+      console.log("[AI Analysis] Groq response received, content length:", content.length);
+
       if (!content) {
+        console.error("[AI Analysis] Groq returned empty response");
         throw new Error("Groq returned empty response");
       }
 
       let result;
       try {
         result = JSON.parse(content);
+        console.log("[AI Analysis] JSON parsed successfully");
+        console.log("[AI Analysis] Response has directives:", !!result.directives, "metrics:", !!result.metrics);
       } catch (parseErr) {
-        console.error("Failed to parse Groq JSON response:", parseErr);
-        console.error("Raw content:", content.substring(0, 500));
+        console.error("[AI Analysis] Failed to parse Groq JSON response:", parseErr);
+        console.error("[AI Analysis] Raw content preview:", content.substring(0, 500));
         throw new Error(`Invalid JSON from Groq: ${parseErr}`);
       }
 
       // Validate response has required fields
       if (!result.directives || !Array.isArray(result.directives)) {
-        console.warn("Groq response missing directives array, adding fallback");
+        console.warn("[AI Analysis] Groq response missing directives array, adding fallback");
         result.directives = result.directives || [];
       }
 
       // Validate and correct metrics based on security score
       if (!result.metrics || typeof result.metrics !== 'object') {
-        console.warn("Groq response missing metrics, calculating from security score");
+        console.warn("[AI Analysis] Groq response missing metrics, calculating from security score");
         result.metrics = calculateMetricsFromScore(score);
       } else {
         // Validate metric values are in reasonable range (0-100)
@@ -779,25 +793,33 @@ Generate analysis in JSON format only (no markdown):
         ['Risk', 'Resilience', 'Stability'].forEach(key => {
           if (typeof validMetrics[key] !== 'number' || validMetrics[key] < 0 || validMetrics[key] > 100) {
             metricsValid = false;
-            console.warn(`Metric ${key} out of range (${validMetrics[key]}), recalculating`);
+            console.warn(`[AI Analysis] Metric ${key} out of range (${validMetrics[key]}), recalculating`);
           }
         });
         if (!metricsValid) {
+          console.log("[AI Analysis] Recalculating metrics from score:", score);
           result.metrics = calculateMetricsFromScore(score);
+        } else {
+          console.log("[AI Analysis] Metrics valid:", result.metrics);
         }
       }
 
       // Cache successful response
+      console.log("[AI Analysis] Caching response and returning to client");
       aiAnalysisCache = result;
       res.json(result);
     } catch (err) {
-      console.error("AI analysis failed:", err);
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      console.error("[AI Analysis] ERROR:", errorMsg);
+      console.error("[AI Analysis] Stack:", err instanceof Error ? err.stack : "No stack");
+
       // If we have cached data, return it instead of fallback template
       if (aiAnalysisCache) {
-        console.log("Returning cached AI analysis due to API failure");
+        console.log("[AI Analysis] Returning cached AI analysis due to API failure");
         res.json(aiAnalysisCache);
       } else {
         // Only show fallback if we have no cached data
+        console.log("[AI Analysis] No cache available, returning fallback");
         res.status(500).json({
           directives: [
             { label: "Assessment", text: "Unable to generate detailed risk analysis at this time. Review threat assessment score and key risk indicators below.", icon: "AlertTriangle" }
