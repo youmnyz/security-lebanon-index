@@ -38,11 +38,15 @@ export default function Methodology() {
               </li>
               <li className="flex gap-2">
                 <span className="text-[#E31E24] font-bold">•</span>
-                <span><strong>Time Window:</strong> Last 7 days of news coverage</span>
+                <span><strong>Time Window:</strong> Recent news items and 30-day historical data for trend analysis</span>
               </li>
               <li className="flex gap-2">
                 <span className="text-[#E31E24] font-bold">•</span>
-                <span><strong>Update Frequency:</strong> Real-time as new articles are published</span>
+                <span><strong>AI Analysis:</strong> Groq LLM analyzes incidents to generate substantive risk assessments</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-[#E31E24] font-bold">•</span>
+                <span><strong>Update Frequency:</strong> Real-time as new articles are published and analyzed</span>
               </li>
               <li className="flex gap-2">
                 <span className="text-[#E31E24] font-bold">•</span>
@@ -60,19 +64,19 @@ export default function Methodology() {
             <ol className="space-y-3 text-sm text-gray-700">
               <li className="flex gap-3">
                 <span className="font-bold text-[#E31E24] shrink-0">1.</span>
-                <span><strong>Information Gathering:</strong> Analyzes news from 8+ international sources covering political developments, economic indicators, infrastructure status, and regional security events</span>
+                <span><strong>News Collection:</strong> Fetches recent news from 8+ RSS feeds covering political developments, economic indicators, infrastructure status, criminal activity, and humanitarian issues</span>
               </li>
               <li className="flex gap-3">
                 <span className="font-bold text-[#E31E24] shrink-0">2.</span>
-                <span><strong>Risk Identification:</strong> Identifies key risk categories including Political Stability, Economic Security, Infrastructure, and Humanitarian concerns</span>
+                <span><strong>Threat Scoring:</strong> Keyword analysis identifies threat indicators (conflicts, crises, attacks, casualties) and calculates an overall security score (0-100)</span>
               </li>
               <li className="flex gap-3">
                 <span className="font-bold text-[#E31E24] shrink-0">3.</span>
-                <span><strong>Threat Assessment:</strong> Evaluates threat level (Low/Moderate/Elevated/High/Extreme) based on identified risks and their potential impact</span>
+                <span><strong>AI Analysis:</strong> Groq LLM analyzes recent incidents and generates comprehensive assessments across five security domains: Politics, Economic, Infrastructure, Criminal Activity, and Humanitarian</span>
               </li>
               <li className="flex gap-3">
                 <span className="font-bold text-[#E31E24] shrink-0">4.</span>
-                <span><strong>Mitigation Planning:</strong> Provides recommended actions and mitigation strategies for each identified risk category</span>
+                <span><strong>Risk Metrics:</strong> Calculates Resilience, Stability, and Risk metrics (0-100) and identifies specific sub-threats with mitigation strategies for each domain</span>
               </li>
             </ol>
           </div>
@@ -141,14 +145,14 @@ export default function Methodology() {
         <h2 className="text-2xl font-bold text-[#2D2D2D]">Data Freshness & Updates</h2>
         <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-3 text-sm text-gray-700">
           <p>
-            <strong>Update Frequency:</strong> The index recalibrates every time you load the page or click "Recalibrate"
+            <strong>Update Frequency:</strong> The index recalibrates every time you load the page or click "Update"
             by fetching the latest news sources and reassessing security risks.
           </p>
           <p>
-            <strong>Historical Data:</strong> 7-day historical trend shows how risk assessment has evolved over the past week.
+            <strong>Historical Data:</strong> 7-day historical trend shows how the security score has evolved, reflecting changes in threat landscape.
           </p>
           <p>
-            <strong>No Caching of Scores:</strong> Scores are recalculated on-demand from fresh feed data, ensuring current information.
+            <strong>Response Caching:</strong> Successful AI analysis results are cached to ensure consistent, meaningful assessments even during temporary API interruptions. Fallback template text is never shown to users when real data is available.
           </p>
         </div>
       </section>
