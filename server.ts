@@ -378,6 +378,254 @@ async function saveRiskAssessment(date: string, assessment: any): Promise<void> 
   }
 }
 
+// Generate static HTML file for risk assessment (SEO-optimized, crawler-friendly)
+async function generateAssessmentHTML(date: string, assessment: any): Promise<void> {
+  try {
+    const htmlDir = path.join(process.cwd(), 'public/risk-assessment');
+    if (!existsSync(htmlDir)) {
+      mkdirSync(htmlDir, { recursive: true });
+    }
+
+    // Threat level color mapping
+    const threatColors: Record<string, { bg: string; text: string }> = {
+      'Extreme': { bg: '#7c2d12', text: '#fff7ed' },
+      'High': { bg: '#dc2626', text: '#fef2f2' },
+      'Elevated': { bg: '#f97316', text: '#fff7ed' },
+      'Moderate': { bg: '#f59e0b', text: '#fffbeb' },
+      'Low': { bg: '#10b981', text: '#f0fdf4' }
+    };
+
+    const threatLevel = assessment.threatLevel || 'Moderate';
+    const colors = threatColors[threatLevel] || threatColors['Moderate'];
+
+    // Parse date for formatting
+    const dateObj = new Date(`${date}T00:00:00Z`);
+    const formattedDate = dateObj.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    // Sanitize data for HTML attributes
+    const sanitizeHtml = (str: string): string => {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    };
+
+    // Build structured data (JSON-LD)
+    const structuredData = {
+      '@context': 'https://schema.org',
+      '@type': 'NewsArticle',
+      'headline': assessment.seoTitle || `Lebanon Security Risk Assessment - ${formattedDate}`,
+      'description': assessment.seoDescription || assessment.summary,
+      'datePublished': `${date}T00:00:00Z`,
+      'dateModified': `${date}T00:00:00Z`,
+      'inLanguage': 'en-US',
+      'mainEntityOfPage': {
+        '@type': 'WebPage',
+        '@id': `https://lebanon-security-index.zodsecurity.com/risk-assessment/${date}`
+      },
+      'author': {
+        '@type': 'Organization',
+        'name': 'Intelligence Systems'
+      },
+      'publisher': {
+        '@type': 'Organization',
+        'name': 'ZodSecurity'
+      }
+    };
+
+    // Build key risks HTML
+    const keyRisksHtml = (assessment.keyRisks || [])
+      .map((risk: any) => `
+        <div style="margin-bottom: 1.5rem; padding: 1rem; background-color: #f5f5f5; border-radius: 0.5rem; border-left: 4px solid ${colors.bg};">
+          <h3 style="margin: 0 0 0.5rem 0; color: #1f2937; font-size: 1.1rem;">${sanitizeHtml(risk.category)}</h3>
+          <p style="margin: 0.5rem 0; color: #374151; line-height: 1.5;">${sanitizeHtml(risk.description)}</p>
+          <details style="margin-top: 0.75rem;">
+            <summary style="color: #0066cc; cursor: pointer; font-weight: 500;">Mitigation Strategy</summary>
+            <p style="margin: 0.5rem 0 0 0; color: #4b5563; padding-left: 1rem; border-left: 2px solid #e5e7eb; line-height: 1.5;">${sanitizeHtml(risk.mitigation)}</p>
+          </details>
+        </div>
+      `)
+      .join('');
+
+    // Build complete HTML document
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${sanitizeHtml(assessment.seoTitle || `Lebanon Security Risk Assessment - ${formattedDate}`)}</title>
+  <meta name="description" content="${sanitizeHtml(assessment.seoDescription || assessment.summary)}">
+  <meta name="keywords" content="Lebanon security, Lebanon safety, threat assessment, security intelligence, Middle East">
+  <meta name="author" content="ZodSecurity Intelligence Systems">
+  <meta name="geo.placename" content="Lebanon">
+  <meta name="geo.region" content="LB">
+  <link rel="canonical" href="https://lebanon-security-index.zodsecurity.com/risk-assessment/${date}">
+
+  <!-- Open Graph Tags for Social Sharing -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="${sanitizeHtml(assessment.seoTitle || `Lebanon Security Risk Assessment - ${formattedDate}`)}">
+  <meta property="og:description" content="${sanitizeHtml(assessment.seoDescription || assessment.summary)}">
+  <meta property="og:url" content="https://lebanon-security-index.zodsecurity.com/risk-assessment/${date}">
+  <meta property="og:site_name" content="Lebanon Security Index">
+  <meta property="og:image" content="https://lebanon-security-index.zodsecurity.com/og-image.png">
+
+  <!-- Twitter Card Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${sanitizeHtml(assessment.seoTitle || `Lebanon Security Risk Assessment - ${formattedDate}`)}">
+  <meta name="twitter:description" content="${sanitizeHtml(assessment.seoDescription || assessment.summary)}">
+  <meta name="twitter:image" content="https://lebanon-security-index.zodsecurity.com/og-image.png">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  ${JSON.stringify(structuredData, null, 2)}
+  </script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      color: #1f2937;
+      background-color: #f9fafb;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    header {
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .threat-badge {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background-color: ${colors.bg};
+      color: ${colors.text};
+      border-radius: 0.5rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin: 1rem 0;
+    }
+    h1 {
+      font-size: 2rem;
+      margin: 1rem 0 0.5rem 0;
+      color: #1f2937;
+    }
+    .date {
+      color: #6b7280;
+      font-size: 0.95rem;
+      margin-top: 0.5rem;
+    }
+    .summary {
+      background-color: white;
+      padding: 1.5rem;
+      border-left: 4px solid ${colors.bg};
+      border-radius: 0.5rem;
+      margin: 1.5rem 0;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: #374151;
+    }
+    .section {
+      margin: 2rem 0;
+    }
+    .section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #1f2937;
+    }
+    .key-risks {
+      display: grid;
+      gap: 1rem;
+    }
+    .outlook {
+      background-color: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      margin: 2rem 0;
+    }
+    .outlook h3 {
+      color: #1e40af;
+      margin-bottom: 0.75rem;
+    }
+    .outlook p {
+      color: #1e3a8a;
+      line-height: 1.6;
+    }
+    footer {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e5e7eb;
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+    @media (max-width: 768px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.5rem; }
+      .summary { padding: 1rem; }
+    }
+    @media print {
+      body { background-color: white; }
+      .container { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>Lebanon Security Risk Assessment</h1>
+      <p class="date">${formattedDate}</p>
+      <span class="threat-badge">${sanitizeHtml(threatLevel)}</span>
+    </header>
+
+    <article>
+      <section class="summary">
+        <strong>Assessment Summary:</strong><br><br>
+        ${sanitizeHtml(assessment.summary)}
+      </section>
+
+      <section class="section">
+        <h2>Key Risk Areas</h2>
+        <div class="key-risks">
+          ${keyRisksHtml}
+        </div>
+      </section>
+
+      ${assessment.outlook24h ? `
+      <section class="outlook">
+        <h3>24-Hour Outlook</h3>
+        <p>${sanitizeHtml(assessment.outlook24h)}</p>
+      </section>
+      ` : ''}
+
+      <footer>
+        <p><strong>Disclaimer:</strong> This security assessment is generated using automated analysis of publicly available information and is provided for informational purposes only. It should not be considered official government intelligence or be used as the sole basis for decision-making.</p>
+        <p style="margin-top: 1rem;"><strong>Data Updated:</strong> ${formattedDate}</p>
+        <p style="margin-top: 1rem;">© 2026 Lebanon Security Index by ZodSecurity. All rights reserved.</p>
+      </footer>
+    </article>
+  </main>
+</body>
+</html>`;
+
+    // Write HTML file
+    const filePath = path.join(htmlDir, `${date}.html`);
+    await fs.writeFile(filePath, html, 'utf-8');
+    console.log(`[HTML] Generated static HTML for ${date} at ${filePath}`);
+  } catch (err) {
+    console.error(`[HTML] Error generating HTML for ${date}:`, err);
+  }
+}
+
 // Generate daily risk assessment at 6 AM Beirut time
 async function scheduleDailyAssessmentGeneration(groq: any, allNews: any[]) {
   // 6 AM = hour 6, minute 0
@@ -461,8 +709,11 @@ Respond with ONLY valid JSON:
 
       const assessment = JSON.parse(content);
 
-      // Save to file
+      // Save to JSON file
       await saveRiskAssessment(today, assessment);
+
+      // Generate static HTML file for SEO and crawler-friendliness
+      await generateAssessmentHTML(today, assessment);
 
       console.log(`[Scheduler] ✅ Successfully generated and saved assessment for ${today}`);
     } catch (err) {
@@ -717,6 +968,8 @@ Respond with ONLY valid JSON:
       const result = JSON.parse(content);
       // Save to JSON file for future requests
       await saveRiskAssessment(date, result);
+      // Generate static HTML file for SEO and crawler-friendliness
+      await generateAssessmentHTML(date, result);
       // Cache successful response for this date
       riskAssessmentCache.set(date, result);
       res.json(result);
@@ -1212,7 +1465,15 @@ Generate analysis in JSON format only (no markdown):
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
+
+    // Serve pre-generated static HTML assessment pages (highest priority)
+    // These are SEO-optimized and crawler-friendly
+    app.use('/risk-assessment', express.static(path.join(process.cwd(), 'public/risk-assessment')));
+
+    // Serve other static assets from dist
     app.use(express.static(distPath));
+
+    // SPA fallback for other routes (lowest priority)
     app.get('*', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
