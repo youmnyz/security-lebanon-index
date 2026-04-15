@@ -529,69 +529,74 @@ app.get(`${BASE_PATH}/risk-assessment/:date`, (req, res) => {
 
 // Homepage - Archive of all assessments
 app.get(`${BASE_PATH}/`, (req, res) => {
-  ensureDir(ASSESSMENTS_DIR);
-  const files = fs.readdirSync(ASSESSMENTS_DIR).filter(f => f.endsWith('.json'));
-  const assessments = files
-    .map(f => f.replace('.json', ''))
-    .sort()
-    .reverse();
+  try {
+    ensureDir(ASSESSMENTS_DIR);
+    const files = fs.readdirSync(ASSESSMENTS_DIR).filter(f => f.endsWith('.json'));
+    const assessments = files
+      .map(f => f.replace('.json', ''))
+      .sort()
+      .reverse();
 
-  const archiveHtml = assessments
-    .map(date => {
-      const assessment = loadAssessmentJSON(date);
-      const threatColors = {
-        'Extreme': '#7c2d12',
-        'High': '#dc2626',
-        'Elevated': '#f97316',
-        'Moderate': '#f59e0b',
-        'Low': '#10b981'
-      };
-      const color = threatColors[assessment?.threatLevel] || '#666';
-      const dateObj = new Date(`${date}T00:00:00Z`);
-      const formatted = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      return `
-        <div style="margin-bottom: 1rem; padding: 1rem; background: white; border-left: 4px solid ${color}; border-radius: 0.5rem;">
-          <a href="${BASE_PATH}/risk-assessment/${date}" style="color: #0066cc; text-decoration: none; font-weight: 500;">
-            ${formatted}
-          </a>
-          <span style="color: ${color}; font-weight: 600; margin-left: 1rem;">${assessment?.threatLevel || 'Unknown'}</span>
-          <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">${assessment?.summary?.substring(0, 100) || 'No summary'}...</p>
+    const archiveHtml = assessments
+      .map(date => {
+        const assessment = loadAssessmentJSON(date);
+        const threatColors = {
+          'Extreme': '#7c2d12',
+          'High': '#dc2626',
+          'Elevated': '#f97316',
+          'Moderate': '#f59e0b',
+          'Low': '#10b981'
+        };
+        const color = threatColors[assessment?.threatLevel] || '#666';
+        const dateObj = new Date(`${date}T00:00:00Z`);
+        const formatted = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        return `
+          <div style="margin-bottom: 1rem; padding: 1rem; background: white; border-left: 4px solid ${color}; border-radius: 0.5rem;">
+            <a href="${BASE_PATH}/risk-assessment/${date}" style="color: #0066cc; text-decoration: none; font-weight: 500;">
+              ${formatted}
+            </a>
+            <span style="color: ${color}; font-weight: 600; margin-left: 1rem;">${assessment?.threatLevel || 'Unknown'}</span>
+            <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">${assessment?.summary?.substring(0, 100) || 'No summary'}...</p>
+          </div>
+        `;
+      })
+      .join('');
+
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Lebanon Security Index - Risk Assessment Archive</title>
+        <meta name="description" content="Real-time Security Lebanon & Safety Lebanon risk assessments. Daily threat analysis and security outlook.">
+        <meta name="keywords" content="security lebanon, safety lebanon, threat assessment, risk analysis">
+        <link rel="canonical" href="https://zodsecurity.com${BASE_PATH}/">
+      </head>
+      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1f2937; background-color: #f9fafb;">
+        <div style="max-width: 900px; margin: 0 auto; padding: 2rem;">
+          <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Lebanon Security Index</h1>
+          <p style="color: #666; margin-bottom: 2rem;">Daily risk assessments based on real-time security intelligence</p>
+
+          <div style="background: #dbeafe; border-left: 4px solid #0066cc; padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem;">
+            <p><strong>Latest Update:</strong> Daily assessments are generated at 7 AM Beirut time based on RSS feed intelligence and security analysis.</p>
+          </div>
+
+          <h2 style="font-size: 1.5rem; margin: 2rem 0 1rem 0;">Risk Assessment Archive</h2>
+          ${archiveHtml || '<p style="color: #999;">No assessments available yet.</p>'}
+
+          <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e5e7eb; color: #666; font-size: 0.9rem;">
+            <p>Data sources: National News Agency, Naharnet, BBC, Al Jazeera, Middle East Eye, Google News</p>
+            <p>Analysis method: RSS feed intelligence + AI-powered security risk assessment</p>
+          </div>
         </div>
-      `;
-    })
-    .join('');
-
-  res.send(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Lebanon Security Index - Risk Assessment Archive</title>
-      <meta name="description" content="Real-time Security Lebanon & Safety Lebanon risk assessments. Daily threat analysis and security outlook.">
-      <meta name="keywords" content="security lebanon, safety lebanon, threat assessment, risk analysis">
-      <link rel="canonical" href="https://zodsecurity.com${BASE_PATH}/">
-    </head>
-    <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1f2937; background-color: #f9fafb;">
-      <div style="max-width: 900px; margin: 0 auto; padding: 2rem;">
-        <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Lebanon Security Index</h1>
-        <p style="color: #666; margin-bottom: 2rem;">Daily risk assessments based on real-time security intelligence</p>
-
-        <div style="background: #dbeafe; border-left: 4px solid #0066cc; padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem;">
-          <p><strong>Latest Update:</strong> Daily assessments are generated at 7 AM Beirut time based on RSS feed intelligence and security analysis.</p>
-        </div>
-
-        <h2 style="font-size: 1.5rem; margin: 2rem 0 1rem 0;">Risk Assessment Archive</h2>
-        ${archiveHtml || '<p style="color: #999;">No assessments available yet.</p>'}
-
-        <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e5e7eb; color: #666; font-size: 0.9rem;">
-          <p>Data sources: National News Agency, Naharnet, BBC, Al Jazeera, Middle East Eye, Google News</p>
-          <p>Analysis method: RSS feed intelligence + AI-powered security risk assessment</p>
-        </div>
-      </div>
-    </body>
-    </html>
-  `);
+      </body>
+      </html>
+    `);
+  } catch (err) {
+    console.error('[HOMEPAGE] Error rendering homepage:', err);
+    res.status(500).send('<h1>Error loading homepage</h1><p>Please try again later.</p>');
+  }
 });
 
 // Health check
@@ -603,11 +608,11 @@ app.get('/health', (req, res) => {
 app.get('/generate', async (req, res) => {
   try {
     console.log('[Manual] Triggering daily generation...');
-    await runDailyGeneration();
-    res.json({ status: 'success', message: 'Daily assessment generated' });
+    const result = await runDailyGeneration();
+    res.json({ status: 'success', message: 'Daily assessment generated', result });
   } catch (error) {
-    console.error('[Manual] Generation error:', error);
-    res.status(500).json({ status: 'error', message: error.message });
+    console.error('[Manual] Generation error:', error.message, error.stack);
+    res.status(500).json({ status: 'error', message: error.message, stack: error.stack });
   }
 });
 
