@@ -476,11 +476,21 @@ async function runDailyGeneration() {
 
 // Schedule for 7 AM Beirut time (4 AM UTC in winter, 3 AM UTC in summer)
 // Using 0 7 * * * for 7 AM in local timezone (Render is in UTC, so we account for TZ env var)
-cron.schedule('0 7 * * *', runDailyGeneration, {
-  timezone: 'Asia/Beirut'
-});
-
-console.log('[CRON] Scheduled daily generation at 7 AM Beirut time');
+try {
+  cron.schedule('0 7 * * *', async () => {
+    try {
+      await runDailyGeneration();
+    } catch (err) {
+      console.error('[CRON] Daily generation failed:', err.message);
+      // Don't crash the server on cron errors
+    }
+  }, {
+    timezone: 'Asia/Beirut'
+  });
+  console.log('[CRON] Scheduled daily generation at 7 AM Beirut time');
+} catch (err) {
+  console.error('[CRON] Failed to schedule daily generation:', err.message);
+}
 
 // ============================================================================
 // ROUTES
@@ -619,11 +629,17 @@ app.get('/generate', async (req, res) => {
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Error handler for uncaught exceptions
+app.use((err, req, res, next) => {
+  console.error('[ERROR] Unhandled error:', err.message, err.stack);
+  res.status(500).json({ status: 'error', message: 'Internal server error', error: err.message });
+});
+
 // ============================================================================
 // START SERVER
 // ============================================================================
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`\n========================================`);
   console.log(`Lebanon Security Index Server Started`);
   console.log(`========================================`);
@@ -634,6 +650,21 @@ app.listen(PORT, () => {
   console.log(`Data Sources: 8 RSS feeds`);
   console.log(`Analysis: Groq API (llama-3.3-70b)`);
   console.log(`========================================\n`);
+
+  // Verify that the ASSESSMENTS_DIR exists
+  try {
+    ensureDir(ASSESSMENTS_DIR);
+    const files = fs.readdirSync(ASSESSMENTS_DIR);
+    console.log(`[STARTUP] Assessment directory ready with ${files.length} files`);
+  } catch (err) {
+    console.error('[STARTUP] Failed to verify assessment directory:', err.message);
+  }
+});
+
+// Handle server errors
+server.on('error', (err) => {
+  console.error('[SERVER] Fatal error:', err);
+  process.exit(1);
 });
 
 export default app;
