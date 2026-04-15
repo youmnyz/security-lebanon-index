@@ -496,6 +496,12 @@ try {
 // ROUTES
 // ============================================================================
 
+// Root redirect - MUST be first
+app.get('/', (req, res) => {
+  console.log('[ROOT] Redirecting / to' + BASE_PATH + '/');
+  res.redirect(301, BASE_PATH + '/');
+});
+
 // Serve static HTML files
 app.get(`${BASE_PATH}/risk-assessment/:date`, (req, res) => {
   const { date } = req.params;
@@ -607,12 +613,6 @@ app.get(`${BASE_PATH}/`, (req, res) => {
     console.error('[HOMEPAGE] Error rendering homepage:', err);
     res.status(500).send('<h1>Error loading homepage</h1><p>Please try again later.</p>');
   }
-});
-
-// Root - serve Lebanon Security Index homepage or redirect
-app.get('/', (req, res) => {
-  // Redirect root to base path
-  res.redirect(301, BASE_PATH + '/');
 });
 
 // Health check
