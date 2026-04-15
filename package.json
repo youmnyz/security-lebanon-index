@@ -4,11 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx server.ts",
-    "build": "vite build",
-    "start": "node --import tsx/esm server.ts",
-    "preview": "vite preview",
-    "clean": "rm -rf dist",
+    "dev": "node --import tsx/esm server-static.js",
+    "start": "node --import tsx/esm server-static.js",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
