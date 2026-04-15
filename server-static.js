@@ -143,7 +143,7 @@ async function fetchRSSFeeds() {
 // FILE MANAGEMENT
 // ============================================================================
 
-const ASSESSMENTS_DIR = path.join(__dirname, 'public', 'assessments');
+const ASSESSMENTS_DIR = path.join(__dirname, 'public', 'risk-assessment');
 
 function ensureDir(dir) {
   if (!fs.existsSync(dir)) {
