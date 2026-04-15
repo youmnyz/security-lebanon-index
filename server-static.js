@@ -598,21 +598,6 @@ app.get('/generate', async (req, res) => {
   }
 });
 
-// Debug endpoint to list files in assessment directory
-app.get('/debug/files', (req, res) => {
-  try {
-    ensureDir(ASSESSMENTS_DIR);
-    const files = fs.readdirSync(ASSESSMENTS_DIR);
-    res.json({
-      directory: ASSESSMENTS_DIR,
-      files: files,
-      count: files.length
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
