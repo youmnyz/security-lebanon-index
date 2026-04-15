@@ -609,6 +609,11 @@ app.get(`${BASE_PATH}/`, (req, res) => {
   }
 });
 
+// Root redirect
+app.get('/', (req, res) => {
+  res.redirect(BASE_PATH + '/');
+});
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
