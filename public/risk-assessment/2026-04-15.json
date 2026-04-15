@@ -1,0 +1,20 @@
+{
+  "date": "2026-04-15",
+  "summary": "Security assessment based on recent news and intelligence reports.",
+  "threatLevel": "Moderate",
+  "keyRisks": [
+    {
+      "category": "Political Stability",
+      "description": "Ongoing political tensions",
+      "mitigation": "Monitor diplomatic developments"
+    },
+    {
+      "category": "Economic Security",
+      "description": "Economic vulnerabilities",
+      "mitigation": "Strengthen financial reserves"
+    }
+  ],
+  "outlook24h": "Expected developments in the next 24 hours.",
+  "seoTitle": "Security Lebanon Risk Assessment Apr 15 | Real-Time Safety Updates",
+  "seoDescription": "Real-time Security Lebanon & Safety Lebanon threat assessment for April 15. Live incident analysis & security outlook."
+}
