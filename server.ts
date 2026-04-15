@@ -427,7 +427,7 @@ async function generateAssessmentHTML(date: string, assessment: any): Promise<vo
       'inLanguage': 'en-US',
       'mainEntityOfPage': {
         '@type': 'WebPage',
-        '@id': `https://zodsecurity.com/lebanon-security-index/risk-assessment/${date}`
+        '@id': `https://lebanon-security-index.zodsecurity.com/risk-assessment/${date}`
       },
       'author': {
         '@type': 'Organization',
@@ -465,21 +465,21 @@ async function generateAssessmentHTML(date: string, assessment: any): Promise<vo
   <meta name="author" content="ZodSecurity Intelligence Systems">
   <meta name="geo.placename" content="Lebanon">
   <meta name="geo.region" content="LB">
-  <link rel="canonical" href="https://zodsecurity.com/lebanon-security-index/risk-assessment/${date}">
+  <link rel="canonical" href="https://lebanon-security-index.zodsecurity.com/risk-assessment/${date}">
 
   <!-- Open Graph Tags for Social Sharing -->
   <meta property="og:type" content="article">
   <meta property="og:title" content="${sanitizeHtml(assessment.seoTitle || `Security Lebanon ${formattedDate} | Real-Time Risk Assessment & Safety Updates`)}">
   <meta property="og:description" content="${sanitizeHtml(assessment.seoDescription || `Real-time Security Lebanon & Safety Lebanon assessment for ${formattedDate}. Live threat analysis, incident updates & security outlook.`)}">
-  <meta property="og:url" content="https://zodsecurity.com/lebanon-security-index/risk-assessment/${date}">
+  <meta property="og:url" content="https://lebanon-security-index.zodsecurity.com/risk-assessment/${date}">
   <meta property="og:site_name" content="Lebanon Security Index">
-  <meta property="og:image" content="https://zodsecurity.com/lebanon-security-index/og-image.png">
+  <meta property="og:image" content="https://lebanon-security-index.zodsecurity.com/og-image.png">
 
   <!-- Twitter Card Tags -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${sanitizeHtml(assessment.seoTitle || `Security Lebanon ${formattedDate} | Risk Assessment`)}">
   <meta name="twitter:description" content="${sanitizeHtml(assessment.seoDescription || `Real-time Security Lebanon & Safety Lebanon assessment for ${formattedDate}. Live threat analysis & security outlook.`)}">
-  <meta name="twitter:image" content="https://zodsecurity.com/lebanon-security-index/og-image.png">
+  <meta name="twitter:image" content="https://lebanon-security-index.zodsecurity.com/og-image.png">
 
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
@@ -1401,7 +1401,7 @@ Generate analysis in JSON format only (no markdown):
 
   // SEO: Sitemap Index - Google Search Console best practice for 300+ URLs
   app.get("/lebanon-security-index/sitemap.xml", (req, res) => {
-    const baseUrl = process.env.APP_URL || "https://zodsecurity.com/lebanon-security-index";
+    const baseUrl = process.env.APP_URL || "https://lebanon-security-index.zodsecurity.com";
     const today = new Date().toISOString().split('T')[0];
 
     const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
@@ -1426,7 +1426,7 @@ Generate analysis in JSON format only (no markdown):
 
   // Sitemap 1: Core Pages (Homepage, Archive, Methodology)
   app.get("/sitemap-core.xml", (req, res) => {
-    const baseUrl = process.env.APP_URL || "https://zodsecurity.com/lebanon-security-index";
+    const baseUrl = process.env.APP_URL || "https://lebanon-security-index.zodsecurity.com";
     const today = new Date().toISOString().split('T')[0];
 
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -1464,7 +1464,7 @@ Generate analysis in JSON format only (no markdown):
 
   // Sitemap 2: Assessment Pages (365 days) - React SPA routes
   app.get("/sitemap-assessments.xml", (req, res) => {
-    const baseUrl = process.env.APP_URL || "https://zodsecurity.com/lebanon-security-index";
+    const baseUrl = process.env.APP_URL || "https://lebanon-security-index.zodsecurity.com";
     const yearOfDates = Array.from({ length: 365 }, (_, i) => {
       const d = new Date();
       d.setDate(d.getDate() - i);
@@ -1488,7 +1488,7 @@ Generate analysis in JSON format only (no markdown):
 
   // Sitemap 3: Static HTML Assessment Pages (365 days) - SEO-optimized static files
   app.get("/sitemap-static.xml", (req, res) => {
-    const baseUrl = process.env.APP_URL || "https://zodsecurity.com/lebanon-security-index";
+    const baseUrl = process.env.APP_URL || "https://lebanon-security-index.zodsecurity.com";
     const yearOfDates = Array.from({ length: 365 }, (_, i) => {
       const d = new Date();
       d.setDate(d.getDate() - i);
@@ -1512,7 +1512,7 @@ Generate analysis in JSON format only (no markdown):
 
   // Robots.txt
   app.get("/lebanon-security-index/robots.txt", (req, res) => {
-    const baseUrl = process.env.APP_URL || "https://zodsecurity.com/lebanon-security-index";
+    const baseUrl = process.env.APP_URL || "https://lebanon-security-index.zodsecurity.com";
     res.type("text/plain");
     res.send(`User-agent: *\nAllow: /\nSitemap: ${baseUrl}/sitemap.xml`);
   });
