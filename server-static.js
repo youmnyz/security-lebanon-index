@@ -498,7 +498,12 @@ app.get(`${BASE_PATH}/risk-assessment/:date`, (req, res) => {
   // Try to load from disk
   const htmlPath = path.join(__dirname, 'public', 'risk-assessment', `${date}.html`);
   if (fs.existsSync(htmlPath)) {
-    return res.sendFile(htmlPath);
+    return res.sendFile(htmlPath, (err) => {
+      if (err) {
+        console.error(`[RISK-ASSESSMENT] Error sending file ${htmlPath}:`, err);
+        res.status(500).send('<h1>Error loading assessment</h1>');
+      }
+    });
   }
 
   // Try to load JSON and generate HTML on the fly
