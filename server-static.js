@@ -439,14 +439,16 @@ async function runDailyGeneration() {
 
     if (existing) {
       console.log(`[CRON] Assessment already exists for ${today}, skipping`);
-      return;
+      return { status: 'skipped', message: 'Assessment already exists' };
     }
 
     // Fetch latest news
+    console.log('[CRON] Fetching RSS feeds...');
     const news = await fetchRSSFeeds();
     console.log(`[CRON] Fetched ${news.length} news items`);
 
     // Generate assessment
+    console.log('[CRON] Calling Groq API for assessment...');
     const assessment = await generateAssessment(today, news);
     console.log(`[CRON] Assessment generated: threat level ${assessment.threatLevel}`);
 
@@ -461,8 +463,10 @@ async function runDailyGeneration() {
     console.log(`[CRON] HTML saved: ${htmlPath}`);
 
     console.log(`[CRON] Daily generation complete for ${today}`);
+    return { status: 'success', date: today, threatLevel: assessment.threatLevel };
   } catch (err) {
-    console.error('[CRON] Daily generation failed:', err);
+    console.error('[CRON] Daily generation failed:', err.message, err.stack);
+    throw err;  // Re-throw so /generate endpoint can catch it
   }
 }
 
