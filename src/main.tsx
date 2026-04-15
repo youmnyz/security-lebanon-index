@@ -8,7 +8,7 @@ import './index.css';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <HelmetProvider>
-      <BrowserRouter basename="/">
+      <BrowserRouter basename="/lebanon-security-index">
         <App />
       </BrowserRouter>
     </HelmetProvider>

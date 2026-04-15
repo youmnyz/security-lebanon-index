@@ -29,7 +29,7 @@ export default function ArchivePage() {
     '@type': 'CollectionPage',
     name: 'Lebanon Security News Archive',
     description: seoDescription,
-    url: `https://zodsecurity.com/security-index/archive${currentPage > 1 ? `/page/${currentPage}` : ''}`,
+    url: `https://zodsecurity.com/lebanon-security-index/archive${currentPage > 1 ? `/page/${currentPage}` : ''}`,
     mainEntity: {
       '@type': 'ItemList',
       itemListElement: pageDates.map((date, idx) => ({
@@ -39,7 +39,7 @@ export default function ArchivePage() {
           '@type': 'NewsArticle',
           headline: `Lebanon Security Report - ${new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`,
           datePublished: date,
-          url: `https://zodsecurity.com/security-index/risk-assessment/${date}`
+          url: `https://zodsecurity.com/lebanon-security-index/risk-assessment/${date}`
         }
       }))
     }
