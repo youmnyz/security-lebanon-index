@@ -609,9 +609,10 @@ app.get(`${BASE_PATH}/`, (req, res) => {
   }
 });
 
-// Root redirect
+// Root - serve Lebanon Security Index homepage or redirect
 app.get('/', (req, res) => {
-  res.redirect(BASE_PATH + '/');
+  // Redirect root to base path
+  res.redirect(301, BASE_PATH + '/');
 });
 
 // Health check
