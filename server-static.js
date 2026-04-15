@@ -586,6 +586,18 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
 });
 
+// Manual generation endpoint for testing
+app.get('/generate', async (req, res) => {
+  try {
+    console.log('[Manual] Triggering daily generation...');
+    await runDailyGeneration();
+    res.json({ status: 'success', message: 'Daily assessment generated' });
+  } catch (error) {
+    console.error('[Manual] Generation error:', error);
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+});
+
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
