@@ -422,7 +422,11 @@ Respond with ONLY valid JSON:
     max_tokens: 1024
   });
 
-  const content = response.choices[0]?.message?.content || '{}';
+  let content = response.choices[0]?.message?.content || '{}';
+
+  // Strip markdown code blocks if present (e.g., ```json { ... } ```)
+  content = content.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+
   return JSON.parse(content);
 }
 
