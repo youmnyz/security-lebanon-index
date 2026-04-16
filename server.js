@@ -208,11 +208,11 @@ app.get(`${BASE_PATH}/`, (req, res) => {
     const assessments = getAvailableAssessments();
 
     const threatColors = {
-      'Extreme': '#7c2d12',
+      'Extreme': '#991b1b',
       'High': '#dc2626',
-      'Elevated': '#f97316',
-      'Moderate': '#f59e0b',
-      'Low': '#10b981'
+      'Elevated': '#ef4444',
+      'Moderate': '#808080',
+      'Low': '#404040'
     };
 
     const archiveHtml = assessments
@@ -228,7 +228,7 @@ app.get(`${BASE_PATH}/`, (req, res) => {
 
         return `
           <div style="margin-bottom: 1rem; padding: 1rem; background: white; border-left: 4px solid ${color}; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-            <a href="${BASE_PATH}/risk-assessment/${date}" style="color: #0066cc; text-decoration: none; font-weight: 500;">
+            <a href="${BASE_PATH}/risk-assessment/${date}" style="color: #dc2626; text-decoration: none; font-weight: 500;">
               ${formatted}
             </a>
             <span style="color: ${color}; font-weight: 600; margin-left: 1rem;">${assessment?.threatLevel || 'Unknown'}</span>
@@ -267,8 +267,8 @@ app.get(`${BASE_PATH}/`, (req, res) => {
     h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
     p { margin-bottom: 1rem; color: #666; }
     .info-box {
-      background: #dbeafe;
-      border-left: 4px solid #0066cc;
+      background: #fef2f2;
+      border-left: 4px solid #dc2626;
       padding: 1rem;
       border-radius: 0.5rem;
       margin-bottom: 2rem;
@@ -305,16 +305,16 @@ app.get(`${BASE_PATH}/`, (req, res) => {
       <div style="margin-bottom: 1.5rem;">
         <p style="margin-bottom: 0.5rem; font-weight: 500;"><strong>ZodSecurity Services</strong></p>
         <p>
-          <a href="https://zodsecurity.com/" style="margin-right: 1.5rem; color: #0066cc; text-decoration: none;">🏠 ZodSecurity Home</a>
-          <a href="https://zodsecurity.com/lebanon-security-index/" style="margin-right: 1.5rem; color: #0066cc; text-decoration: none;">📊 Security Index</a>
-          <a href="https://zodsecurity.com/" style="margin-right: 1.5rem; color: #0066cc; text-decoration: none;">🛡️ Services</a>
-          <a href="https://zodsecurity.com/" style="color: #0066cc; text-decoration: none;">📞 Contact</a>
+          <a href="https://zodsecurity.com/" style="margin-right: 1.5rem; color: #dc2626; text-decoration: none;">🏠 ZodSecurity Home</a>
+          <a href="https://zodsecurity.com/lebanon-security-index/" style="margin-right: 1.5rem; color: #dc2626; text-decoration: none;">📊 Security Index</a>
+          <a href="https://zodsecurity.com/" style="margin-right: 1.5rem; color: #dc2626; text-decoration: none;">🛡️ Services</a>
+          <a href="https://zodsecurity.com/" style="color: #dc2626; text-decoration: none;">📞 Contact</a>
         </p>
       </div>
       <div style="border-top: 1px solid #e5e7eb; padding-top: 1rem; color: #666; font-size: 0.9rem;">
         <p>Data sources: National News Agency, Naharnet, BBC, Al Jazeera, Middle East Eye, Google News, The961, The New Arab</p>
         <p>Analysis method: RSS feed intelligence + AI-powered security risk assessment using Groq API</p>
-        <p style="margin-top: 1rem; color: #999;">&copy; 2026 ZodSecurity. All rights reserved. | <a href="https://zodsecurity.com/" style="color: #0066cc; text-decoration: none;">ZodSecurity.com</a></p>
+        <p style="margin-top: 1rem; color: #999;">&copy; 2026 ZodSecurity. All rights reserved. | <a href="https://zodsecurity.com/" style="color: #dc2626; text-decoration: none;">ZodSecurity.com</a></p>
       </div>
     </footer>
   </div>

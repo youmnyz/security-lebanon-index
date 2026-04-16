@@ -5,19 +5,19 @@
  */
 
 const THREAT_COLORS = {
-  'Extreme': { bg: '#7c2d12', text: '#fff7ed', badge: '🚨' },
+  'Extreme': { bg: '#991b1b', text: '#fef2f2', badge: '🚨' },
   'High': { bg: '#dc2626', text: '#fef2f2', badge: '⚠️' },
-  'Elevated': { bg: '#f97316', text: '#fff7ed', badge: '⚠️' },
-  'Moderate': { bg: '#f59e0b', text: '#fffbeb', badge: '⚡' },
-  'Low': { bg: '#10b981', text: '#f0fdf4', badge: '✓' }
+  'Elevated': { bg: '#ef4444', text: '#fef2f2', badge: '⚠️' },
+  'Moderate': { bg: '#808080', text: '#ffffff', badge: '⚡' },
+  'Low': { bg: '#404040', text: '#ffffff', badge: '✓' }
 };
 
 const RISK_CATEGORY_COLORS = {
-  'Political': '#3b82f6',
-  'Economic': '#8b5cf6',
-  'Security': '#ef4444',
-  'Infrastructure': '#f59e0b',
-  'Civil': '#06b6d4'
+  'Political': '#dc2626',
+  'Economic': '#808080',
+  'Security': '#991b1b',
+  'Infrastructure': '#606060',
+  'Civil': '#404040'
 };
 
 function sanitizeHtml(str) {
@@ -330,6 +330,24 @@ export function generateHTML(date, assessment, feedsData = {}) {
       font-weight: 600;
       margin-top: 1rem;
     }
+    .disclaimer-box {
+      background: #fef2f2;
+      border-left: 4px solid #dc2626;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 8px;
+      color: #404040;
+    }
+    .disclaimer-box h3 {
+      color: #991b1b;
+      margin-bottom: 0.75rem;
+    }
+    .disclaimer-box p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #606060;
+    }
+
     .summary-box {
       background: white;
       padding: 1.5rem;
@@ -348,7 +366,7 @@ export function generateHTML(date, assessment, feedsData = {}) {
       border-radius: 8px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
-    .feed-source h3 { color: #0066cc; margin-bottom: 1rem; }
+    .feed-source h3 { color: #dc2626; margin-bottom: 1rem; }
     .feed-source ul { list-style: none; }
     .feed-source li { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #e5e7eb; }
     .feed-source li:last-child { border-bottom: none; }
@@ -357,7 +375,7 @@ export function generateHTML(date, assessment, feedsData = {}) {
     .severity-badge.high { background: #fee2e2; color: #dc2626; }
     .severity-badge.medium { background: #fef3c7; color: #d97706; }
     .severity-badge.low { background: #dcfce7; color: #16a34a; }
-    .feed-source a { color: #0066cc; text-decoration: none; font-weight: 500; display: block; }
+    .feed-source a { color: #dc2626; text-decoration: none; font-weight: 500; display: block; }
     .feed-source a:hover { text-decoration: underline; }
     .feed-source p { color: #6b7280; font-size: 0.9rem; margin-top: 0.5rem; }
 
@@ -385,7 +403,7 @@ export function generateHTML(date, assessment, feedsData = {}) {
     .keyword-tag:hover { background: #0066cc; color: white; }
 
     footer { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 0.9rem; }
-    a { color: #0066cc; text-decoration: none; }
+    a { color: #dc2626; text-decoration: none; }
     a:hover { text-decoration: underline; }
   </style>
 </head>
@@ -396,6 +414,11 @@ export function generateHTML(date, assessment, feedsData = {}) {
       <p>Assessment for ${formattedDate}</p>
       <div class="threat-badge">${threatLevel}</div>
     </header>
+
+    <div class="disclaimer-box">
+      <h3>⚠️ Disclaimer</h3>
+      <p><strong>This assessment is for informational purposes only.</strong> The Lebanon Security Index provides analysis based on publicly available news, RSS feeds, and artificial intelligence. This information should not be considered official government assessment, legal advice, or a substitute for professional security consulting. All assessments are subject to change without notice based on evolving situations. ZodSecurity and its partners are not liable for any decisions made based on this information. Users should verify critical information through official government sources and professional security experts before making decisions.</p>
+    </div>
 
     <div class="summary-box">
       <h2>Executive Summary</h2>
