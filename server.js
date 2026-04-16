@@ -24,6 +24,9 @@ const PORT = process.env.PORT || 3000;
 const BASE_PATH = '/lebanon-security-index';
 const ASSESSMENTS_DIR = path.join(__dirname, 'public', 'risk-assessment');
 
+// Force rebuild trigger
+const BUILD_TIMESTAMP = new Date().toISOString();
+
 // Middleware
 app.use(helmet());
 app.use(express.json());
