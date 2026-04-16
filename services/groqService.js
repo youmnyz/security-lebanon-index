@@ -70,8 +70,8 @@ Analyze this information and return a JSON object with:
       model: 'llama-3.3-70b-versatile',
       max_tokens: 1024,
       temperature: 0.5,
-      system: systemPrompt,
       messages: [
+        { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
       ]
     });
