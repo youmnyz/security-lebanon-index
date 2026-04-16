@@ -11,7 +11,19 @@ export async function generateAssessment(date, newsItems, threatScore) {
     throw new Error('GROQ_API_KEY not configured');
   }
 
-  const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  let groq;
+  try {
+    groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    if (!groq) {
+      throw new Error('Groq constructor returned undefined');
+    }
+    if (!groq.messages) {
+      throw new Error('Groq instance missing messages property');
+    }
+  } catch (err) {
+    console.error('[GROQ] Initialization failed:', err.message, err.stack);
+    throw new Error(`Groq initialization failed: ${err.message}`);
+  }
 
   // Filter recent news (last 7 days)
   const now = new Date();
