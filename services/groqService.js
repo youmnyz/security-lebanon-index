@@ -11,19 +11,7 @@ export async function generateAssessment(date, newsItems, threatScore) {
     throw new Error('GROQ_API_KEY not configured');
   }
 
-  let groq;
-  try {
-    groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-    if (!groq) {
-      throw new Error('Groq constructor returned undefined');
-    }
-    if (!groq.messages) {
-      throw new Error('Groq instance missing messages property');
-    }
-  } catch (err) {
-    console.error('[GROQ] Initialization failed:', err.message, err.stack);
-    throw new Error(`Groq initialization failed: ${err.message}`);
-  }
+  const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
   // Filter recent news (last 7 days)
   const now = new Date();
@@ -78,7 +66,7 @@ Analyze this information and return a JSON object with:
 }`;
 
   try {
-    const response = await groq.messages.create({
+    const response = await groq.chat.completions.create({
       model: 'llama-3.3-70b-versatile',
       max_tokens: 1024,
       temperature: 0.5,
