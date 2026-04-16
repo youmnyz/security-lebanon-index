@@ -133,13 +133,16 @@ async function runDailyGeneration() {
 
     console.log(`[PIPELINE] Assessment generated: ${assessment.threatLevel}`);
 
-    // Step 4: Save JSON
-    saveAssessmentJSON(today, assessment);
+    // Step 4: Add feeds data to assessment
+    assessment.rssFeeds = feedsData;
 
     // Step 5: Generate and save HTML
     console.log('[PIPELINE] Generating HTML...');
     const html = generateHTML(today, assessment, feedsData);
     saveAssessmentHTML(today, html);
+
+    // Step 6: Save assessment JSON with feeds data
+    saveAssessmentJSON(today, assessment);
 
     console.log(`[PIPELINE] Complete for ${today}`);
     return { status: 'success', date: today, threatLevel: assessment.threatLevel };
@@ -329,7 +332,9 @@ app.get(`${BASE_PATH}/risk-assessment/:date`, (req, res) => {
     // Try to generate from JSON
     const assessment = loadAssessmentJSON(date);
     if (assessment) {
-      html = generateHTML(date, assessment, {});
+      // Reconstruct feedsData from assessment if available
+      const feedsData = assessment.rssFeeds || {};
+      html = generateHTML(date, assessment, feedsData);
       return res.send(html);
     }
 
