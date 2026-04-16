@@ -366,6 +366,24 @@ export function generateHTML(date, assessment, feedsData = {}) {
     .chart-desc { color: #6b7280; font-size: 0.875rem; margin-top: 0.75rem; }
 
     .map-section { background: white; padding: 1.5rem; border-radius: 8px; }
+
+    .key-risks-section { margin: 2rem 0; }
+    .risks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 1rem 0; }
+    .risk-card { background: white; padding: 1.5rem; border-left: 4px solid #ef4444; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .risk-category { color: #dc2626; margin-bottom: 0.75rem; font-size: 1.1rem; }
+    .risk-description { color: #374151; margin-bottom: 0.75rem; }
+    .risk-mitigation { color: #059669; font-size: 0.95rem; font-style: italic; }
+
+    .top-threats-section { background: #fef2f2; padding: 1.5rem; border-left: 4px solid #dc2626; border-radius: 8px; margin: 2rem 0; }
+    .threats-list { list-style: none; padding: 0; }
+    .threats-list li { padding: 0.5rem 0; padding-left: 1.5rem; position: relative; }
+    .threats-list li:before { content: "▸"; position: absolute; left: 0; color: #dc2626; font-weight: bold; }
+
+    .threat-keywords-section { background: white; padding: 1.5rem; border-radius: 8px; margin: 2rem 0; }
+    .keywords-cloud { margin: 1rem 0; }
+    .keyword-tag { transition: all 0.2s; }
+    .keyword-tag:hover { background: #0066cc; color: white; }
+
     footer { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 0.9rem; }
     a { color: #0066cc; text-decoration: none; }
     a:hover { text-decoration: underline; }
@@ -380,10 +398,46 @@ export function generateHTML(date, assessment, feedsData = {}) {
     </header>
 
     <div class="summary-box">
-      <h2>Summary</h2>
+      <h2>Executive Summary</h2>
       <p>${sanitizeHtml(assessment.summary || 'Assessment being generated...')}</p>
-      <p><strong>24-Hour Outlook:</strong> ${sanitizeHtml(assessment.outlook24h || 'No specific outlook available')}</p>
+      <p><strong>24-Hour Security Outlook:</strong> ${sanitizeHtml(assessment.outlook24h || 'No specific outlook available')}</p>
+      <p><strong>Current Threat Score:</strong> <span style="font-size: 1.5rem; color: ${assessment.threatScore >= 75 ? '#dc2626' : assessment.threatScore >= 50 ? '#f97316' : '#10b981'}; font-weight: bold;">${assessment.threatScore}/100</span></p>
     </div>
+
+    <section class="key-risks-section">
+      <h2>🎯 Key Risk Factors Identified</h2>
+      <div class="risks-grid">
+        ${assessment.keyRisks?.map(risk => `
+          <div class="risk-card">
+            <h3 class="risk-category">${sanitizeHtml(risk.category)}</h3>
+            <p class="risk-description"><strong>Risk:</strong> ${sanitizeHtml(risk.description)}</p>
+            <p class="risk-mitigation"><strong>Mitigation Strategy:</strong> ${sanitizeHtml(risk.mitigation)}</p>
+          </div>
+        `).join('') || ''}
+      </div>
+    </section>
+
+    <section class="top-threats-section">
+      <h2>⚠️ Critical Threats</h2>
+      <ul class="threats-list">
+        ${assessment.topThreats?.map(threat => `<li>${sanitizeHtml(threat)}</li>`).join('') || ''}
+      </ul>
+    </section>
+
+    <section class="threat-keywords-section">
+      <h2>📊 Threat Intelligence Keywords</h2>
+      <p>Analysis identified these critical security indicators:</p>
+      <div class="keywords-cloud">
+        ${Object.entries(assessment.threatKeywords || {})
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10)
+          .map(([keyword, count]) => `
+            <span class="keyword-tag" style="font-size: ${0.9 + count * 0.1}rem; padding: 0.5rem 1rem; margin: 0.25rem; background: #f0f9ff; border: 1px solid #0066cc; border-radius: 20px; display: inline-block;">
+              ${sanitizeHtml(keyword)} <strong>(${count})</strong>
+            </span>
+          `).join('')}
+      </div>
+    </section>
 
     ${generateRSSFeedsHTML(feedsData)}
     ${generateChartsHTML(assessment)}
