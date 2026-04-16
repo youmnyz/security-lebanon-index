@@ -90,14 +90,14 @@ function getAvailableAssessments() {
 // DAILY GENERATION PIPELINE
 // ============================================================================
 
-async function runDailyGeneration() {
+async function runDailyGeneration(force = false) {
   try {
     console.log('[PIPELINE] Daily generation started');
 
     const today = new Date().toISOString().split('T')[0];
     const existing = loadAssessmentJSON(today);
 
-    if (existing) {
+    if (existing && !force) {
       console.log(`[PIPELINE] Assessment already exists for ${today}`);
       return { status: 'skipped', message: 'Assessment already exists' };
     }
@@ -193,7 +193,8 @@ app.get('/health', (req, res) => {
 app.get('/generate', async (req, res) => {
   try {
     console.log('[MANUAL] Triggering generation');
-    const result = await runDailyGeneration();
+    const force = req.query.force === 'true';
+    const result = await runDailyGeneration(force);
     res.json({ status: 'success', ...result });
   } catch (error) {
     console.error('[MANUAL] Error:', error.message);
@@ -304,11 +305,16 @@ app.get(`${BASE_PATH}/`, (req, res) => {
     <footer style="border-top: 1px solid #e5e7eb; margin-top: 2rem; padding-top: 2rem;">
       <div style="margin-bottom: 1.5rem;">
         <p style="margin-bottom: 0.5rem; font-weight: 500;"><strong>ZodSecurity Services</strong></p>
+        <p style="margin-bottom: 1rem;">
+          <a href="https://zodsecurity.com/" style="margin-right: 1.5rem; color: #dc2626; text-decoration: none;">🏠 ZodSecurity</a>
+          <a href="https://zodfire.com/" style="margin-right: 1.5rem; color: #dc2626; text-decoration: none;">🔥 ZodFire</a>
+          <a href="https://zodsafe.com/" style="margin-right: 1.5rem; color: #dc2626; text-decoration: none;">🛡️ ZodSafe</a>
+          <a href="https://zodprotection.com/" style="margin-right: 1.5rem; color: #dc2626; text-decoration: none;">🔒 ZodProtection</a>
+        </p>
         <p>
-          <a href="https://zodsecurity.com/" style="margin-right: 1.5rem; color: #dc2626; text-decoration: none;">🏠 ZodSecurity Home</a>
+          <a href="https://zodlightning.com/" style="margin-right: 1.5rem; color: #dc2626; text-decoration: none;">⚡ ZodLightning</a>
+          <a href="https://zodentrance.com/" style="margin-right: 1.5rem; color: #dc2626; text-decoration: none;">🚪 ZodEntrance</a>
           <a href="https://zodsecurity.com/lebanon-security-index/" style="margin-right: 1.5rem; color: #dc2626; text-decoration: none;">📊 Security Index</a>
-          <a href="https://zodsecurity.com/" style="margin-right: 1.5rem; color: #dc2626; text-decoration: none;">🛡️ Services</a>
-          <a href="https://zodsecurity.com/" style="color: #dc2626; text-decoration: none;">📞 Contact</a>
         </p>
       </div>
       <div style="border-top: 1px solid #e5e7eb; padding-top: 1rem; color: #666; font-size: 0.9rem;">

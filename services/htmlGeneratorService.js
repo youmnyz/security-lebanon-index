@@ -469,11 +469,16 @@ export function generateHTML(date, assessment, feedsData = {}) {
     <footer style="border-top: 1px solid #e5e7eb; margin-top: 3rem; padding-top: 2rem;">
       <div style="margin-bottom: 1.5rem;">
         <p style="margin-bottom: 0.5rem;"><strong>ZodSecurity Services</strong></p>
+        <p style="margin-bottom: 1rem;">
+          <a href="https://zodsecurity.com/" style="margin-right: 1.5rem;">🏠 ZodSecurity</a>
+          <a href="https://zodfire.com/" style="margin-right: 1.5rem;">🔥 ZodFire</a>
+          <a href="https://zodsafe.com/" style="margin-right: 1.5rem;">🛡️ ZodSafe</a>
+          <a href="https://zodprotection.com/" style="margin-right: 1.5rem;">🔒 ZodProtection</a>
+        </p>
         <p>
-          <a href="https://zodsecurity.com/" style="margin-right: 1.5rem;">🏠 ZodSecurity Home</a>
+          <a href="https://zodlightning.com/" style="margin-right: 1.5rem;">⚡ ZodLightning</a>
+          <a href="https://zodentrance.com/" style="margin-right: 1.5rem;">🚪 ZodEntrance</a>
           <a href="https://zodsecurity.com/lebanon-security-index/" style="margin-right: 1.5rem;">📊 Security Index</a>
-          <a href="https://zodsecurity.com/" style="margin-right: 1.5rem;">🛡️ Services</a>
-          <a href="https://zodsecurity.com/">📞 Contact</a>
         </p>
       </div>
       <div style="border-top: 1px solid #e5e7eb; padding-top: 1rem; color: #6b7280; font-size: 0.9rem;">
