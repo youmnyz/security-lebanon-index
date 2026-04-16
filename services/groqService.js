@@ -4,7 +4,7 @@
  * Reused and enhanced from original server-static.js
  */
 
-import Groq from 'groq-sdk';
+import { Groq } from 'groq-sdk';
 
 export async function generateAssessment(date, newsItems, threatScore) {
   if (!process.env.GROQ_API_KEY) {
