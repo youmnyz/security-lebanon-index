@@ -443,10 +443,21 @@ export function generateHTML(date, assessment, feedsData = {}) {
     ${generateChartsHTML(assessment)}
     ${generateMapHTML()}
 
-    <footer>
-      <p>Generated: ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Beirut' })} (Beirut Time)</p>
-      <p>Data sources: National News Agency, Naharnet, BBC, Al Jazeera, Middle East Eye, Google News and others</p>
-      <p><a href="https://zodsecurity.com/lebanon-security-index/">← Back to Archive</a></p>
+    <footer style="border-top: 1px solid #e5e7eb; margin-top: 3rem; padding-top: 2rem;">
+      <div style="margin-bottom: 1.5rem;">
+        <p style="margin-bottom: 0.5rem;"><strong>ZodSecurity Services</strong></p>
+        <p>
+          <a href="https://zodsecurity.com/" style="margin-right: 1.5rem;">🏠 ZodSecurity Home</a>
+          <a href="https://zodsecurity.com/lebanon-security-index/" style="margin-right: 1.5rem;">📊 Security Index</a>
+          <a href="https://zodsecurity.com/" style="margin-right: 1.5rem;">🛡️ Services</a>
+          <a href="https://zodsecurity.com/">📞 Contact</a>
+        </p>
+      </div>
+      <div style="border-top: 1px solid #e5e7eb; padding-top: 1rem; color: #6b7280; font-size: 0.9rem;">
+        <p>Generated: ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Beirut' })} (Beirut Time)</p>
+        <p>Data sources: National News Agency, Naharnet, BBC, Al Jazeera, Middle East Eye, Google News and others</p>
+        <p style="margin-top: 1rem; color: #999;">© 2026 ZodSecurity. All rights reserved. | <a href="https://zodsecurity.com/">ZodSecurity.com</a></p>
+      </div>
     </footer>
   </div>
 </body>

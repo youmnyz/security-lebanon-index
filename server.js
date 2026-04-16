@@ -301,10 +301,21 @@ app.get(`${BASE_PATH}/`, (req, res) => {
     <h2>Risk Assessment Archive</h2>
     ${archiveHtml || '<p style="color: #999;">No assessments available yet.</p>'}
 
-    <footer>
-      <p>Data sources: National News Agency, Naharnet, BBC, Al Jazeera, Middle East Eye, Google News, The961, The New Arab</p>
-      <p>Analysis method: RSS feed intelligence + AI-powered security risk assessment using Groq API</p>
-      <p>&copy; 2026 ZodSecurity. All rights reserved.</p>
+    <footer style="border-top: 1px solid #e5e7eb; margin-top: 2rem; padding-top: 2rem;">
+      <div style="margin-bottom: 1.5rem;">
+        <p style="margin-bottom: 0.5rem; font-weight: 500;"><strong>ZodSecurity Services</strong></p>
+        <p>
+          <a href="https://zodsecurity.com/" style="margin-right: 1.5rem; color: #0066cc; text-decoration: none;">🏠 ZodSecurity Home</a>
+          <a href="https://zodsecurity.com/lebanon-security-index/" style="margin-right: 1.5rem; color: #0066cc; text-decoration: none;">📊 Security Index</a>
+          <a href="https://zodsecurity.com/" style="margin-right: 1.5rem; color: #0066cc; text-decoration: none;">🛡️ Services</a>
+          <a href="https://zodsecurity.com/" style="color: #0066cc; text-decoration: none;">📞 Contact</a>
+        </p>
+      </div>
+      <div style="border-top: 1px solid #e5e7eb; padding-top: 1rem; color: #666; font-size: 0.9rem;">
+        <p>Data sources: National News Agency, Naharnet, BBC, Al Jazeera, Middle East Eye, Google News, The961, The New Arab</p>
+        <p>Analysis method: RSS feed intelligence + AI-powered security risk assessment using Groq API</p>
+        <p style="margin-top: 1rem; color: #999;">&copy; 2026 ZodSecurity. All rights reserved. | <a href="https://zodsecurity.com/" style="color: #0066cc; text-decoration: none;">ZodSecurity.com</a></p>
+      </div>
     </footer>
   </div>
 </body>
