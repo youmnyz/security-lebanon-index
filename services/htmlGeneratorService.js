@@ -43,6 +43,7 @@ function generateSchemata(date, assessment) {
     '@type': 'NewsArticle',
     'headline': `Lebanon Security Assessment - ${formattedDate}`,
     'description': assessment.summary || 'Security assessment for Lebanon',
+    'url': `https://zodsecurity.com/lebanon-security-index/risk-assessment/${date}`,
     'datePublished': new Date(`${date}T07:00:00Z`).toISOString(),
     'dateModified': new Date().toISOString(),
     'author': {
@@ -52,8 +53,12 @@ function generateSchemata(date, assessment) {
     },
     'publisher': {
       '@type': 'Organization',
-      'name': 'Lebanon Security Index',
-      'url': 'https://zodsecurity.com/lebanon-security-index/'
+      'name': 'ZodSecurity - Lebanon Security Index',
+      'url': 'https://zodsecurity.com/lebanon-security-index/',
+      'logo': {
+        '@type': 'ImageObject',
+        'url': 'https://zodsecurity.com/logo.png'
+      }
     },
     'mainEntity': {
       '@type': 'Thing',
@@ -292,6 +297,7 @@ export function generateHTML(date, assessment, feedsData = {}) {
   <meta name="twitter:description" content="${sanitizeHtml(assessment.summary || 'Real-time security assessment')}">
 
   <link rel="canonical" href="https://zodsecurity.com/lebanon-security-index/risk-assessment/${date}">
+  <meta property="og:url" content="https://zodsecurity.com/lebanon-security-index/risk-assessment/${date}">
 
   <script type="application/ld+json">
   ${schemata}

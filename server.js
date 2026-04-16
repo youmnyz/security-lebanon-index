@@ -250,9 +250,10 @@ app.get(`${BASE_PATH}/`, (req, res) => {
   <link rel="canonical" href="https://zodsecurity.com${BASE_PATH}/">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Lebanon Security Index">
-  <meta property="og:description" content="Real-time security assessment for Lebanon">
+  <meta property="og:title" content="Lebanon Security Index - ZodSecurity">
+  <meta property="og:description" content="Real-time AI-powered security assessment for Lebanon. Daily threat analysis and intelligence.">
   <meta property="og:url" content="https://zodsecurity.com${BASE_PATH}/">
+  <meta property="og:site_name" content="ZodSecurity">
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
