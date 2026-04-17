@@ -237,11 +237,16 @@ function initializeCharts() {
   }
 }
 
-// Call on load to ensure all resources are available
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initializeCharts);
-} else {
+// Wait for everything to load, including external scripts
+if (document.readyState === 'complete') {
+  // Page is already fully loaded
   initializeCharts();
+} else if (document.readyState === 'interactive') {
+  // DOM is ready but resources might still be loading
+  setTimeout(initializeCharts, 500);
+} else {
+  // Still loading, wait for full page load
+  window.addEventListener('load', initializeCharts);
 }
 </script>
   `;
