@@ -124,19 +124,19 @@ function generateChartsHTML(assessment) {
   <div class="charts-grid">
     <div class="chart-container">
       <h3>Threat Score Gauge</h3>
-      <canvas id="threatGaugeChart" width="300" height="300" style="max-width: 100%; height: auto;"></canvas>
+      <canvas id="threatGaugeChart" width="400" height="400"></canvas>
       <p class="chart-desc">Current security threat level on 0-100 scale</p>
     </div>
 
     <div class="chart-container">
       <h3>Risk Category Breakdown</h3>
-      <canvas id="riskBreakdownChart" width="300" height="300" style="max-width: 100%; height: auto;"></canvas>
+      <canvas id="riskBreakdownChart" width="400" height="400"></canvas>
       <p class="chart-desc">Threat distribution by risk category</p>
     </div>
 
     <div class="chart-container">
       <h3>30-Day Threat Timeline</h3>
-      <canvas id="timelineChart" width="400" height="200" style="max-width: 100%; height: auto;"></canvas>
+      <canvas id="timelineChart" width="600" height="300"></canvas>
       <p class="chart-desc">Historical threat level trends</p>
     </div>
   </div>
@@ -389,7 +389,8 @@ export function generateHTML(date, assessment, feedsData = {}) {
     .feed-source p { color: #6b7280; font-size: 0.9rem; margin-top: 0.5rem; }
 
     .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-    .chart-container { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .chart-container { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: relative; }
+    .chart-container canvas { display: block; }
     .chart-desc { color: #6b7280; font-size: 0.875rem; margin-top: 0.75rem; }
 
     .map-section { background: white; padding: 1.5rem; border-radius: 8px; }
