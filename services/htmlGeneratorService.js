@@ -124,19 +124,19 @@ function generateChartsHTML(assessment) {
   <div class="charts-grid">
     <div class="chart-container">
       <h3>Threat Score Gauge</h3>
-      <canvas id="threatGaugeChart"></canvas>
+      <canvas id="threatGaugeChart" width="300" height="300" style="max-width: 100%; height: auto;"></canvas>
       <p class="chart-desc">Current security threat level on 0-100 scale</p>
     </div>
 
     <div class="chart-container">
       <h3>Risk Category Breakdown</h3>
-      <canvas id="riskBreakdownChart"></canvas>
+      <canvas id="riskBreakdownChart" width="300" height="300" style="max-width: 100%; height: auto;"></canvas>
       <p class="chart-desc">Threat distribution by risk category</p>
     </div>
 
     <div class="chart-container">
       <h3>30-Day Threat Timeline</h3>
-      <canvas id="timelineChart"></canvas>
+      <canvas id="timelineChart" width="400" height="200" style="max-width: 100%; height: auto;"></canvas>
       <p class="chart-desc">Historical threat level trends</p>
     </div>
   </div>
