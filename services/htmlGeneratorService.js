@@ -144,6 +144,13 @@ function generateChartsHTML(assessment) {
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
 <script>
+// Wait for Chart.js to load before initializing charts
+function initializeCharts() {
+  if (typeof Chart === 'undefined') {
+    setTimeout(initializeCharts, 100);
+    return;
+  }
+
 // Threat Gauge Chart
 const threatCtx = document.getElementById('threatGaugeChart').getContext('2d');
 const threatScore = ${assessment.threatScore || 50};
@@ -215,6 +222,8 @@ new Chart(timelineCtx, {
     }
   }
 });
+} // Close initializeCharts function
+initializeCharts(); // Call the function to start initialization
 </script>
   `;
 }
