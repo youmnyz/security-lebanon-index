@@ -6,6 +6,40 @@
 
 import { Groq } from 'groq-sdk';
 
+// Threat keywords for analysis
+const THREAT_KEYWORDS = [
+  'attack', 'violence', 'terrorism', 'bombing', 'shooting', 'explosion',
+  'conflict', 'war', 'crisis', 'emergency', 'siege', 'hostage',
+  'protest', 'riot', 'unrest', 'strike', 'demonstration', 'clash',
+  'political', 'election', 'tension', 'dispute', 'disagreement',
+  'economic', 'market', 'inflation', 'recession', 'currency', 'crisis',
+  'infrastructure', 'damage', 'collapse', 'failure', 'outage',
+  'security', 'threat', 'danger', 'risk', 'alert', 'warning'
+];
+
+// Analyze news items for threat keywords
+function extractThreatKeywords(newsItems) {
+  const keywordCounts = {};
+
+  newsItems.forEach(item => {
+    const text = (item.title + ' ' + (item.summary || '')).toLowerCase();
+    THREAT_KEYWORDS.forEach(keyword => {
+      if (text.includes(keyword)) {
+        keywordCounts[keyword] = (keywordCounts[keyword] || 0) + 1;
+      }
+    });
+  });
+
+  // Sort by frequency and return top keywords
+  return Object.entries(keywordCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .reduce((obj, [key, count]) => {
+      obj[key] = count;
+      return obj;
+    }, {});
+}
+
 export async function generateAssessment(date, newsItems, threatScore) {
   if (!process.env.GROQ_API_KEY) {
     throw new Error('GROQ_API_KEY not configured');
@@ -94,6 +128,7 @@ Analyze this information and return a JSON object with:
       outlook24h: assessment.outlook24h || 'No specific outlook',
       riskBreakdown: assessment.riskBreakdown || {},
       topThreats: assessment.topThreats || [],
+      threatKeywords: extractThreatKeywords(newsItems),
       newsCount: recentNews.length
     };
   } catch (err) {
