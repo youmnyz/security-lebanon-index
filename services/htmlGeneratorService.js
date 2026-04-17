@@ -215,7 +215,7 @@ new Chart(timelineCtx, {
     }
   }
 });
-<\/script>
+</script>
   `;
 }
 
@@ -227,7 +227,7 @@ function generateMapHTML() {
 </section>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"><\/script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const map = L.map('map').setView([33.8, 35.5], 8);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
