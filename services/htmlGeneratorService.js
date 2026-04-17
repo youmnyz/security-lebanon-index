@@ -144,86 +144,105 @@ function generateChartsHTML(assessment) {
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
 <script>
-// Wait for Chart.js to load before initializing charts
+// Initialize charts with error handling
 function initializeCharts() {
   if (typeof Chart === 'undefined') {
-    setTimeout(initializeCharts, 100);
+    setTimeout(initializeCharts, 200);
     return;
   }
 
-  // Threat Gauge Chart
-  const threatCtx = document.getElementById('threatGaugeChart').getContext('2d');
-  const threatScore = ${assessment.threatScore || 50};
-  new Chart(threatCtx, {
-    type: 'doughnut',
-    data: {
-      labels: ['Current Threat', 'Safe'],
-      datasets: [{
-        data: [threatScore, 100 - threatScore],
-        backgroundColor: ['#ef4444', '#e5e7eb'],
-        borderColor: ['#dc2626', '#d1d5db'],
-        borderWidth: 2
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: {
-        legend: { display: true, position: 'bottom' }
-      }
+  try {
+    // Threat Gauge Chart
+    const threatCtx = document.getElementById('threatGaugeChart');
+    if (threatCtx) {
+      const ctx = threatCtx.getContext('2d');
+      const threatScore = ${assessment.threatScore || 50};
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Current Threat', 'Safe'],
+          datasets: [{
+            data: [threatScore, 100 - threatScore],
+            backgroundColor: ['#ef4444', '#e5e7eb'],
+            borderColor: ['#dc2626', '#d1d5db'],
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { display: true, position: 'bottom' }
+          }
+        }
+      });
     }
-  });
 
-  // Risk Breakdown Chart
-  const riskCtx = document.getElementById('riskBreakdownChart').getContext('2d');
-  const riskData = ${riskBreakdownJson};
-  new Chart(riskCtx, {
-    type: 'pie',
-    data: {
-      labels: Object.keys(riskData),
-      datasets: [{
-        data: Object.values(riskData),
-        backgroundColor: ['#3b82f6', '#8b5cf6', '#ef4444', '#f59e0b', '#06b6d4']
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: {
-        legend: { display: true, position: 'bottom' }
-      }
+    // Risk Breakdown Chart
+    const riskCtx = document.getElementById('riskBreakdownChart');
+    if (riskCtx) {
+      const ctx = riskCtx.getContext('2d');
+      const riskData = ${riskBreakdownJson};
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: Object.keys(riskData),
+          datasets: [{
+            data: Object.values(riskData),
+            backgroundColor: ['#3b82f6', '#8b5cf6', '#ef4444', '#f59e0b', '#06b6d4']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { display: true, position: 'bottom' }
+          }
+        }
+      });
     }
-  });
 
-  // Timeline Chart
-  const timelineCtx = document.getElementById('timelineChart').getContext('2d');
-  const historicalScores = ${historicalScoresJson};
-  new Chart(timelineCtx, {
-    type: 'line',
-    data: {
-      labels: historicalScores.map(d => d.date),
-      datasets: [{
-        label: 'Threat Score',
-        data: historicalScores.map(d => d.score),
-        borderColor: '#ef4444',
-        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-        tension: 0.3,
-        fill: true
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: {
-        legend: { display: true }
-      },
-      scales: {
-        y: { beginAtZero: true, max: 100 }
-      }
+    // Timeline Chart
+    const timelineCtx = document.getElementById('timelineChart');
+    if (timelineCtx) {
+      const ctx = timelineCtx.getContext('2d');
+      const historicalScores = ${historicalScoresJson};
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: historicalScores.map(d => d.date),
+          datasets: [{
+            label: 'Threat Score',
+            data: historicalScores.map(d => d.score),
+            borderColor: '#ef4444',
+            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+            tension: 0.3,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { display: true }
+          },
+          scales: {
+            y: { beginAtZero: true, max: 100 }
+          }
+        }
+      });
     }
-  });
+  } catch (err) {
+    console.error('Chart initialization error:', err);
+  }
 }
-initializeCharts(); // Call the function to start initialization
+
+// Call on load to ensure all resources are available
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeCharts);
+} else {
+  initializeCharts();
+}
 </script>
   `;
 }
