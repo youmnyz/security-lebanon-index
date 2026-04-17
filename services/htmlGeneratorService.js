@@ -144,25 +144,27 @@ function generateChartsHTML(assessment) {
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
 <script>
-// Initialize charts with error handling
-function initializeCharts() {
+// Direct chart initialization with retries
+(function initializeCharts(retries) {
+  retries = retries || 0;
+
   if (typeof Chart === 'undefined') {
-    setTimeout(initializeCharts, 200);
+    if (retries < 50) {
+      setTimeout(() => initializeCharts(retries + 1), 100);
+    }
     return;
   }
 
   try {
     // Threat Gauge Chart
-    const threatCtx = document.getElementById('threatGaugeChart');
-    if (threatCtx) {
-      const ctx = threatCtx.getContext('2d');
-      const threatScore = ${assessment.threatScore || 50};
-      new Chart(ctx, {
+    const threatGauge = document.getElementById('threatGaugeChart');
+    if (threatGauge && !threatGauge.hasAttribute('data-chart-initialized')) {
+      new Chart(threatGauge.getContext('2d'), {
         type: 'doughnut',
         data: {
           labels: ['Current Threat', 'Safe'],
           datasets: [{
-            data: [threatScore, 100 - threatScore],
+            data: [${assessment.threatScore || 50}, ${100 - (assessment.threatScore || 50)}],
             backgroundColor: ['#ef4444', '#e5e7eb'],
             borderColor: ['#dc2626', '#d1d5db'],
             borderWidth: 2
@@ -176,14 +178,14 @@ function initializeCharts() {
           }
         }
       });
+      threatGauge.setAttribute('data-chart-initialized', 'true');
     }
 
     // Risk Breakdown Chart
-    const riskCtx = document.getElementById('riskBreakdownChart');
-    if (riskCtx) {
-      const ctx = riskCtx.getContext('2d');
+    const riskBreakdown = document.getElementById('riskBreakdownChart');
+    if (riskBreakdown && !riskBreakdown.hasAttribute('data-chart-initialized')) {
       const riskData = ${riskBreakdownJson};
-      new Chart(ctx, {
+      new Chart(riskBreakdown.getContext('2d'), {
         type: 'pie',
         data: {
           labels: Object.keys(riskData),
@@ -200,14 +202,14 @@ function initializeCharts() {
           }
         }
       });
+      riskBreakdown.setAttribute('data-chart-initialized', 'true');
     }
 
     // Timeline Chart
-    const timelineCtx = document.getElementById('timelineChart');
-    if (timelineCtx) {
-      const ctx = timelineCtx.getContext('2d');
+    const timeline = document.getElementById('timelineChart');
+    if (timeline && !timeline.hasAttribute('data-chart-initialized')) {
       const historicalScores = ${historicalScoresJson};
-      new Chart(ctx, {
+      new Chart(timeline.getContext('2d'), {
         type: 'line',
         data: {
           labels: historicalScores.map(d => d.date),
@@ -231,23 +233,12 @@ function initializeCharts() {
           }
         }
       });
+      timeline.setAttribute('data-chart-initialized', 'true');
     }
   } catch (err) {
-    console.error('Chart initialization error:', err);
+    console.error('[CHARTS] Init error:', err);
   }
-}
-
-// Wait for everything to load, including external scripts
-if (document.readyState === 'complete') {
-  // Page is already fully loaded
-  initializeCharts();
-} else if (document.readyState === 'interactive') {
-  // DOM is ready but resources might still be loading
-  setTimeout(initializeCharts, 500);
-} else {
-  // Still loading, wait for full page load
-  window.addEventListener('load', initializeCharts);
-}
+})();
 </script>
   `;
 }
