@@ -142,7 +142,7 @@ function generateChartsHTML(assessment) {
   </div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"><\/script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
 <script>
 // Threat Gauge Chart
 const threatCtx = document.getElementById('threatGaugeChart').getContext('2d');
