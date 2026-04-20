@@ -10,7 +10,11 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import cron from 'node-cron';
 import helmet from 'helmet';
-import 'dotenv/config';
+
+// Load .env only in development, not on Render (where env vars are set directly)
+if (process.env.NODE_ENV !== 'production') {
+  import('dotenv/config').catch(() => {});
+}
 
 // Import services
 import { calculateSecurityScore, getThreatLevelFromScore, analyzeThreatKeywords } from './services/scoreService.js';
